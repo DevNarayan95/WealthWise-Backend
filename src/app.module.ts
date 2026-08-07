@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { loggingConfig } from './config/logging.config';
 import configuration from './config/configuration';
 import { envValidationSchema } from './config/env.validation';
 import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
+    loggingConfig,
+
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
@@ -16,6 +19,7 @@ import { HealthModule } from './modules/health/health.module';
         abortEarly: false,
       },
     }),
+
     HealthModule,
   ],
 })
