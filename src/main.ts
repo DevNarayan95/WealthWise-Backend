@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { Logger } from 'nestjs-pino';
+import { setupSwagger } from './config/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -68,8 +69,17 @@ async function bootstrap() {
    */
   app.enableShutdownHooks();
 
+  /**
+   * Global exception handling
+   */
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  /**
+   * Swagger / OpenAPI
+   */
+  setupSwagger(app);
 
   await app.listen(port);
 }
+
 bootstrap();
