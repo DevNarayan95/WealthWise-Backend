@@ -1,21 +1,20 @@
 import { PrismaUserRepository } from '../../src/modules/users/repositories/prisma-user.repository';
-import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
+import { createTestPrismaClient } from '../helpers/database/test-database';
+import { cleanupDatabase } from '../helpers/database/cleanup';
 
 describe('PrismaUserRepository (integration)', () => {
-  let prisma: PrismaService | undefined;
+  const prisma = createTestPrismaClient();
   let repository: PrismaUserRepository;
 
   beforeAll(async () => {
-    prisma = new PrismaService();
     await prisma.$connect();
 
     repository = new PrismaUserRepository(prisma);
   });
 
   afterAll(async () => {
-    if (prisma) {
-      await prisma.$disconnect();
-    }
+    await cleanupDatabase(prisma);
+    await prisma.$disconnect();
   });
 
   it('should create a user', async () => {
