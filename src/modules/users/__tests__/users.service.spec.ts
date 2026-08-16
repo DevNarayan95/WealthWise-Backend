@@ -3,9 +3,7 @@ import { ConflictException } from '@nestjs/common';
 import * as argon2 from 'argon2';
 
 import { UsersService } from '../services/users.service';
-import { UserRepository } from '../repositories/user.repository';
-import { id } from '../../../../node_modules/@nestjs/cli/node_modules/webpack/lib/util/concatenate';
-import e from 'express';
+import { UserRepository } from '../domain/repositories/user.repository';
 
 describe('UsersService', () => {
   let service: UsersService;

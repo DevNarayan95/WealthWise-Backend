@@ -21,7 +21,6 @@ export class UsersController {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        status: user.status,
         createdAt: user.createdAt,
       },
     };

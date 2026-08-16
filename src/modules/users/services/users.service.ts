@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 
 import * as argon2 from 'argon2';
 
-import { UserRepository } from '../repositories/user.repository';
+import { UserRepository } from '../domain/repositories/user.repository';
 
 interface CreateUserInput {
   email: string;
