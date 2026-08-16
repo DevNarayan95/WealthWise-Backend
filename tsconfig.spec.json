@@ -3,5 +3,10 @@
   "compilerOptions": {
     "types": ["jest", "node"]
   },
-  "include": ["src/**/*.spec.ts", "test/**/*.spec.ts", "test/**/*.e2e-spec.ts"]
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "test/**/*.spec.ts",
+    "test/**/*.e2e-spec.ts"
+  ]
 }
