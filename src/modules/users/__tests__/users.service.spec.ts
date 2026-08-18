@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException } from '@nestjs/common';
-import * as argon2 from 'argon2';
 
 import { UsersService } from '../services/users.service';
+import { PasswordHasherService } from '../services/password-hasher.service';
 import { UserRepository } from '../domain/repositories/user.repository';
 
 describe('UsersService', () => {
   let service: UsersService;
   let repository: jest.Mocked<UserRepository>;
+  let passwordHasher: jest.Mocked<PasswordHasherService>;
 
   beforeEach(async () => {
     repository = {
@@ -16,12 +17,21 @@ describe('UsersService', () => {
       findById: jest.fn(),
     };
 
+    passwordHasher = {
+      hash: jest.fn(),
+      verify: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
         {
           provide: UserRepository,
           useValue: repository,
+        },
+        {
+          provide: PasswordHasherService,
+          useValue: passwordHasher,
         },
       ],
     }).compile();
@@ -55,19 +65,21 @@ describe('UsersService', () => {
       } as any;
 
       repository.findByEmail.mockResolvedValue(null);
+      passwordHasher.hash.mockResolvedValue('hashed-password');
       repository.create.mockResolvedValue(createdUser);
 
       const result = await service.create(input);
 
       expect(repository.findByEmail).toHaveBeenCalledWith(input.email);
 
-      expect(repository.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          email: input.email,
-          firstName: input.firstName,
-          lastName: input.lastName,
-        }),
-      );
+      expect(passwordHasher.hash).toHaveBeenCalledWith(input.password);
+
+      expect(repository.create).toHaveBeenCalledWith({
+        email: input.email,
+        passwordHash: 'hashed-password',
+        firstName: input.firstName,
+        lastName: input.lastName,
+      });
 
       expect(result).toEqual(createdUser);
     });
@@ -90,6 +102,7 @@ describe('UsersService', () => {
       ).rejects.toThrow(ConflictException);
 
       expect(repository.create).not.toHaveBeenCalled();
+      expect(passwordHasher.hash).not.toHaveBeenCalled();
     });
 
     it('should hash the password before storing it', async () => {
@@ -113,18 +126,23 @@ describe('UsersService', () => {
       } as any;
 
       repository.findByEmail.mockResolvedValue(null);
+      passwordHasher.hash.mockResolvedValue('hashed-password');
       repository.create.mockResolvedValue(createdUser);
 
       await service.create(input);
 
+      expect(passwordHasher.hash).toHaveBeenCalledWith(input.password);
+
+      expect(repository.create).toHaveBeenCalledWith({
+        email: input.email,
+        passwordHash: 'hashed-password',
+        firstName: input.firstName,
+        lastName: input.lastName,
+      });
+
       const createCall = repository.create.mock.calls[0][0];
 
       expect(createCall.passwordHash).not.toBe(input.password);
-      expect(createCall.passwordHash).toEqual(expect.any(String));
-
-      await expect(
-        argon2.verify(createCall.passwordHash, input.password),
-      ).resolves.toBe(true);
     });
   });
 

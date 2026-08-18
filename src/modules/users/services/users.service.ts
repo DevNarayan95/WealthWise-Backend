@@ -1,13 +1,15 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
-import * as argon2 from 'argon2';
-
 import { UserRepository } from '../domain/repositories/user.repository';
 import { CreateUserInput } from '../application/inputs/create-user.input';
+import { PasswordHasherService } from './password-hasher.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly passwordHasher: PasswordHasherService,
+  ) {}
 
   async create(input: CreateUserInput) {
     const existingUser = await this.userRepository.findByEmail(input.email);
@@ -16,7 +18,7 @@ export class UsersService {
       throw new ConflictException('User with this email already exists');
     }
 
-    const passwordHash = await argon2.hash(input.password);
+    const passwordHash = await this.passwordHasher.hash(input.password);
 
     return this.userRepository.create({
       email: input.email,

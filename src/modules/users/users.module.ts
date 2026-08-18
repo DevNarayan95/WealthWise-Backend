@@ -4,11 +4,13 @@ import { UsersController } from './controllers/users.controller';
 import { PrismaUserRepository } from './repositories/prisma-user.repository';
 import { UserRepository } from './domain/repositories/user.repository';
 import { UsersService } from './services/users.service';
+import { PasswordHasherService } from './services/password-hasher.service';
 
 @Module({
   controllers: [UsersController],
   providers: [
     UsersService,
+    PasswordHasherService,
     PrismaUserRepository,
     {
       provide: UserRepository,
