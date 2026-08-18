@@ -14,6 +14,7 @@ import {
 } from '../interfaces/api-error-response.interface';
 
 interface NestHttpExceptionResponse {
+  code?: ErrorCode;
   message?: string | string[];
   error?: string;
 }
@@ -51,7 +52,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       },
       meta: {},
       timestamp: new Date().toISOString(),
-      path: request.url,
+      path: request.originalUrl,
     };
 
     response.status(statusCode).json(errorResponse);
@@ -90,11 +91,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     return {
-      code: this.getErrorCode(statusCode),
+      code: exceptionData.code ?? this.getErrorCode(statusCode),
       message:
-        exceptionData.message ??
-        exceptionData.error ??
-        'An unexpected error occurred',
+        typeof exceptionData.message === 'string'
+          ? exceptionData.message
+          : (exceptionData.error ?? 'An unexpected error occurred'),
     };
   }
 

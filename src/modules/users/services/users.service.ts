@@ -1,8 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { UserRepository } from '../domain/repositories/user.repository';
 import { CreateUserInput } from '../application/inputs/create-user.input';
 import { PasswordHasherService } from './password-hasher.service';
+import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +16,7 @@ export class UsersService {
     const existingUser = await this.userRepository.findByEmail(input.email);
 
     if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      throw new UserAlreadyExistsException();
     }
 
     const passwordHash = await this.passwordHasher.hash(input.password);

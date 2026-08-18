@@ -4,6 +4,7 @@ import { ConflictException } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { PasswordHasherService } from '../services/password-hasher.service';
 import { UserRepository } from '../domain/repositories/user.repository';
+import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -99,8 +100,7 @@ describe('UsersService', () => {
           firstName: 'John',
           lastName: 'Doe',
         }),
-      ).rejects.toThrow(ConflictException);
-
+      ).rejects.toThrow(UserAlreadyExistsException);
       expect(repository.create).not.toHaveBeenCalled();
       expect(passwordHasher.hash).not.toHaveBeenCalled();
     });

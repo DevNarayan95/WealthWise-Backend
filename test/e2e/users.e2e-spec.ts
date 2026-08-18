@@ -176,7 +176,16 @@ describe('Users Registration (E2E)', () => {
         })
         .expect(409);
 
-      expect(response.body.success).toBe(false);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          success: false,
+          statusCode: 409,
+          error: expect.objectContaining({
+            code: 'USER_ALREADY_EXISTS',
+            message: 'A user with this email already exists',
+          }),
+        }),
+      );
     });
   });
 });
