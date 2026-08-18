@@ -3,7 +3,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
 
 import { UserRepository } from '../domain/repositories/user.repository';
-import { CreateUserInput } from '../application/dto/create-user.input';
+import { CreateUserInput } from '../application/inputs/create-user.input';
 
 @Injectable()
 export class UsersService {

@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 
-import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UserResponseMapper } from '../mappers/user-response.mapper';
 
 @Controller({
   path: 'users',
@@ -12,17 +13,16 @@ export class UsersController {
 
   @Post()
   async create(@Body() dto: CreateUserDto) {
-    const user = await this.usersService.create(dto);
+    const user = await this.usersService.create({
+      email: dto.email,
+      password: dto.password,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+    });
 
     return {
       success: true,
-      data: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        createdAt: user.createdAt,
-      },
+      data: UserResponseMapper.toDto(user),
     };
   }
 }
