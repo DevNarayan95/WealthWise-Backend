@@ -58,6 +58,7 @@ describe('Users Registration (E2E)', () => {
         .expect(201);
 
       expect(response.body.success).toBe(true);
+      expect(response.body.meta).toEqual({});
 
       expect(response.body.data).toEqual(
         expect.objectContaining({

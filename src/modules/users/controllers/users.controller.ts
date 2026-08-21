@@ -1,8 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 
-import { UsersService } from '../services/users.service';
+import { successResponse } from '../../../common/utils/api-response.util';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserResponseMapper } from '../mappers/user-response.mapper';
+import { UsersService } from '../services/users.service';
 
 @Controller({
   path: 'users',
@@ -20,9 +21,6 @@ export class UsersController {
       lastName: dto.lastName,
     });
 
-    return {
-      success: true,
-      data: UserResponseMapper.toDto(user),
-    };
+    return successResponse(UserResponseMapper.toDto(user));
   }
 }
