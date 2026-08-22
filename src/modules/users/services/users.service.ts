@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UserRepository } from '../domain/repositories/user.repository';
 import { CreateUserInput } from '../application/inputs/create-user.input';
@@ -34,6 +34,12 @@ export class UsersService {
   }
 
   async findById(id: string) {
-    return this.userRepository.findById(id);
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 }

@@ -9,6 +9,8 @@ import { PrismaModule } from './infrastructure/database/prisma/prisma.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
 
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import authConfig from './config/auth.config';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { UsersModule } from './modules/users/users.module';
 
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [configuration, authConfig],
       validationSchema: envValidationSchema,
       validationOptions: {
         allowUnknown: true,
@@ -28,6 +30,7 @@ import { UsersModule } from './modules/users/users.module';
     DatabaseModule,
     HealthModule,
     UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

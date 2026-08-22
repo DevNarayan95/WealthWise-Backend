@@ -17,6 +17,6 @@ import { PasswordHasherService } from './services/password-hasher.service';
       useExisting: PrismaUserRepository,
     },
   ],
-  exports: [UsersService],
+  exports: [UsersService, UserRepository, PasswordHasherService],
 })
 export class UsersModule {}

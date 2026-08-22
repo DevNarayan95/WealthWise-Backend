@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 import { UsersService } from '../services/users.service';
 import { PasswordHasherService } from '../services/password-hasher.service';
@@ -180,9 +180,10 @@ describe('UsersService', () => {
     it('should return null when the user does not exist', async () => {
       repository.findById.mockResolvedValue(null);
 
-      const result = await service.findById('unknown-id');
+      await expect(service.findById('unknown-id')).rejects.toThrow(
+        NotFoundException,
+      );
 
-      expect(result).toBeNull();
       expect(repository.findById).toHaveBeenCalledWith('unknown-id');
     });
   });
