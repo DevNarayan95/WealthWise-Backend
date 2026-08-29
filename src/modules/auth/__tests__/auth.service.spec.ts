@@ -9,7 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 describe('AuthService', () => {
   let service: AuthService;
   let userRepository: jest.Mocked<UserRepository>;
-  let passwordHasher: jest.Mocked<PasswordHasherService>;
+  let passwordHasher: {
+    hash: jest.MockedFunction<PasswordHasherService['hash']>;
+    verify: jest.MockedFunction<PasswordHasherService['verify']>;
+  };
   let jwtService: jest.Mocked<JwtService>;
 
   beforeEach(async () => {
@@ -17,6 +20,7 @@ describe('AuthService', () => {
       create: jest.fn(),
       findByEmail: jest.fn(),
       findById: jest.fn(),
+      findPermissionsByUserId: jest.fn(),
     };
 
     passwordHasher = {

@@ -5,6 +5,7 @@ import { PrismaUserRepository } from './repositories/prisma-user.repository';
 import { UserRepository } from './domain/repositories/user.repository';
 import { UsersService } from './services/users.service';
 import { PasswordHasherService } from './services/password-hasher.service';
+import { PermissionsGuard } from '../../common/auth/permissions.guard';
 
 @Module({
   controllers: [UsersController],
@@ -12,6 +13,7 @@ import { PasswordHasherService } from './services/password-hasher.service';
     UsersService,
     PasswordHasherService,
     PrismaUserRepository,
+    PermissionsGuard,
     {
       provide: UserRepository,
       useExisting: PrismaUserRepository,

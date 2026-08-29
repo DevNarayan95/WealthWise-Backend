@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
 
@@ -8,9 +8,14 @@ import {
   UserRepository,
 } from '../domain/repositories/user.repository';
 
+type PrismaDatabaseClient = Pick<PrismaService, 'user' | 'rolePermission'>;
+
 @Injectable()
 export class PrismaUserRepository extends UserRepository {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    @Inject(PrismaService)
+    private readonly prisma: PrismaDatabaseClient,
+  ) {
     super();
   }
 
@@ -36,6 +41,27 @@ export class PrismaUserRepository extends UserRepository {
     });
 
     return user ? this.toDomain(user) : null;
+  }
+
+  async findPermissionsByUserId(userId: string): Promise<string[]> {
+    const rolePermissions = await this.prisma.rolePermission.findMany({
+      where: {
+        role: {
+          users: {
+            some: {
+              userId,
+            },
+          },
+        },
+      },
+      include: {
+        permission: true,
+      },
+    });
+
+    return rolePermissions.map(
+      ({ permission }) => `${permission.resource}:${permission.action}`,
+    );
   }
 
   private toDomain(user: {

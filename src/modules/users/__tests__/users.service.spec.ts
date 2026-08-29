@@ -9,13 +9,17 @@ import { UserAlreadyExistsException } from '../exceptions/user-already-exists.ex
 describe('UsersService', () => {
   let service: UsersService;
   let repository: jest.Mocked<UserRepository>;
-  let passwordHasher: jest.Mocked<PasswordHasherService>;
+  let passwordHasher: {
+    hash: jest.MockedFunction<PasswordHasherService['hash']>;
+    verify: jest.MockedFunction<PasswordHasherService['verify']>;
+  };
 
   beforeEach(async () => {
     repository = {
       create: jest.fn(),
       findByEmail: jest.fn(),
       findById: jest.fn(),
+      findPermissionsByUserId: jest.fn(),
     };
 
     passwordHasher = {

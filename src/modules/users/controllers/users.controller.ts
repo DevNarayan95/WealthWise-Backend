@@ -1,25 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 
+import { Permissions } from '../../../common/auth/permissions.decorator';
+import { PermissionsGuard } from '../../../common/auth/permissions.guard';
 import { successResponse } from '../../../common/utils/api-response.util';
+
+import type { AuthenticatedRequest } from '../../../common/auth/interfaces/authenticated-request.interface';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserResponseMapper } from '../mappers/user-response.mapper';
 import { UsersService } from '../services/users.service';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-
-interface AuthenticatedRequest extends Request {
-  user: {
-    userId: string;
-    email: string;
-  };
-}
 
 @Controller({
   path: 'users',
@@ -29,6 +19,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('users:create')
   async create(@Body() dto: CreateUserDto) {
     const user = await this.usersService.create({
       email: dto.email,

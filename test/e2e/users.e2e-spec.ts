@@ -4,13 +4,17 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
 import request from 'supertest';
 
 import { AppModule } from '../../src/app.module';
 import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
 
+import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
+
 describe('Users Registration (E2E)', () => {
   let app: INestApplication;
+  let accessToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -37,6 +41,28 @@ describe('Users Registration (E2E)', () => {
     app.useGlobalFilters(new HttpExceptionFilter());
 
     await app.init();
+
+    /**
+     * Generate JWT for seeded Super Admin.
+     * Super Admin has users:create permission.
+     */
+    const jwtService = app.get(JwtService);
+    const prisma = app.get(PrismaService);
+
+    const superAdmin = await prisma.user.findUnique({
+      where: {
+        email: 'admin@wealthwise.local',
+      },
+    });
+
+    if (!superAdmin) {
+      throw new Error('Super Admin user not found. Run npm run db:seed');
+    }
+
+    accessToken = await jwtService.signAsync({
+      sub: superAdmin.id,
+      email: superAdmin.email,
+    });
   });
 
   afterAll(async () => {
@@ -49,6 +75,7 @@ describe('Users Registration (E2E)', () => {
 
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email,
           password: 'Password123!',
@@ -76,6 +103,7 @@ describe('Users Registration (E2E)', () => {
     it('should reject registration when email is missing', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           password: 'Password1231!',
           firstName: 'E2E',
@@ -89,6 +117,7 @@ describe('Users Registration (E2E)', () => {
     it('should reject registration when email is invalid', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email: 'invalid-email',
           password: 'Password123!',
@@ -103,6 +132,7 @@ describe('Users Registration (E2E)', () => {
     it('should reject registration when password is missing', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email: `missing-password-${Date.now()}@example.com`,
           firstName: 'E2E',
@@ -116,6 +146,7 @@ describe('Users Registration (E2E)', () => {
     it('should reject registration when first name is missing', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email: `missing-first-name-${Date.now()}@example.com`,
           password: 'Password123!',
@@ -129,6 +160,7 @@ describe('Users Registration (E2E)', () => {
     it('should reject registration when last name is missing', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email: `missing-first-name-${Date.now()}@example.com`,
           password: 'Password123!',
@@ -142,6 +174,7 @@ describe('Users Registration (E2E)', () => {
     it('should reject unexpected fields', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email: `extra-field-${Date.now()}@example.com`,
           password: 'Password123!',
@@ -159,6 +192,7 @@ describe('Users Registration (E2E)', () => {
 
       await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email,
           password: 'Password123!',
@@ -169,6 +203,7 @@ describe('Users Registration (E2E)', () => {
 
       const response = await request(app.getHttpServer())
         .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           email,
           password: 'Password123!',
