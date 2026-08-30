@@ -1,4 +1,4 @@
-import { successResponse } from '../api-response.util';
+import { successResponse } from './api-response.util';
 
 describe('successResponse', () => {
   it('should create a successful API response', () => {
