@@ -1,9 +1,9 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthService } from '../services/auth.service';
-import { UserRepository } from '../../users/domain/repositories/user.repository';
-import { PasswordHasherService } from '../../users/services/password-hasher.service';
+import { AuthService } from './auth.service';
+import { UserRepository } from '../../../users/domain/repositories/user.repository';
+import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
 import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {

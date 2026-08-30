@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 
 import { LoginDto } from '../dto/login.dto';
-import { AuthService } from '../services/auth.service';
-import { UserResponseMapper } from '../../users/mappers/user-response.mapper';
+import { AuthService } from '../../application/services/auth.service';
+import { UserResponseMapper } from '../../../users/presentation/mappers/user-response.mapper';
 
 @Controller({
   path: 'auth',

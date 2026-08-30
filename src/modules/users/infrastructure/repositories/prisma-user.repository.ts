@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
+import { PrismaService } from '../../../../infrastructure/database/prisma/prisma.service';
 
-import { User } from '../domain/entities/user.entity';
+import { User } from '../../domain/entities/user.entity';
 import {
   CreateUserRepositoryInput,
   UserRepository,
-} from '../domain/repositories/user.repository';
+} from '../../domain/repositories/user.repository';
 
 type PrismaDatabaseClient = Pick<PrismaService, 'user' | 'rolePermission'>;
 

@@ -1,4 +1,4 @@
-import { PrismaUserRepository } from '../../src/modules/users/repositories/prisma-user.repository';
+import { PrismaUserRepository } from '../../src/modules/users/infrastructure/repositories/prisma-user.repository';
 import { createTestPrismaClient } from '../helpers/database/test-database';
 import { cleanupDatabase } from '../helpers/database/cleanup';
 

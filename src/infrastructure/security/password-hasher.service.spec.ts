@@ -1,4 +1,4 @@
-import { PasswordHasherService } from '../services/password-hasher.service';
+import { PasswordHasherService } from './password-hasher.service';
 
 describe('PasswordHasherService', () => {
   let service: PasswordHasherService;

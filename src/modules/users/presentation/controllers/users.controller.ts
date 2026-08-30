@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 
-import { Permissions } from '../../../common/auth/permissions.decorator';
-import { PermissionsGuard } from '../../../common/auth/permissions.guard';
-import { successResponse } from '../../../common/utils/api-response.util';
+import { Permissions } from '../../../auth/infrastructure/decorators/permissions.decorator';
+import { PermissionsGuard } from '../../../auth/infrastructure/guards/permissions.guard';
+import { successResponse } from '../../../../common/utils/api-response.util';
 
-import type { AuthenticatedRequest } from '../../../common/auth/interfaces/authenticated-request.interface';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../../../auth/infrastructure/interfaces/authenticated-request.interface';
+import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserResponseMapper } from '../mappers/user-response.mapper';
-import { UsersService } from '../services/users.service';
+import { UsersService } from '../../application/services/users.service';
 
 @Controller({
   path: 'users',

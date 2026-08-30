@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 import { UsersService } from '../services/users.service';
-import { PasswordHasherService } from '../services/password-hasher.service';
-import { UserRepository } from '../domain/repositories/user.repository';
-import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
+import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
+import { UserRepository } from '../../domain/repositories/user.repository';
+import { UserAlreadyExistsException } from '../../presentation/exceptions/user-already-exists.exception';
 
 describe('UsersService', () => {
   let service: UsersService;

@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { UserRepository } from '../domain/repositories/user.repository';
-import { CreateUserInput } from '../application/inputs/create-user.input';
-import { PasswordHasherService } from './password-hasher.service';
-import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
+import { UserRepository } from '../../domain/repositories/user.repository';
+import { CreateUserInput } from '../inputs/create-user.input';
+import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
+import { UserAlreadyExistsException } from '../../presentation/exceptions/user-already-exists.exception';
 
 @Injectable()
 export class UsersService {
