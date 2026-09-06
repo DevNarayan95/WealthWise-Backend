@@ -1,7 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 
-import { LoginDto } from '../dto/login.dto';
+import { LoginInput } from '../../application/inputs/login.input';
 import { AuthService } from '../../application/services/auth.service';
+
+import { LoginDto } from '../dto/login.dto';
+
 import { UserResponseMapper } from '../../../users/presentation/mappers/user-response.mapper';
 
 @Controller({
@@ -13,7 +16,12 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    const result = await this.authService.login(dto);
+    const input: LoginInput = {
+      email: dto.email,
+      password: dto.password,
+    };
+
+    const result = await this.authService.login(input);
 
     return {
       success: true,

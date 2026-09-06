@@ -133,5 +133,46 @@ describe('AuthService', () => {
       );
       expect(jwtService.signAsync).not.toHaveBeenCalled();
     });
+
+    it('should never include the password hash in the JWT payload', async () => {
+      const user = {
+        id: 'user-id',
+        email: 'test@example.com',
+        passwordHash: 'hashed-password',
+        firstName: 'John',
+        lastName: 'Doe',
+      } as any;
+
+      userRepository.findByEmail.mockResolvedValue(user);
+      passwordHasher.verify.mockResolvedValue(true);
+      jwtService.signAsync.mockResolvedValue('test-access-token');
+
+      await service.login({
+        email: 'test@example.com',
+        password: 'Password123!',
+      });
+
+      expect(jwtService.signAsync).toHaveBeenCalledWith({
+        sub: 'user-id',
+        email: 'test@example.com',
+      });
+
+      expect(jwtService.signAsync).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          passwordHash: expect.anything(),
+        }),
+      );
+    });
+
+    it('should use the same error message for unknown email', async () => {
+      userRepository.findByEmail.mockResolvedValue(null);
+
+      await expect(
+        service.login({
+          email: 'unknown@example.com',
+          password: 'Password123!',
+        }),
+      ).rejects.toThrow('Invalid email or password');
+    });
   });
 });

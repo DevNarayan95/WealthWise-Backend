@@ -34,6 +34,7 @@ export const seedUsers = async (
       email,
     },
     update: {
+      passwordHash,
       firstName: 'System',
       lastName: 'Administrator',
       status: 'ACTIVE',

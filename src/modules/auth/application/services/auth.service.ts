@@ -1,8 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginDto } from '../../presentation/dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
+
 import { UserRepository } from '../../../users/domain/repositories/user.repository';
 import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
-import { JwtService } from '@nestjs/jwt';
+
+import { LoginInput } from '../inputs/login.input';
+import { LoginOutput } from '../outputs/login.output';
 
 @Injectable()
 export class AuthService {
@@ -12,15 +15,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(dto: LoginDto) {
-    const user = await this.userRepository.findByEmail(dto.email);
+  async login(input: LoginInput): Promise<LoginOutput> {
+    const user = await this.userRepository.findByEmail(input.email);
 
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
     const passwordValid = await this.passwordHasher.verify(
-      dto.password,
+      input.password,
       user.passwordHash,
     );
 

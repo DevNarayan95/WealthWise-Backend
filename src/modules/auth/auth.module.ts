@@ -6,6 +6,7 @@ import { AuthController } from './presentation/controllers/auth.controller';
 import { AuthService } from './application/services/auth.service';
 import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
+import type { SignOptions } from 'jsonwebtoken';
 
 @Module({
   imports: [
@@ -15,7 +16,10 @@ import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow<string>('auth.jwtSecret'),
         signOptions: {
-          expiresIn: '15m',
+          expiresIn:
+            configService.getOrThrow<SignOptions['expiresIn']>(
+              'auth.jwtExpiresIn',
+            ),
         },
       }),
     }),
