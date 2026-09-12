@@ -187,4 +187,88 @@ describe('Authorization (E2E)', () => {
       expect(response.body.success).toBe(false);
     });
   });
+
+  it('should reject a previously authorized JWT after the required permission is revoked', async () => {
+    const loginResponse = await request(app.getHttpServer())
+      .post('/api/v1/auth/login')
+      .send({
+        email: adminEmail,
+        password: adminPassword,
+      })
+      .expect(200);
+
+    const accessToken = loginResponse.body.data.accessToken;
+
+    const adminUser = await prisma.user.findUniqueOrThrow({
+      where: {
+        email: adminEmail,
+      },
+    });
+
+    const permission = await prisma.permission.findUnique({
+      where: {
+        resource_action: {
+          resource: 'users',
+          action: 'create',
+        },
+      },
+    });
+
+    expect(permission).not.toBeNull();
+
+    const userRole = await prisma.userRole.findFirst({
+      where: {
+        userId: adminUser.id,
+      },
+    });
+
+    expect(userRole).not.toBeNull();
+
+    const rolePermission = await prisma.rolePermission.findUnique({
+      where: {
+        roleId_permissionId: {
+          roleId: userRole!.roleId,
+          permissionId: permission!.id,
+        },
+      },
+    });
+
+    expect(rolePermission).not.toBeNull();
+
+    try {
+      await prisma.rolePermission.delete({
+        where: {
+          roleId_permissionId: {
+            roleId: userRole!.roleId,
+            permissionId: permission!.id,
+          },
+        },
+      });
+
+      await request(app.getHttpServer())
+        .post('/api/v1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          email: `revoked-${Date.now()}@example.com`,
+          password: 'TestPassword123!',
+          firstName: 'Revoked',
+          lastName: 'Permission',
+        })
+        .expect(403);
+    } finally {
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: userRole!.roleId,
+            permissionId: permission!.id,
+          },
+        },
+        update: {},
+        create: {
+          roleId: userRole!.roleId,
+          permissionId: permission!.id,
+        },
+      });
+    }
+  });
 });

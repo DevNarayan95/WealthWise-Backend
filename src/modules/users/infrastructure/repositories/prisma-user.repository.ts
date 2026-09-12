@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../../infrastructure/database/prisma/prisma.service';
 
-import { User } from '../../domain/entities/user.entity';
+import { User, UserStatus } from '../../domain/entities/user.entity';
 import {
   CreateUserRepositoryInput,
   UserRepository,
@@ -70,6 +70,7 @@ export class PrismaUserRepository extends UserRepository {
     passwordHash: string;
     firstName: string;
     lastName: string;
+    status: UserStatus;
     createdAt: Date;
     updatedAt: Date;
   }): User {
@@ -79,6 +80,7 @@ export class PrismaUserRepository extends UserRepository {
       passwordHash: user.passwordHash,
       firstName: user.firstName,
       lastName: user.lastName,
+      status: user.status,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });

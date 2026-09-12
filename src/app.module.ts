@@ -11,6 +11,7 @@ import { DatabaseModule } from './infrastructure/database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import authConfig from './config/auth.config';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -24,6 +25,16 @@ import authConfig from './config/auth.config';
         allowUnknown: true,
         abortEarly: false,
       },
+    }),
+
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          name: 'default',
+          ttl: 60_000,
+          limit: 5,
+        },
+      ],
     }),
 
     PrismaModule,

@@ -15,6 +15,29 @@ describe('AuthService', () => {
   };
   let jwtService: jest.Mocked<JwtService>;
 
+  const createUser = (
+    overrides: Partial<{
+      id: string;
+      email: string;
+      passwordHash: string;
+      firstName: string;
+      lastName: string;
+      status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+      createdAt: Date;
+      updatedAt: Date;
+    }> = {},
+  ) => ({
+    id: 'user-id',
+    email: 'test@example.com',
+    passwordHash: 'hashed-password',
+    firstName: 'John',
+    lastName: 'Doe',
+    status: 'ACTIVE' as const,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ...overrides,
+  });
+
   beforeEach(async () => {
     userRepository = {
       create: jest.fn(),
@@ -59,13 +82,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should authenticate a user with valid credentials', async () => {
-      const user = {
-        id: 'user-id',
-        email: 'test@example.com',
-        passwordHash: 'hashed-password',
-        firstName: 'John',
-        lastName: 'Doe',
-      } as any;
+      const user = createUser();
 
       userRepository.findByEmail.mockResolvedValue(user);
       passwordHasher.verify.mockResolvedValue(true);
@@ -76,11 +93,6 @@ describe('AuthService', () => {
         password: 'Password123!',
       });
 
-      expect(jwtService.signAsync).toHaveBeenCalledWith({
-        sub: user.id,
-        email: user.email,
-      });
-
       expect(userRepository.findByEmail).toHaveBeenCalledWith(
         'test@example.com',
       );
@@ -89,6 +101,11 @@ describe('AuthService', () => {
         'Password123!',
         'hashed-password',
       );
+
+      expect(jwtService.signAsync).toHaveBeenCalledWith({
+        sub: user.id,
+        email: user.email,
+      });
 
       expect(result.user).toEqual(user);
       expect(result.accessToken).toBe('test-access-token');
@@ -110,14 +127,11 @@ describe('AuthService', () => {
     });
 
     it('should reject an invalid password', async () => {
-      const user = {
-        id: 'user-id',
-        email: 'test@example.com',
-        passwordHash: 'hashed-password',
-      } as any;
+      const user = createUser();
 
       userRepository.findByEmail.mockResolvedValue(user);
       passwordHasher.verify.mockResolvedValue(false);
+
       jwtService.signAsync.mockResolvedValue('test-access-token');
 
       await expect(
@@ -135,13 +149,7 @@ describe('AuthService', () => {
     });
 
     it('should never include the password hash in the JWT payload', async () => {
-      const user = {
-        id: 'user-id',
-        email: 'test@example.com',
-        passwordHash: 'hashed-password',
-        firstName: 'John',
-        lastName: 'Doe',
-      } as any;
+      const user = createUser();
 
       userRepository.findByEmail.mockResolvedValue(user);
       passwordHasher.verify.mockResolvedValue(true);
@@ -153,8 +161,8 @@ describe('AuthService', () => {
       });
 
       expect(jwtService.signAsync).toHaveBeenCalledWith({
-        sub: 'user-id',
-        email: 'test@example.com',
+        sub: user.id,
+        email: user.email,
       });
 
       expect(jwtService.signAsync).not.toHaveBeenCalledWith(
@@ -173,6 +181,52 @@ describe('AuthService', () => {
           password: 'Password123!',
         }),
       ).rejects.toThrow('Invalid email or password');
+    });
+
+    it('should reject login for an inactive user', async () => {
+      const user = createUser({
+        status: 'INACTIVE',
+      });
+
+      userRepository.findByEmail.mockResolvedValue(user);
+      passwordHasher.verify.mockResolvedValue(true);
+
+      await expect(
+        service.login({
+          email: user.email,
+          password: 'Password123!',
+        }),
+      ).rejects.toThrow('User account is not active');
+
+      expect(passwordHasher.verify).toHaveBeenCalledWith(
+        'Password123!',
+        'hashed-password',
+      );
+
+      expect(jwtService.signAsync).not.toHaveBeenCalled();
+    });
+
+    it('should reject login for a suspended user', async () => {
+      const user = createUser({
+        status: 'SUSPENDED',
+      });
+
+      userRepository.findByEmail.mockResolvedValue(user);
+      passwordHasher.verify.mockResolvedValue(true);
+
+      await expect(
+        service.login({
+          email: user.email,
+          password: 'Password123!',
+        }),
+      ).rejects.toThrow('User account is not active');
+
+      expect(passwordHasher.verify).toHaveBeenCalledWith(
+        'Password123!',
+        'hashed-password',
+      );
+
+      expect(jwtService.signAsync).not.toHaveBeenCalled();
     });
   });
 });

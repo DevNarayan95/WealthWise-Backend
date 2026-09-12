@@ -1,9 +1,12 @@
+export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+
 export interface UserProps {
   id: string;
   email: string;
   passwordHash: string;
   firstName: string;
   lastName: string;
+  status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +36,10 @@ export class User {
 
   get lastName(): string {
     return this.props.lastName;
+  }
+
+  get status(): UserStatus {
+    return this.props.status;
   }
 
   get createdAt(): Date {

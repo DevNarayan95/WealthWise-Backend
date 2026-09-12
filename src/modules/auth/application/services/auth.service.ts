@@ -31,6 +31,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    if (user.status !== 'ACTIVE') {
+      throw new UnauthorizedException('User account is not active');
+    }
+
     const accessToken = await this.jwtService.signAsync({
       sub: user.id,
       email: user.email,

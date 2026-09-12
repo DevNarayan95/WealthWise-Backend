@@ -9,6 +9,9 @@ import { UserResponseMapper } from '../../../users/presentation/mappers/user-res
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginResponseDto } from '../dto/login-response.dto';
 
+import { UseGuards } from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+
 @ApiTags('Authentication')
 @Controller({
   path: 'auth',
@@ -18,6 +21,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({
+    default: {
+      limit: 5,
+      ttl: 60_000, // 1 minute in milliseconds
+    },
+  })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Authenticate a user',

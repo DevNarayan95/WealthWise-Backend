@@ -59,6 +59,27 @@ describe('Users Registration (E2E)', () => {
       throw new Error('Super Admin user not found. Run npm run db:seed');
     }
 
+    const permissions = await prisma.rolePermission.findMany({
+      where: {
+        role: {
+          users: {
+            some: {
+              userId: superAdmin.id,
+            },
+          },
+        },
+      },
+      include: {
+        permission: true,
+      },
+    });
+
+    const permissionNames = permissions.map(
+      ({ permission }) => `${permission.resource}:${permission.action}`,
+    );
+
+    expect(permissionNames).toContain('users:create');
+
     accessToken = await jwtService.signAsync({
       sub: superAdmin.id,
       email: superAdmin.email,
