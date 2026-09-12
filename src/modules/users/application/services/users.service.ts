@@ -4,6 +4,7 @@ import { UserRepository } from '../../domain/repositories/user.repository';
 import { CreateUserInput } from '../inputs/create-user.input';
 import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
 import { UserAlreadyExistsException } from '../../presentation/exceptions/user-already-exists.exception';
+import { User } from '../../domain/entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,7 +13,7 @@ export class UsersService {
     private readonly passwordHasher: PasswordHasherService,
   ) {}
 
-  async create(input: CreateUserInput) {
+  async create(input: CreateUserInput): Promise<User> {
     const existingUser = await this.userRepository.findByEmail(input.email);
 
     if (existingUser) {
@@ -29,11 +30,11 @@ export class UsersService {
     });
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findByEmail(email);
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<User> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {

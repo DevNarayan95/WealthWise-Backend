@@ -61,7 +61,7 @@ describe('Authentication (E2E)', () => {
           email: adminEmail,
           password: adminPassword,
         })
-        .expect(201);
+        .expect(200);
 
       expect(response.body.success).toBe(true);
 
@@ -168,7 +168,7 @@ describe('Authentication (E2E)', () => {
           email: adminEmail,
           password: adminPassword,
         })
-        .expect(201);
+        .expect(200);
 
       const accessToken = loginResponse.body.data.accessToken;
 
@@ -201,7 +201,7 @@ describe('Authentication (E2E)', () => {
           email: adminEmail,
           password: adminPassword,
         })
-        .expect(201);
+        .expect(200);
 
       const accessToken = loginResponse.body.data.accessToken;
 

@@ -89,7 +89,7 @@ describe('Authorization (E2E)', () => {
           email: adminEmail,
           password: adminPassword,
         })
-        .expect(201);
+        .expect(200);
 
       const accessToken = loginResponse.body.data.accessToken;
 
@@ -126,7 +126,7 @@ describe('Authorization (E2E)', () => {
           email: normalUserEmail,
           password: 'TestPassword123!',
         })
-        .expect(201);
+        .expect(200);
 
       const accessToken = loginResponse.body.data.accessToken;
 
