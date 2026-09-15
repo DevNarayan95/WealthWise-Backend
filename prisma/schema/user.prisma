@@ -1,3 +1,9 @@
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
 model User {
   id           String     @id @default(uuid()) @db.Uuid
   email        String     @unique @db.VarChar(255)
@@ -9,7 +15,8 @@ model User {
   updatedAt    DateTime   @updatedAt @map("updated_at")
   deletedAt    DateTime?  @map("deleted_at")
 
-  roles UserRole[]
+  roles    UserRole[]
+  accounts Account[]
 
   @@index([status])
   @@index([createdAt])

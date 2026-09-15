@@ -1,3 +1,35 @@
+enum AccountType {
+  BANK_ACCOUNT
+  CASH
+  CREDIT_CARD
+  INVESTMENT
+  OTHER
+}
+
+enum AccountStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model Account {
+  id             String        @id @default(uuid()) @db.Uuid
+  userId         String        @map("user_id") @db.Uuid
+  name           String        @db.VarChar(150)
+  type           AccountType
+  currency       String        @db.Char(3)
+  openingBalance Decimal       @map("opening_balance") @db.Decimal(19, 4)
+  status         AccountStatus @default(ACTIVE)
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([userId, status])
+  @@map("accounts")
+}
+
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -5,12 +37,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
 }
 
 model Permission {
@@ -71,6 +97,12 @@ model UserRole {
   @@map("user_roles")
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
 model User {
   id           String     @id @default(uuid()) @db.Uuid
   email        String     @unique @db.VarChar(255)
@@ -82,7 +114,8 @@ model User {
   updatedAt    DateTime   @updatedAt @map("updated_at")
   deletedAt    DateTime?  @map("deleted_at")
 
-  roles UserRole[]
+  roles    UserRole[]
+  accounts Account[]
 
   @@index([status])
   @@index([createdAt])

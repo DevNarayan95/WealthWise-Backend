@@ -120,6 +120,18 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  type: 'type',
+  currency: 'currency',
+  openingBalance: 'openingBalance',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PermissionScalarFieldEnum = {
   id: 'id',
   resource: 'resource',
@@ -175,6 +187,19 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.AccountType = exports.$Enums.AccountType = {
+  BANK_ACCOUNT: 'BANK_ACCOUNT',
+  CASH: 'CASH',
+  CREDIT_CARD: 'CREDIT_CARD',
+  INVESTMENT: 'INVESTMENT',
+  OTHER: 'OTHER'
+};
+
+exports.AccountStatus = exports.$Enums.AccountStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+};
+
 exports.UserStatus = exports.$Enums.UserStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE',
@@ -182,6 +207,7 @@ exports.UserStatus = exports.$Enums.UserStatus = {
 };
 
 exports.Prisma.ModelName = {
+  Account: 'Account',
   Permission: 'Permission',
   RolePermission: 'RolePermission',
   Role: 'Role',
