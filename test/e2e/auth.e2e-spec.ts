@@ -229,6 +229,44 @@ describe('Authentication (E2E)', () => {
 
       expect(response.body.success).toBe(false);
     });
+
+    it('should reject a password longer than 128 characters', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          email: adminEmail,
+          password: 'A'.repeat(129),
+        })
+        .expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should authenticate with a mixed-case email address', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          email: 'ADMIN@WEALTHWISE.LOCAL',
+          password: 'Password123!',
+        })
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.user.email).toBe('admin@wealthwise.local');
+    });
+
+    it('should normalize email whitespace and casing during login', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          email: '  ADMIN@WEALTHWISE.LOCAL  ',
+          password: 'Password123!',
+        })
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.user.email).toBe('admin@wealthwise.local');
+    });
   });
 
   describe('GET /api/v1/users/me', () => {

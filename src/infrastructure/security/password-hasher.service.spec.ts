@@ -45,5 +45,14 @@ describe('PasswordHasherService', () => {
 
       expect(result).toBe(false);
     });
+
+    it('should return false for an invalid password hash', async () => {
+      const password = 'Password123!';
+      const invalidHash = 'not-a-valid-bcrypt-hash';
+
+      const result = await service.verify(password, invalidHash);
+
+      expect(result).toBe(false);
+    });
   });
 });
