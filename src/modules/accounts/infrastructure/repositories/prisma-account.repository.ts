@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import { PrismaService } from '../../../../infrastructure/database/prisma/prisma.service';
-
 import {
   Account,
   AccountStatus,
@@ -10,6 +8,8 @@ import {
 import {
   AccountRepository,
   CreateAccountRepositoryInput,
+  FindAccountsRepositoryInput,
+  FindAccountsRepositoryOutput,
 } from '../../domain/repositories/account.repository';
 
 @Injectable()
@@ -44,17 +44,31 @@ export class PrismaAccountRepository implements AccountRepository {
     return account ? this.toDomain(account) : null;
   }
 
-  async findAllByUserId(userId: string): Promise<Account[]> {
-    const accounts = await this.prisma.account.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+  async findAllByUserId(
+    input: FindAccountsRepositoryInput,
+  ): Promise<FindAccountsRepositoryOutput> {
+    const where = {
+      userId: input.userId,
+    };
 
-    return accounts.map((account) => this.toDomain(account));
+    const [accounts, total] = await Promise.all([
+      this.prisma.account.findMany({
+        where,
+        skip: input.skip,
+        take: input.take,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.account.count({
+        where,
+      }),
+    ]);
+
+    return {
+      accounts: accounts.map((account) => this.toDomain(account)),
+      total,
+    };
   }
 
   private toDomain(account: {
@@ -63,9 +77,7 @@ export class PrismaAccountRepository implements AccountRepository {
     name: string;
     type: string;
     currency: string;
-    openingBalance: {
-      toString(): string;
-    };
+    openingBalance: { toString(): string };
     status: string;
     createdAt: Date;
     updatedAt: Date;
@@ -87,19 +99,14 @@ export class PrismaAccountRepository implements AccountRepository {
     switch (type) {
       case 'BANK_ACCOUNT':
         return AccountType.BANK_ACCOUNT;
-
       case 'CASH':
         return AccountType.CASH;
-
       case 'CREDIT_CARD':
         return AccountType.CREDIT_CARD;
-
       case 'INVESTMENT':
         return AccountType.INVESTMENT;
-
       case 'OTHER':
         return AccountType.OTHER;
-
       default:
         throw new Error(`Unsupported account type: ${type}`);
     }
@@ -109,10 +116,8 @@ export class PrismaAccountRepository implements AccountRepository {
     switch (status) {
       case 'ACTIVE':
         return AccountStatus.ACTIVE;
-
       case 'ARCHIVED':
         return AccountStatus.ARCHIVED;
-
       default:
         throw new Error(`Unsupported account status: ${status}`);
     }

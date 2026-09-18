@@ -4,13 +4,16 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -25,6 +28,8 @@ import { AccountsService } from '../../application/services/accounts.service';
 import { AccountResponseDto } from '../dto/account-response.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { AccountResponseMapper } from '../mappers/account-response.mapper';
+import { ListAccountsQueryDto } from '../dto/list-accounts-query.dto';
+import { PaginatedAccountsResponseDto } from '../dto/paginated-accounts-response.dto';
 
 @ApiTags('Accounts')
 @Controller({
@@ -42,6 +47,21 @@ export class AccountsController {
     summary: 'Create an account',
     description:
       'Creates a new financial account for the authenticated user. Requires the accounts:create permission.',
+  })
+  @ApiBody({
+    type: CreateAccountDto,
+    examples: {
+      bankAccount: {
+        summary: 'Bank account',
+        description: 'Example of a MYR bank account.',
+        value: {
+          name: 'Maybank Savings',
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '1250.5000',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -82,28 +102,48 @@ export class AccountsController {
   @ApiOperation({
     summary: 'List accounts',
     description:
-      'Returns all financial accounts belonging to the authenticated user. Requires the accounts:read permission.',
+      'Returns paginated financial accounts belonging to the authenticated user. Requires the accounts:read permission.',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    example: 1,
+    description: 'Page number. Starts from 1.',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    example: 20,
+    description: 'Number of accounts per page. Maximum 100.',
   })
   @ApiResponse({
     status: 200,
     description: 'Accounts returned successfully.',
-    type: AccountResponseDto,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Authentication is required.',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'User does not have the required permission.',
+    type: PaginatedAccountsResponseDto,
   })
   async findAll(
     @Req() request: AuthenticatedRequest,
-  ): Promise<ApiSuccessResponse<AccountResponseDto[]>> {
-    const accounts = await this.accountsService.findAll(request.user.userId);
+    @Query() query: ListAccountsQueryDto,
+  ): Promise<ApiSuccessResponse<PaginatedAccountsResponseDto>> {
+    const result = await this.accountsService.findAll(
+      request.user.userId,
+      query.page,
+      query.limit,
+    );
 
-    return successResponse(AccountResponseMapper.toDtoList(accounts));
+    return successResponse(
+      {
+        items: AccountResponseMapper.toDtoList(result.items),
+      },
+      {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages: result.totalPages,
+      },
+    );
   }
 
   @Get(':id')

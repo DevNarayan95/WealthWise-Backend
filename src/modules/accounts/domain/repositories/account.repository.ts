@@ -1,11 +1,22 @@
-import { Account } from '../entities/account.entity';
+import { Account, AccountType } from '../entities/account.entity';
 
 export interface CreateAccountRepositoryInput {
   userId: string;
   name: string;
-  type: Account['type'];
+  type: AccountType;
   currency: string;
   openingBalance: string;
+}
+
+export interface FindAccountsRepositoryInput {
+  userId: string;
+  skip: number;
+  take: number;
+}
+
+export interface FindAccountsRepositoryOutput {
+  accounts: Account[];
+  total: number;
 }
 
 export abstract class AccountRepository {
@@ -16,5 +27,7 @@ export abstract class AccountRepository {
     userId: string,
   ): Promise<Account | null>;
 
-  abstract findAllByUserId(userId: string): Promise<Account[]>;
+  abstract findAllByUserId(
+    input: FindAccountsRepositoryInput,
+  ): Promise<FindAccountsRepositoryOutput>;
 }

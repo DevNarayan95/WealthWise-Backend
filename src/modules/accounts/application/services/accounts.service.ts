@@ -11,6 +11,7 @@ import { AccountRepository } from '../../domain/repositories/account.repository'
 import { InvalidAccountException } from '../../exceptions/invalid-account.exception';
 import { AccountNotFoundException } from '../../exceptions/account-not-found.exception';
 import { CreateAccountInput } from '../inputs/create-account.input';
+import { PaginatedAccountsOutput } from '../outputs/paginated-accounts.output';
 
 @Injectable()
 export class AccountsService {
@@ -48,8 +49,26 @@ export class AccountsService {
     return account;
   }
 
-  async findAll(userId: string): Promise<Account[]> {
-    return this.accountRepository.findAllByUserId(userId);
+  async findAll(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedAccountsOutput> {
+    const skip = (page - 1) * limit;
+
+    const result = await this.accountRepository.findAllByUserId({
+      userId,
+      skip,
+      take: limit,
+    });
+
+    return {
+      items: result.accounts,
+      page,
+      limit,
+      total: result.total,
+      totalPages: Math.ceil(result.total / limit),
+    };
   }
 
   private validateAccountName(name: string): void {

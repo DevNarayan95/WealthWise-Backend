@@ -12,6 +12,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import authConfig from './config/auth.config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AccountsModule } from './modules/accounts/accounts.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     HealthModule,
     UsersModule,
     AuthModule,
+    AccountsModule,
   ],
 })
 export class AppModule {}
