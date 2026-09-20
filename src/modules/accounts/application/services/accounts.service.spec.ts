@@ -1,7 +1,10 @@
 import {
+  Account,
   AccountStatus,
   AccountType,
 } from '../../domain/entities/account.entity';
+import { AccountAlreadyArchivedException } from '../../domain/exceptions/account-already-archived.exception';
+import { AccountAlreadyArchivedApplicationException } from '../../exceptions/account-already-archived.exception';
 import { AccountNotFoundException } from '../../exceptions/account-not-found.exception';
 import { InvalidAccountException } from '../../exceptions/invalid-account.exception';
 import { AccountsService } from './accounts.service';
@@ -11,6 +14,7 @@ describe('AccountsService', () => {
     create: jest.fn(),
     findByIdForUser: jest.fn(),
     findAllByUserId: jest.fn(),
+    update: jest.fn(),
   };
 
   let service: AccountsService;
@@ -362,13 +366,128 @@ describe('AccountsService', () => {
         },
       ];
 
-      accountRepository.findAllByUserId.mockResolvedValue(accounts);
+      accountRepository.findAllByUserId.mockResolvedValue({
+        accounts,
+        total: 1,
+      });
 
-      const result = await service.findAll('user-id');
+      const result = await service.findAll('user-id', 1, 10);
 
-      expect(accountRepository.findAllByUserId).toHaveBeenCalledWith('user-id');
+      expect(accountRepository.findAllByUserId).toHaveBeenCalledWith({
+        userId: 'user-id',
+        skip: 0,
+        take: 10,
+      });
 
-      expect(result).toEqual(accounts);
+      expect(result.items).toEqual(accounts);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(10);
+      expect(result.total).toBe(1);
+      expect(result.totalPages).toBe(1);
+    });
+  });
+
+  describe('archive', () => {
+    it('should archive an active account owned by the user', async () => {
+      const account = Account.create({
+        id: 'account-id',
+        userId: 'user-id',
+        name: 'Maybank Savings',
+        type: AccountType.BANK_ACCOUNT,
+        currency: 'MYR',
+        openingBalance: '1000.0000',
+        status: AccountStatus.ACTIVE,
+        createdAt: new Date('2026-08-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-08-01T00:00:00.000Z'),
+      });
+      const archivedAccount = Account.create({
+        id: 'account-id',
+        userId: 'user-id',
+        name: 'Maybank Savings',
+        type: AccountType.BANK_ACCOUNT,
+        currency: 'MYR',
+        openingBalance: '1000.0000',
+        status: AccountStatus.ARCHIVED,
+        createdAt: new Date('2026-08-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-08-02T00:00:00.000Z'),
+      });
+      accountRepository.findByIdForUser.mockResolvedValue(account);
+      accountRepository.update.mockResolvedValue(archivedAccount);
+      const result = await service.archive('account-id', 'user-id');
+      expect(accountRepository.findByIdForUser).toHaveBeenCalledWith(
+        'account-id',
+        'user-id',
+      );
+      expect(accountRepository.update).toHaveBeenCalledWith({
+        accountId: 'account-id',
+        userId: 'user-id',
+        status: AccountStatus.ARCHIVED,
+      });
+      expect(result.status).toBe(AccountStatus.ARCHIVED);
+      expect(result.id).toBe('account-id');
+    });
+
+    it('should throw AccountNotFoundException when the account does not exist or is not owned by the user', async () => {
+      accountRepository.findByIdForUser.mockResolvedValue(null);
+      await expect(
+        service.archive('account-id', 'user-id'),
+      ).rejects.toBeInstanceOf(AccountNotFoundException);
+      expect(accountRepository.findByIdForUser).toHaveBeenCalledWith(
+        'account-id',
+        'user-id',
+      );
+      expect(accountRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should reject archiving an already archived account', async () => {
+      const account = Account.create({
+        id: 'account-id',
+        userId: 'user-id',
+        name: 'Maybank Savings',
+        type: AccountType.BANK_ACCOUNT,
+        currency: 'MYR',
+        openingBalance: '1000.0000',
+        status: AccountStatus.ARCHIVED,
+        createdAt: new Date('2026-08-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-08-01T00:00:00.000Z'),
+      });
+
+      accountRepository.findByIdForUser.mockResolvedValue(account);
+
+      await expect(
+        service.archive('account-id', 'user-id'),
+      ).rejects.toBeInstanceOf(AccountAlreadyArchivedApplicationException);
+
+      expect(accountRepository.findByIdForUser).toHaveBeenCalledWith(
+        'account-id',
+        'user-id',
+      );
+
+      expect(accountRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should throw AccountNotFoundException when the repository update does not update an account', async () => {
+      const account = Account.create({
+        id: 'account-id',
+        userId: 'user-id',
+        name: 'Maybank Savings',
+        type: AccountType.BANK_ACCOUNT,
+        currency: 'MYR',
+        openingBalance: '1000.0000',
+        status: AccountStatus.ACTIVE,
+        createdAt: new Date('2026-08-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-08-01T00:00:00.000Z'),
+      });
+      accountRepository.findByIdForUser.mockResolvedValue(account);
+      accountRepository.update.mockResolvedValue(null);
+      await expect(
+        service.archive('account-id', 'user-id'),
+      ).rejects.toBeInstanceOf(AccountNotFoundException);
+      expect(accountRepository.update).toHaveBeenCalledWith({
+        accountId: 'account-id',
+        userId: 'user-id',
+        status: AccountStatus.ARCHIVED,
+      });
     });
   });
 });

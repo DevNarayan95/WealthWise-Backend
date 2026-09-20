@@ -1,3 +1,5 @@
+import { AccountAlreadyArchivedException } from '../exceptions/account-already-archived.exception';
+
 export enum AccountType {
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   CASH = 'CASH',
@@ -28,6 +30,17 @@ export class Account {
 
   static create(props: AccountProps): Account {
     return new Account(props);
+  }
+
+  archive(): Account {
+    if (this.props.status === AccountStatus.ARCHIVED) {
+      throw new AccountAlreadyArchivedException();
+    }
+
+    return new Account({
+      ...this.props,
+      status: AccountStatus.ARCHIVED,
+    });
   }
 
   get id(): string {

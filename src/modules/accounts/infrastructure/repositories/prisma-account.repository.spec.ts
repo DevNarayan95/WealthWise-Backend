@@ -10,6 +10,8 @@ describe('PrismaAccountRepository', () => {
       create: jest.fn(),
       findFirst: jest.fn(),
       findMany: jest.fn(),
+      count: jest.fn(),
+      updateMany: jest.fn(),
     },
   };
 
@@ -170,42 +172,105 @@ describe('PrismaAccountRepository', () => {
       ];
 
       prisma.account.findMany.mockResolvedValue(prismaAccounts);
+      prisma.account.count.mockResolvedValue(2);
 
-      const result = await repository.findAllByUserId('user-id');
+      const result = await repository.findAllByUserId({
+        userId: 'user-id',
+        skip: 0,
+        take: 20,
+      });
+
+      expect(prisma.account.count).toHaveBeenCalledWith({
+        where: {
+          userId: 'user-id',
+        },
+      });
 
       expect(prisma.account.findMany).toHaveBeenCalledWith({
         where: {
           userId: 'user-id',
         },
+        skip: 0,
+        take: 20,
         orderBy: {
           createdAt: 'desc',
         },
       });
 
-      expect(result).toHaveLength(2);
-
-      expect(result[0].id).toBe('account-1');
-      expect(result[0].openingBalance).toBe('1000.0000');
-
-      expect(result[1].id).toBe('account-2');
-      expect(result[1].openingBalance).toBe('250.5000');
+      expect(result.accounts).toHaveLength(2);
+      expect(result.total).toBe(2);
+      expect(result.accounts[0].id).toBe('account-1');
+      expect(result.accounts[0].openingBalance).toBe('1000.0000');
+      expect(result.accounts[1].id).toBe('account-2');
+      expect(result.accounts[1].openingBalance).toBe('250.5000');
     });
 
     it('should return an empty array when the user has no accounts', async () => {
       prisma.account.findMany.mockResolvedValue([]);
-
-      const result = await repository.findAllByUserId('user-id');
-
-      expect(result).toEqual([]);
-
-      expect(prisma.account.findMany).toHaveBeenCalledWith({
-        where: {
-          userId: 'user-id',
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
+      prisma.account.count.mockResolvedValue(0);
+      const result = await repository.findAllByUserId({
+        userId: 'user-id',
+        skip: 0,
+        take: 20,
       });
+      expect(result.accounts).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(prisma.account.findMany).toHaveBeenCalledWith({
+        where: { userId: 'user-id' },
+        skip: 0,
+        take: 20,
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(prisma.account.count).toHaveBeenCalledWith({
+        where: { userId: 'user-id' },
+      });
+    });
+  });
+
+  describe('update', () => {
+    it('should update account status for the account owner', async () => {
+      const account = {
+        id: 'account-id',
+        userId: 'user-id',
+        name: 'Maybank Savings',
+        type: AccountType.BANK_ACCOUNT,
+        currency: 'MYR',
+        openingBalance: { toString: () => '1000.50' },
+        status: AccountStatus.ARCHIVED,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+      };
+      prisma.account.updateMany.mockResolvedValue({ count: 1 });
+      prisma.account.findFirst.mockResolvedValue(account);
+      const result = await repository.update({
+        accountId: 'account-id',
+        userId: 'user-id',
+        status: AccountStatus.ARCHIVED,
+      });
+      expect(prisma.account.updateMany).toHaveBeenCalledWith({
+        where: { id: 'account-id', userId: 'user-id' },
+        data: { status: AccountStatus.ARCHIVED },
+      });
+      expect(prisma.account.findFirst).toHaveBeenCalledWith({
+        where: { id: 'account-id', userId: 'user-id' },
+      });
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe('account-id');
+      expect(result?.status).toBe(AccountStatus.ARCHIVED);
+    });
+    it('should return null when the account does not belong to the user', async () => {
+      prisma.account.updateMany.mockResolvedValue({ count: 0 });
+      const result = await repository.update({
+        accountId: 'account-id',
+        userId: 'different-user-id',
+        status: AccountStatus.ARCHIVED,
+      });
+      expect(result).toBeNull();
+      expect(prisma.account.updateMany).toHaveBeenCalledWith({
+        where: { id: 'account-id', userId: 'different-user-id' },
+        data: { status: AccountStatus.ARCHIVED },
+      });
+      expect(prisma.account.findFirst).not.toHaveBeenCalled();
     });
   });
 

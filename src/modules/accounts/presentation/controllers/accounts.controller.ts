@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -182,6 +183,22 @@ export class AccountsController {
     @Param('id') accountId: string,
   ): Promise<ApiSuccessResponse<AccountResponseDto>> {
     const account = await this.accountsService.findById(
+      accountId,
+      request.user.userId,
+    );
+
+    return successResponse(AccountResponseMapper.toDto(account));
+  }
+
+  @Patch(':id/archive')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('accounts:update')
+  @ApiBearerAuth('access-token')
+  async archive(
+    @Param('id') accountId: string,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<ApiSuccessResponse<AccountResponseDto>> {
+    const account = await this.accountsService.archive(
       accountId,
       request.user.userId,
     );

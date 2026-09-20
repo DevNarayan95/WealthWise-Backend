@@ -5,13 +5,15 @@ import {
   isValidCurrencyCode,
   isValidOpeningBalance,
   ACCOUNT_NAME_MAX_LENGTH,
-} from '../../domain/account-validation';
-import { Account } from '../../domain/entities/account.entity';
+} from '../../domain/validations/account-validation';
+import { Account, AccountStatus } from '../../domain/entities/account.entity';
 import { AccountRepository } from '../../domain/repositories/account.repository';
 import { InvalidAccountException } from '../../exceptions/invalid-account.exception';
 import { AccountNotFoundException } from '../../exceptions/account-not-found.exception';
 import { CreateAccountInput } from '../inputs/create-account.input';
 import { PaginatedAccountsOutput } from '../outputs/paginated-accounts.output';
+import { AccountAlreadyArchivedException } from '../../domain/exceptions/account-already-archived.exception';
+import { AccountAlreadyArchivedApplicationException } from '../../exceptions/account-already-archived.exception';
 
 @Injectable()
 export class AccountsService {
@@ -103,5 +105,40 @@ export class AccountsService {
         'Opening balance must be a valid decimal with up to 4 decimal places',
       );
     }
+  }
+
+  async archive(accountId: string, userId: string): Promise<Account> {
+    const account = await this.accountRepository.findByIdForUser(
+      accountId,
+      userId,
+    );
+
+    if (!account) {
+      throw new AccountNotFoundException();
+    }
+
+    let archivedAccount: Account;
+
+    try {
+      archivedAccount = account.archive();
+    } catch (error) {
+      if (error instanceof AccountAlreadyArchivedException) {
+        throw new AccountAlreadyArchivedApplicationException();
+      }
+
+      throw error;
+    }
+
+    const updatedAccount = await this.accountRepository.update({
+      accountId,
+      userId,
+      status: AccountStatus.ARCHIVED,
+    });
+
+    if (!updatedAccount) {
+      throw new AccountNotFoundException();
+    }
+
+    return archivedAccount;
   }
 }

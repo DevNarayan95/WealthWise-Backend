@@ -1,4 +1,8 @@
-import { Account, AccountType } from '../entities/account.entity';
+import {
+  Account,
+  AccountType,
+  AccountStatus,
+} from '../entities/account.entity';
 
 export interface CreateAccountRepositoryInput {
   userId: string;
@@ -19,6 +23,12 @@ export interface FindAccountsRepositoryOutput {
   total: number;
 }
 
+export interface UpdateAccountRepositoryInput {
+  accountId: string;
+  userId: string;
+  status: AccountStatus;
+}
+
 export abstract class AccountRepository {
   abstract create(input: CreateAccountRepositoryInput): Promise<Account>;
 
@@ -30,4 +40,6 @@ export abstract class AccountRepository {
   abstract findAllByUserId(
     input: FindAccountsRepositoryInput,
   ): Promise<FindAccountsRepositoryOutput>;
+
+  abstract update(input: UpdateAccountRepositoryInput): Promise<Account | null>;
 }

@@ -1,4 +1,4 @@
-import { AccountType } from './entities/account.entity';
+import { AccountType } from '../entities/account.entity';
 
 export const ACCOUNT_NAME_MAX_LENGTH = 150;
 export const ACCOUNT_CURRENCY_LENGTH = 3;

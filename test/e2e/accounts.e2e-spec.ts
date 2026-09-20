@@ -77,7 +77,7 @@ describe('Accounts (E2E)', () => {
     });
 
     if (!superAdmin) {
-      throw new Error('Super Admin user not found. Run npm run db:test:seed');
+      throw new Error('Super Admin user not found. Run npm run db:seed:test');
     }
 
     const superAdminPermissions = await prisma.rolePermission.findMany({
@@ -353,6 +353,16 @@ describe('Accounts (E2E)', () => {
 
       expect(response.body.success).toBe(false);
     });
+
+    it('should reject archiving an account without authentication', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/accounts/${created.body.data.id}/archive`)
+        .expect(401);
+
+      expect(response.body.success).toBe(false);
+    });
   });
 
   describe('Authorization', () => {
@@ -374,6 +384,17 @@ describe('Accounts (E2E)', () => {
     it('should reject account lookup without accounts:read permission', async () => {
       const response = await request(app.getHttpServer())
         .get('/api/v1/accounts/4990c246-06bf-4a81-9c23-62e8265e895f')
+        .set('Authorization', `Bearer ${unauthorizedUserToken}`)
+        .expect(403);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject account archiving without accounts:update permission', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/accounts/${created.body.data.id}/archive`)
         .set('Authorization', `Bearer ${unauthorizedUserToken}`)
         .expect(403);
 
@@ -751,6 +772,148 @@ describe('Accounts (E2E)', () => {
         expect.objectContaining({
           code: 'ACCOUNT_NOT_FOUND',
           message: 'Account not found',
+        }),
+      );
+    });
+  });
+
+  describe('PATCH /api/v1/accounts/:id/archive', () => {
+    it('should archive an active account successfully', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/accounts/${created.body.data.id}/archive`)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.meta).toEqual({});
+
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          id: created.body.data.id,
+          name: created.body.data.name,
+          type: created.body.data.type,
+          currency: created.body.data.currency,
+          openingBalance: created.body.data.openingBalance,
+          status: 'ARCHIVED',
+        }),
+      );
+    });
+
+    it('should persist the archived status', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+      await request(app.getHttpServer())
+        .patch(`/api/v1/accounts/${created.body.data.id}/archive`)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+      const account = await prisma.account.findUnique({
+        where: { id: created.body.data.id },
+      });
+      expect(account).not.toBeNull();
+      expect(account?.status).toBe('ARCHIVED');
+    });
+
+    it('should return 409 when archiving an already archived account', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+      const archiveUrl = `/api/v1/accounts/${created.body.data.id}/archive`;
+      await request(app.getHttpServer())
+        .patch(archiveUrl)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+      const response = await request(app.getHttpServer())
+        .patch(archiveUrl)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(409);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toEqual(
+        expect.objectContaining({
+          code: 'ACCOUNT_ALREADY_ARCHIVED',
+          message: 'Account is already archived',
+        }),
+      );
+    });
+
+    it('should return 404 when archiving a non-existent account', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/api/v1/accounts/4990c246-06bf-4a81-9c23-62e8265e895f/archive')
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(404);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toEqual(
+        expect.objectContaining({
+          code: 'ACCOUNT_NOT_FOUND',
+          message: 'Account not found',
+        }),
+      );
+    });
+
+    it('should not allow another authorized user to archive the account', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/accounts/${created.body.data.id}/archive`)
+        .set('Authorization', `Bearer ${secondAuthorizedUserToken}`)
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toEqual(
+        expect.objectContaining({
+          code: 'ACCOUNT_NOT_FOUND',
+          message: 'Account not found',
+        }),
+      );
+
+      const account = await prisma.account.findUnique({
+        where: { id: created.body.data.id },
+      });
+
+      expect(account?.status).toBe('ACTIVE');
+    });
+
+    it('should keep an archived account accessible to its owner', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      await request(app.getHttpServer())
+        .patch(`/api/v1/accounts/${created.body.data.id}/archive`)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/accounts/${created.body.data.id}`)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          id: created.body.data.id,
+          status: 'ARCHIVED',
+        }),
+      );
+    });
+
+    it('should preserve account data when archiving', async () => {
+      const created = await createAccount(authorizedUserToken, {
+        name: `${testPrefix}-archive-preserve`,
+        type: 'CREDIT_CARD',
+        currency: 'MYR',
+        openingBalance: '-1250.50',
+      }).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/accounts/${created.body.data.id}/archive`)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          id: created.body.data.id,
+          name: `${testPrefix}-archive-preserve`,
+          type: 'CREDIT_CARD',
+          currency: 'MYR',
+          openingBalance: '-1250.5',
+          status: 'ARCHIVED',
         }),
       );
     });

@@ -10,6 +10,7 @@ import {
   CreateAccountRepositoryInput,
   FindAccountsRepositoryInput,
   FindAccountsRepositoryOutput,
+  UpdateAccountRepositoryInput,
 } from '../../domain/repositories/account.repository';
 
 @Injectable()
@@ -69,6 +70,31 @@ export class PrismaAccountRepository implements AccountRepository {
       accounts: accounts.map((account) => this.toDomain(account)),
       total,
     };
+  }
+
+  async update(input: UpdateAccountRepositoryInput): Promise<Account | null> {
+    const result = await this.prisma.account.updateMany({
+      where: {
+        id: input.accountId,
+        userId: input.userId,
+      },
+      data: {
+        status: input.status,
+      },
+    });
+
+    if (result.count === 0) {
+      return null;
+    }
+
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: input.accountId,
+        userId: input.userId,
+      },
+    });
+
+    return account ? this.toDomain(account) : null;
   }
 
   private toDomain(account: {
