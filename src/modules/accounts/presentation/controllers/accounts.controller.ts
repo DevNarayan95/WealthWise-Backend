@@ -12,11 +12,16 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConflictResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
@@ -194,6 +199,31 @@ export class AccountsController {
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('accounts:update')
   @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Archive an account',
+    description:
+      'Archives an account owned by the authenticated user. ' +
+      'Archived accounts are retained and can still be viewed, but cannot be archived again.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Account ID',
+    type: String,
+    format: 'uuid',
+  })
+  @ApiOkResponse({
+    description: 'Account archived successfully',
+    type: AccountResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Authentication is required' })
+  @ApiForbiddenResponse({
+    description: 'User does not have the accounts:update permission',
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Account was not found or does not belong to the authenticated user',
+  })
+  @ApiConflictResponse({ description: 'Account is already archived' })
   async archive(
     @Param('id') accountId: string,
     @Req() request: AuthenticatedRequest,
