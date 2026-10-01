@@ -20,7 +20,8 @@ model Account {
   openingBalance Decimal       @map("opening_balance") @db.Decimal(19, 4)
   status         AccountStatus @default(ACTIVE)
 
-  user User @relation(fields: [userId], references: [id])
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -95,6 +96,29 @@ model UserRole {
   @@id([userId, roleId])
   @@index([roleId])
   @@map("user_roles")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model Transaction {
+  id              String          @id @default(uuid()) @db.Uuid
+  accountId       String          @map("account_id") @db.Uuid
+  type            TransactionType
+  amount          Decimal         @db.Decimal(19, 4)
+  currency        String          @db.Char(3)
+  description     String?         @db.VarChar(255)
+  transactionDate DateTime        @map("transaction_date")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  account Account @relation(fields: [accountId], references: [id])
+
+  @@index([accountId])
+  @@index([accountId, transactionDate])
+  @@map("transactions")
 }
 
 enum UserStatus {

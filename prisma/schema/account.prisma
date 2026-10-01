@@ -20,7 +20,8 @@ model Account {
   openingBalance Decimal       @map("opening_balance") @db.Decimal(19, 4)
   status         AccountStatus @default(ACTIVE)
 
-  user User @relation(fields: [userId], references: [id])
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

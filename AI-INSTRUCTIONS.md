@@ -1563,342 +1563,616 @@ Current authentication/authorization milestone was committed after all tests bec
 
 # 38. Current Project Progress
 
-The backend has established:
+The WealthWise backend foundation and the first financial domain module have been implemented.
 
-- NestJS application
-- Configuration management
-- Environment validation
-- PostgreSQL
-- Prisma
-- Database module
-- Prisma module/service
-- User module
-- User domain entity
-- User repository abstraction
-- Prisma user repository
-- User application service
-- User controllers
-- User DTOs
-- Application input separation
-- Authentication module
-- Login
-- Password hashing
-- JWT authentication
-- JWT strategy
-- JWT guard
-- Permission guard
-- Permission decorator
-- Authenticated request abstraction
-- Role/permission authorization
-- Wildcard authorization
-- Global exception handling
-- API response utilities
-- Health endpoint
-- Pino logging
-- Swagger configuration
-- Unit testing
-- Integration testing
-- E2E testing
-- Authentication E2E tests
-- Authorization E2E tests
-- Idempotent admin seed behavior
-- Authentication/authorization architecture review
+The actual source tree and current implementation remain the source of truth.
 
-The backend currently follows a modular-monolith architecture.
-
----
-
-# 39. Completed Authentication & Authorization Milestone
-
-The following milestone is considered complete:
+## Foundation
 
 ```text
-Authentication & Authorization Foundation
-
-├── User registration
-├── Password hashing
-├── Login
-├── JWT generation
-├── JWT validation
-├── Protected endpoints
-├── Current-user endpoint
-│
-├── Permissions decorator
-├── PermissionsGuard
-├── User → Role
-├── Role → Permission
-├── Permission checking
-├── Multiple permissions
-├── Wildcard permission
-│
-├── Authentication unit tests
-├── Authorization unit tests
-├── Repository integration tests
-├── Authentication E2E tests
-└── Authorization E2E tests
-```
-
-Status:
-
-```text
-✅ COMPLETE
-```
-
----
-
-# 40. Current Immediate Objective
-
-The next objective is **Authentication Hardening**.
-
-The implementation has established that authentication works.
-
-The next phase is to make the authentication system appropriate for production conditions.
-
-The planned sequence is:
-
-```text
-Authentication Hardening
-
-9.1  Password & Credential Security Policy      ✅
-9.2  JWT Security Review                        ⏳
-9.3  Login Failure Handling                     ⏳
-9.4  Brute-Force Protection Strategy            ⏳
-9.5  Refresh Token Decision                     ⏳
-9.6  Token Revocation / Logout Strategy         ⏳
-9.7  Account Status Enforcement                 ⏳
-9.8  Sensitive Data / Logging Review             ⏳
-9.9  Security-Focused Tests                     ⏳
-9.10 Production Authentication Checklist        ⏳
-```
-
----
-
-# 41. Step 9.1 — Password & Credential Security Policy
-
-Step 9.1 has been reviewed.
-
-Current decisions:
-
-```text
-Plaintext passwords                 ❌ Never store
-Password hashing                    ✅ PasswordHasherService
-Current algorithm                   ✅ bcrypt
-Current cost factor                 ✅ 12
-Password in API response            ❌ Never expose
-Password hash in API response       ❌ Never expose
-Password in JWT                     ❌ Never include
-Password hash in JWT                ❌ Never include
-Password in logs                    ❌ Never log
-Password hash in logs               ❌ Never log
-Password reset                      ⏳ Future dedicated flow
-Password change                     ⏳ Future dedicated flow
-Brute-force protection              ⏳ Future hardening
-```
-
-No unnecessary code change was introduced during this review.
-
----
-
-# 42. Next Topic
-
-The next engineering topic is:
-
-## Step 9.2 — JWT Security Review
-
-The review will cover:
-
-```text
-JWT_SECRET
-     ↓
-Token signing
-     ↓
-JWT claims
-     ↓
-Algorithm configuration
-     ↓
-Token expiration
-     ↓
-Token validation
-     ↓
-Token storage
-     ↓
-Token theft
-     ↓
-Refresh token strategy
-     ↓
-Logout / revocation
-```
-
-The goal is to determine which JWT security controls WealthWise actually needs and which would be unnecessary complexity.
-
-Do not implement refresh tokens, token revocation, or other JWT changes until the architectural/security decision has been made.
-
----
-
-# 43. Requirement → Implementation Workflow
-
-Every future WealthWise feature should follow:
-
-```text
-Requirement
-    ↓
-Domain / Business Rules
-    ↓
-Application Use Case
-    ↓
-Infrastructure
-    ↓
-API / Presentation
-    ↓
-Tests
-    ↓
-Documentation
-    ↓
-Validation
-    ↓
-Focused Git Commit
-```
-
-The AI should preserve this sequence wherever practical.
-
----
-
-# 44. AI Continuation Rule
-
-When this document is provided in a new AI conversation:
-
-1. Read this document completely.
-2. Treat it as the project's baseline architecture.
-3. Do not ask the user to repeat information already contained here.
-4. Ask only for information genuinely missing from this document.
-5. If the user provides the current source tree, treat the source tree as the latest implementation state.
-6. If the current source tree conflicts with this document, prefer the actual source tree and identify the difference.
-7. Preserve existing coding style.
-8. Preserve existing naming conventions.
-9. Preserve existing architecture unless the user explicitly requests a change.
-10. Continue from the current project state rather than restarting the project design.
-11. Do not skip completed milestones.
-12. Do not assume a feature is production-ready merely because its happy-path tests pass.
-13. Before introducing a new abstraction, check whether an existing abstraction already solves the problem.
-14. When an architectural improvement is identified but not required immediately, record it as a review item instead of performing an unnecessary refactor.
-15. Keep implementation, tests, architecture, and documentation synchronized.
-
----
-
-# 45. Important Instruction
-
-**WealthWise is a long-term engineering project.**
-
-The goal is not simply to generate code.
-
-The goal is to build the system using professional software engineering practices while allowing the developer to learn the reasoning behind each architectural decision.
-
-Therefore, when introducing an important architectural concept, explain:
-
-- What it is
-- Why it exists
-- What problem it solves
-- Why WealthWise uses it
-- Where it belongs
-- What alternatives exist
-- Why the chosen approach is appropriate
-- What trade-offs exist
-- How it should be tested
-- What production risks remain
-
-Keep explanations practical and connected to the actual WealthWise codebase.
-
----
-
-# 46. Current Learning Position
-
-The user is learning WealthWise development as both:
-
-1. A real production-quality backend implementation
-2. A software engineering/Tech Lead learning exercise
-
-Therefore, important implementation decisions should be explained from both perspectives:
-
-```text
-Implementation
-     +
-Architecture
-     +
-Security
-     +
-Testing
-     +
-Operational concerns
-     +
-Engineering reasoning
-```
-
-The assistant should teach the reasoning behind decisions rather than only provide code.
-
----
-
-# 47. Current Status Summary
-
-```text
-WEALTHWISE BACKEND
-────────────────────────────────────────
-
 Foundation
 ├── NestJS application                    ✅
 ├── Configuration                         ✅
 ├── Environment validation                ✅
 ├── PostgreSQL                            ✅
 ├── Prisma                                ✅
-├── Logging                               ✅
-├── Swagger                               ✅
+├── Database module                       ✅
+├── Prisma module/service                 ✅
+├── Logging / Pino                        ✅
+├── Swagger / OpenAPI                     ✅
 ├── Global exception handling             ✅
 ├── API response utilities                ✅
-└── Health endpoint                       ✅
+├── Health endpoint                       ✅
+├── Unit testing                          ✅
+├── Integration testing                   ✅
+└── E2E testing                           ✅
+```
 
+## Users
+
+```text
 Users
 ├── User domain entity                    ✅
 ├── Repository abstraction                ✅
 ├── Prisma repository                     ✅
 ├── Application service                   ✅
-├── DTOs                                  ✅
 ├── Application inputs                    ✅
+├── DTOs                                  ✅
 ├── Controller                            ✅
+├── Validation                            ✅
+├── Ownership-aware repository access     ✅
 └── Tests                                 ✅
+```
 
+## Authentication
+
+```text
 Authentication
 ├── Password hashing                      ✅
 ├── Login                                 ✅
 ├── JWT generation                        ✅
 ├── JWT strategy                          ✅
 ├── JWT guard                             ✅
-├── /users/me                             ✅
+├── Current-user flow                     ✅
+├── Authentication error handling         ✅
+├── Account status enforcement             ✅
+├── Credential validation                 ✅
 ├── Authentication E2E                    ✅
-└── Authentication architecture review   ✅
+└── Security architecture review          ✅
+```
 
+## Authorization
+
+```text
 Authorization
 ├── Permission model                      ✅
 ├── Permissions decorator                 ✅
 ├── PermissionsGuard                      ✅
 ├── Multiple permissions                  ✅
 ├── Wildcard permission                   ✅
+├── Permission freshness                  ✅
 ├── 401 / 403 semantics                   ✅
+├── Ownership-aware authorization         ✅
 ├── Unit tests                            ✅
 ├── E2E tests                             ✅
 └── Architecture review                   ✅
+```
 
-Database / Seed
-├── Test database                         ✅
-├── Test migrations                       ✅
-├── Admin seed                            ✅
-├── Idempotent role assignment            ✅
-└── Idempotent password synchronization  ✅
+## Authentication Hardening
 
-Current Milestone
-└── Authentication & Authorization       ✅ COMPLETE
+Authentication hardening has been completed.
 
-Current Phase
-└── Authentication Hardening             🔄 IN PROGRESS
+```text
+Authentication Hardening
+├── Password & credential security         ✅
+├── JWT security review                   ✅
+├── Login failure handling                ✅
+├── Login rate limiting                   ✅
+├── Account enumeration protection        ✅
+├── Refresh token strategy decision       ✅
+├── Token/session security                ✅
+├── Account status enforcement             ✅
+├── Sensitive data / logging review       ✅
+├── Security-focused tests                ✅
+└── Production authentication review      ✅
+```
 
-Current Topic
-└── 9.2 JWT Security Review               ⏳ NEXT
+Important security decisions:
+
+```text
+Passwords
+├── Plaintext storage                     ❌
+├── Password in JWT                       ❌
+├── Password in API response              ❌
+└── Password/hash in logs                 ❌
+
+JWT
+├── Secret from configuration             ✅
+├── Expiration configured                 ✅
+├── Signature validation                  ✅
+├── Invalid token rejection               ✅
+├── User existence validation             ✅
+└── Sensitive claims excluded             ✅
+
+Authorization
+├── Permission checked at request time    ✅
+├── Permission changes take effect        ✅
+└── Wildcard permission supported         ✅
+
+Logging
+├── Passwords excluded                    ✅
+├── Password hashes excluded              ✅
+├── JWT/access tokens excluded             ✅
+└── Sensitive financial information       ✅
+```
+
+---
+
+# 39. Financial Domain Foundation
+
+The financial domain foundation has been established before implementing financial modules.
+
+## Financial Principles
+
+```text
+Financial Domain
+├── Money representation                  ✅
+├── Decimal / NUMERIC strategy            ✅
+├── Currency strategy                     ✅
+├── User ownership / isolation            ✅
+├── UUID record identity                  ✅
+├── UTC timestamps                        ✅
+├── Business-date distinction             ✅
+├── Database transaction strategy         ✅
+├── Auditability principles               ✅
+├── Immutable/reversal principles         ✅
+├── Soft-delete/archive principles        ✅
+├── Database constraints                  ✅
+├── Database indexing                     ✅
+├── Financial conventions                 ✅
+└── Architecture review                   ✅
+```
+
+### Money
+
+JavaScript `number` is not used as the authoritative representation of financial amounts.
+
+The database uses PostgreSQL `NUMERIC/DECIMAL`, while the application/domain currently represents monetary values as strings.
+
+```text
+PostgreSQL NUMERIC/DECIMAL
+        ↓
+Prisma Decimal
+        ↓
+Infrastructure mapping
+        ↓
+Domain monetary string
+```
+
+A dedicated Money value object can be introduced later if domain complexity requires it.
+
+### Currency
+
+Currencies use ISO-4217-style three-character currency codes.
+
+Examples:
+
+```text
+MYR
+USD
+SGD
+```
+
+Currency conversion is not part of the Accounts module.
+
+### Ownership
+
+All user-owned financial resources must enforce ownership at the repository boundary.
+
+Example:
+
+```text
+findByIdForUser(accountId, userId)
+```
+
+A resource belonging to another user must not be exposed merely because its ID is known.
+
+### Financial Record Lifecycle
+
+Financial records should not be physically deleted when doing so would destroy financial history.
+
+For Accounts:
+
+```text
+ACTIVE
+   │
+   │ archive
+   ▼
+ARCHIVED
+```
+
+---
+
+# 40. Accounts Module
+
+The Accounts module is **COMPLETE**.
+
+It is the first completed financial business module in WealthWise.
+
+## Accounts Scope
+
+```text
+Accounts
+├── Account creation                     ✅
+├── Account retrieval                    ✅
+├── Account listing                      ✅
+├── Pagination                           ✅
+├── Ownership isolation                  ✅
+├── Account validation                   ✅
+├── Currency normalization               ✅
+├── Opening balance validation           ✅
+├── Negative opening balance support     ✅
+├── Account status                       ✅
+├── Account archival                     ✅
+├── Double-archive protection             ✅
+├── Authentication                       ✅
+├── Permission authorization             ✅
+├── Swagger documentation               ✅
+├── Domain tests                         ✅
+├── Application service tests            ✅
+├── Repository tests                     ✅
+├── Controller tests                     ✅
+├── Integration tests                    ✅
+├── E2E tests                            ✅
+└── Green validation                     ✅
+```
+
+## Account Types
+
+```text
+BANK_ACCOUNT
+CASH
+CREDIT_CARD
+INVESTMENT
+OTHER
+```
+
+## Account Status
+
+```text
+ACTIVE
+ARCHIVED
+```
+
+## Account API
+
+```text
+POST   /api/v1/accounts
+GET    /api/v1/accounts
+GET    /api/v1/accounts/:id
+PATCH  /api/v1/accounts/:id/archive
+```
+
+## Account Permissions
+
+```text
+accounts:create
+accounts:read
+accounts:update
+```
+
+## Archive Rules
+
+```text
+ACTIVE
+   │
+   │ PATCH /accounts/:id/archive
+   ▼
+ARCHIVED
+```
+
+An archived account:
+
+- remains stored in the database
+- remains accessible to its owner
+- cannot be archived again
+- returns `ACCOUNT_ALREADY_ARCHIVED` when archived again
+- remains protected by ownership rules
+- does not support physical deletion
+
+Ownership failure intentionally behaves as not-found:
+
+```text
+User A account
+      ↓
+User B attempts access
+      ↓
+ACCOUNT_NOT_FOUND
+```
+
+This avoids exposing the existence of another user's financial resource.
+
+## Accounts Architecture
+
+```text
+HTTP
+ │
+ ▼
+AccountsController
+ │
+ ▼
+AccountsService
+ │
+ ▼
+Account domain
+ │
+ ▼
+AccountRepository
+ │
+ ▼
+PrismaAccountRepository
+ │
+ ▼
+Prisma
+ │
+ ▼
+PostgreSQL
+```
+
+The module follows the project's established:
+
+```text
+Presentation
+      ↓
+Application
+      ↓
+Domain
+      ↑
+Infrastructure
+```
+
+architecture.
+
+Prisma remains an infrastructure concern.
+
+---
+
+# 41. Accounts Testing Status
+
+The Accounts module has completed the required testing layers.
+
+```text
+Accounts Domain Tests                  ✅
+Accounts Service Tests                ✅
+Accounts Repository Tests             ✅
+Accounts Controller Tests             ✅
+Accounts Integration Tests            ✅
+Accounts E2E Tests                    ✅
+Ownership Isolation Tests              ✅
+Authentication Tests                  ✅
+Authorization Tests                    ✅
+Archive Lifecycle Tests                ✅
+Swagger/API documentation              ✅
+Build                                  ✅
+Lint                                   ✅
+Full project validation                ✅
+```
+
+Important E2E scenarios include:
+
+```text
+Unauthenticated request
+        ↓
+401 Unauthorized
+
+Authenticated user
+        ↓
+Missing accounts:update
+        ↓
+403 Forbidden
+
+Account owner
+        ↓
+PATCH /accounts/:id/archive
+        ↓
+200 OK
+        ↓
+ARCHIVED
+
+Already archived
+        ↓
+409 Conflict
+
+Another user's account
+        ↓
+404 Not Found
+```
+
+---
+
+# 42. Completed Milestones
+
+The current completed milestones are:
+
+```text
+WealthWise Backend Foundation
+        ↓
+        ✅ COMPLETE
+
+Users / RBAC Foundation
+        ↓
+        ✅ COMPLETE
+
+Authentication & Authorization
+        ↓
+        ✅ COMPLETE
+
+Authentication Hardening
+        ↓
+        ✅ COMPLETE
+
+Financial Domain Foundation
+        ↓
+        ✅ COMPLETE
+
+Accounts Module
+        ↓
+        ✅ COMPLETE
+```
+
+---
+
+# 43. Current Financial Development Phase
+
+The project is now entering the next financial capability.
+
+```text
+Financial Domain
+│
+├── Foundation                         ✅
+│
+├── Accounts                           ✅ COMPLETE
+│
+├── Transactions                       ⏳ NEXT
+│
+├── Income                             ⏳
+├── Expenses                           ⏳
+├── Budgets                            ⏳
+├── Savings                            ⏳
+├── Financial Goals                    ⏳
+├── Fixed Deposits                     ⏳
+├── Recurring Deposits                 ⏳
+├── Investments                        ⏳
+└── Reporting / Analytics               ⏳
+```
+
+The next module is **Transactions**.
+
+However, implementation should not begin immediately.
+
+Transactions are more financially sensitive than Accounts because they introduce:
+
+- money movement
+- debit/credit semantics
+- account balance effects
+- transaction dates
+- immutable financial records
+- reversal/correction strategy
+- database transactions
+- concurrency
+- idempotency considerations
+- ownership enforcement
+- currency consistency
+- future reporting requirements
+
+Therefore, the next milestone begins with:
+
+```text
+Transactions
+    ↓
+Domain & Business Rules
+    ↓
+Transaction Model
+    ↓
+Money Movement Semantics
+    ↓
+Database Design
+    ↓
+Architecture Review
+    ↓
+Implementation
+    ↓
+Tests
+    ↓
+E2E
+    ↓
+Validation
+    ↓
+Focused Commit
+```
+
+Do not add transaction implementation before these rules are explicitly established.
+
+---
+
+# 44. Current Project Status
+
+```text
+WEALTHWISE BACKEND
+────────────────────────────────────────
+
+Core Foundation                    ✅ COMPLETE
+Users                              ✅ COMPLETE
+Authentication                     ✅ COMPLETE
+Authorization                      ✅ COMPLETE
+Authentication Hardening           ✅ COMPLETE
+
+Financial Domain Foundation        ✅ COMPLETE
+Accounts                           ✅ COMPLETE
+
+Transactions                       ⏳ NEXT
+Income                             ⏳
+Expenses                           ⏳
+Budgets                            ⏳
+Savings                            ⏳
+Financial Goals                    ⏳
+Deposits                           ⏳
+Investments                        ⏳
+Reporting                          ⏳
+
+────────────────────────────────────────
+
+CURRENT MILESTONE
+└── Accounts                        ✅ COMPLETE
+
+CURRENT PHASE
+└── Financial Modules
+
+CURRENT TOPIC
+└── Transactions — Domain Design    ⏳ NEXT
+```
+
+---
+
+# 45. Continuation Rule
+
+When continuing WealthWise development:
+
+1. Treat the actual source tree as the latest implementation state.
+2. Treat this document as the persistent engineering context.
+3. Do not restart completed milestones.
+4. Do not redesign completed architecture without a concrete reason.
+5. Do not introduce duplicate abstractions.
+6. Check existing code before adding new code or tests.
+7. Every implementation change must have corresponding tests.
+8. Preserve the modular-monolith architecture.
+9. Preserve domain/application/infrastructure separation.
+10. Keep Prisma inside infrastructure.
+11. Enforce user ownership at repository boundaries.
+12. Do not use JavaScript `number` as authoritative financial money.
+13. Do not physically delete financial history without an explicit architectural decision.
+14. Follow the requirement → domain → application → infrastructure → API → tests → documentation → validation → commit workflow.
+15. Complete one milestone and establish a green checkpoint before moving to the next.
+16. Do not assume a feature is production-ready merely because its happy path works.
+17. Record architectural improvements as review items when they are not required immediately.
+18. Keep implementation, tests, architecture, and documentation synchronized.
+
+---
+
+# 46. Next Topic
+
+## Transactions — Domain Design
+
+The next session should begin with the **Transactions domain design**, not implementation.
+
+We will first answer:
+
+```text
+What is a financial transaction?
+Why does WealthWise need it?
+What problem does it solve?
+What makes a transaction different from an Account?
+What data must be immutable?
+How does money move between accounts?
+How are income and expenses represented?
+What is the transaction date?
+What happens when a transaction is corrected?
+What is a reversal?
+How do database transactions protect financial consistency?
+How do we prevent cross-user access?
+How will future reporting depend on this model?
+```
+
+Only after these decisions are finalized will we design the Prisma schema and implementation.
+
+**Current position:**
+
+```text
+Accounts Module
+      ↓
+      ✅ COMPLETE
+      ↓
+Transactions Domain Design
+      ↓
+      ⏳ NEXT
 ```

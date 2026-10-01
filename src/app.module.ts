@@ -13,6 +13,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import authConfig from './config/auth.config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AccountsModule } from './modules/accounts/accounts.module';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
     UsersModule,
     AuthModule,
     AccountsModule,
+    TransactionsModule,
   ],
 })
 export class AppModule {}

@@ -161,6 +161,18 @@ exports.Prisma.UserRoleScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  type: 'type',
+  amount: 'amount',
+  currency: 'currency',
+  description: 'description',
+  transactionDate: 'transactionDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -200,6 +212,11 @@ exports.AccountStatus = exports.$Enums.AccountStatus = {
   ARCHIVED: 'ARCHIVED'
 };
 
+exports.TransactionType = exports.$Enums.TransactionType = {
+  INCOME: 'INCOME',
+  EXPENSE: 'EXPENSE'
+};
+
 exports.UserStatus = exports.$Enums.UserStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE',
@@ -212,6 +229,7 @@ exports.Prisma.ModelName = {
   RolePermission: 'RolePermission',
   Role: 'Role',
   UserRole: 'UserRole',
+  Transaction: 'Transaction',
   User: 'User'
 };
 
