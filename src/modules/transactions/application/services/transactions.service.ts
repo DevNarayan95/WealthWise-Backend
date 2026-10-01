@@ -21,6 +21,8 @@ import { TransactionRepository } from '../../domain/repositories/transaction.rep
 import { CreateTransactionInput } from '../inputs/create-transaction.input';
 
 import { InvalidTransactionException } from '../../exceptions/invalid-transaction.exception';
+import { TransactionNotFoundException } from '../../exceptions/transaction-not-found.exception';
+import { ListTransactionsInput } from '../inputs/list-transactions.input';
 
 @Injectable()
 export class TransactionsService {
@@ -88,5 +90,27 @@ export class TransactionsService {
       description,
       transactionDate: input.transactionDate,
     });
+  }
+
+  async findById(transactionId: string, userId: string): Promise<Transaction> {
+    const transaction = await this.transactionsRepository.findByIdForUser(
+      transactionId,
+      userId,
+    );
+
+    if (!transaction) {
+      throw new TransactionNotFoundException('Transaction not found');
+    }
+
+    return transaction;
+  }
+
+  async findAll(input: ListTransactionsInput): Promise<{
+    transactions: Transaction[];
+    total: number;
+  }> {
+    await this.accountsService.findById(input.accountId, input.userId);
+
+    return this.transactionsRepository.findAllByAccountForUser(input);
   }
 }

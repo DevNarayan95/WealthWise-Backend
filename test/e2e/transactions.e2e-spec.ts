@@ -20,7 +20,16 @@ describe('Transactions E2E', () => {
   let secondAccessToken: string;
 
   let superAdminId: string;
+
+  // Account used by POST and GET /transactions/:id tests.
   let accountId: string;
+  let transactionId: string;
+
+  // Dedicated account used only by GET /transactions list tests.
+  let listAccountId: string;
+  let listNewestTransactionId: string;
+  let listMiddleTransactionId: string;
+  let listOldestTransactionId: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -68,6 +77,10 @@ describe('Transactions E2E', () => {
       email: superAdmin.email,
     });
 
+    /*
+     * Account used by the existing POST and GET /transactions/:id
+     * test suites.
+     */
     const account = await prisma.account.create({
       data: {
         userId: superAdmin.id,
@@ -79,6 +92,76 @@ describe('Transactions E2E', () => {
     });
 
     accountId = account.id;
+
+    const transaction = await prisma.transaction.create({
+      data: {
+        accountId: account.id,
+        type: 'EXPENSE',
+        amount: '75.5000',
+        currency: 'MYR',
+        description: 'Retrieve transaction test',
+        transactionDate: new Date('2026-09-05T00:00:00.000Z'),
+      },
+    });
+
+    transactionId = transaction.id;
+
+    /*
+     * Dedicated account for GET /api/v1/transactions list tests.
+     *
+     * This prevents the POST tests from changing the transaction
+     * count used by pagination/list assertions.
+     */
+    const listAccount = await prisma.account.create({
+      data: {
+        userId: superAdmin.id,
+        name: 'Transaction List Test Account',
+        type: 'BANK_ACCOUNT',
+        currency: 'MYR',
+        openingBalance: '1000.0000',
+      },
+    });
+
+    listAccountId = listAccount.id;
+
+    const newestTransaction = await prisma.transaction.create({
+      data: {
+        accountId: listAccount.id,
+        type: 'INCOME',
+        amount: '1500.0000',
+        currency: 'MYR',
+        description: 'List transaction income',
+        transactionDate: new Date('2026-09-10T00:00:00.000Z'),
+      },
+    });
+
+    listNewestTransactionId = newestTransaction.id;
+
+    const middleTransaction = await prisma.transaction.create({
+      data: {
+        accountId: listAccount.id,
+        type: 'EXPENSE',
+        amount: '25.2500',
+        currency: 'MYR',
+        description: 'List transaction expense',
+        transactionDate: new Date('2026-09-08T00:00:00.000Z'),
+      },
+    });
+
+    listMiddleTransactionId = middleTransaction.id;
+
+    const oldestTransaction = await prisma.transaction.create({
+      data: {
+        accountId: listAccount.id,
+        type: 'EXPENSE',
+        amount: '75.5000',
+        currency: 'MYR',
+        description: 'List transaction oldest',
+        transactionDate: new Date('2026-09-05T00:00:00.000Z'),
+      },
+    });
+
+    listOldestTransactionId = oldestTransaction.id;
 
     const secondUser = await prisma.user.create({
       data: {
@@ -139,6 +222,7 @@ describe('Transactions E2E', () => {
       });
 
       expect(persistedTransaction).not.toBeNull();
+
       expect(persistedTransaction?.accountId).toBe(accountId);
       expect(persistedTransaction?.type).toBe('EXPENSE');
       expect(persistedTransaction?.amount.toString()).toBe('50');
@@ -443,6 +527,7 @@ describe('Transactions E2E', () => {
       });
 
       expect(persistedTransaction).not.toBeNull();
+
       expect(persistedTransaction?.amount.toString()).toBe(
         '123456789012345.1234',
       );
@@ -491,6 +576,362 @@ describe('Transactions E2E', () => {
 
       expect(response.body.success).toBe(true);
       expect(response.body.data.description).toBeNull();
+    });
+  });
+
+  describe('GET /api/v1/transactions/:id', () => {
+    it('should retrieve a transaction for the authenticated owner', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/transactions/${transactionId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          id: transactionId,
+          accountId,
+          type: 'EXPENSE',
+          amount: '75.5000',
+          currency: 'MYR',
+          description: 'Retrieve transaction test',
+          transactionDate: '2026-09-05T00:00:00.000Z',
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      );
+    });
+
+    it('should reject retrieving a transaction without authentication', async () => {
+      await request(app.getHttpServer())
+        .get(`/api/v1/transactions/${transactionId}`)
+        .expect(401);
+    });
+
+    it('should return 404 when the transaction does not exist', async () => {
+      const nonExistentTransactionId = '00000000-0000-0000-0000-000000000000';
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/transactions/${nonExistentTransactionId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should return 404 when another user tries to retrieve the transaction', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/transactions/${transactionId}`)
+        .set('Authorization', `Bearer ${secondAccessToken}`)
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should return the persisted transaction data', async () => {
+      const persistedTransaction = await prisma.transaction.findUnique({
+        where: {
+          id: transactionId,
+        },
+      });
+
+      expect(persistedTransaction).not.toBeNull();
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/transactions/${transactionId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          id: persistedTransaction?.id,
+          accountId: persistedTransaction?.accountId,
+          type: persistedTransaction?.type,
+          amount: persistedTransaction?.amount.toFixed(4),
+          currency: persistedTransaction?.currency.trim(),
+          description: persistedTransaction?.description,
+          transactionDate: persistedTransaction?.transactionDate.toISOString(),
+          createdAt: persistedTransaction?.createdAt.toISOString(),
+          updatedAt: persistedTransaction?.updatedAt.toISOString(),
+        }),
+      );
+    });
+  });
+
+  describe('GET /api/v1/transactions', () => {
+    it('should retrieve paginated transactions for the authenticated owner', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 20,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+
+      expect(response.body.data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: listNewestTransactionId,
+            accountId: listAccountId,
+            type: 'INCOME',
+            amount: '1500.0000',
+            currency: 'MYR',
+            description: 'List transaction income',
+            transactionDate: '2026-09-10T00:00:00.000Z',
+          }),
+          expect.objectContaining({
+            id: listMiddleTransactionId,
+            accountId: listAccountId,
+            type: 'EXPENSE',
+            amount: '25.2500',
+            currency: 'MYR',
+            description: 'List transaction expense',
+            transactionDate: '2026-09-08T00:00:00.000Z',
+          }),
+          expect.objectContaining({
+            id: listOldestTransactionId,
+            accountId: listAccountId,
+            type: 'EXPENSE',
+            amount: '75.5000',
+            currency: 'MYR',
+            description: 'List transaction oldest',
+            transactionDate: '2026-09-05T00:00:00.000Z',
+          }),
+        ]),
+      );
+
+      expect(response.body.meta).toEqual({
+        page: 1,
+        limit: 20,
+        total: 3,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      });
+    });
+
+    it('should reject retrieving transactions without authentication', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 20,
+        })
+        .expect(401);
+    });
+
+    it('should return 404 when another user tries to list transactions for the account', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 20,
+        })
+        .set('Authorization', `Bearer ${secondAccessToken}`)
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should return 404 when the account does not exist', async () => {
+      const nonExistentAccountId = '00000000-0000-0000-0000-000000000000';
+
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: nonExistentAccountId,
+          page: 1,
+          limit: 20,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should use the default page and limit', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+
+      expect(response.body.meta).toEqual({
+        page: 1,
+        limit: 20,
+        total: 3,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      });
+
+      expect(response.body.data).toHaveLength(3);
+    });
+
+    it('should return transactions in transaction date descending order', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 20,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(
+        response.body.data.map((transaction: { id: string }) => transaction.id),
+      ).toEqual([
+        listNewestTransactionId,
+        listMiddleTransactionId,
+        listOldestTransactionId,
+      ]);
+    });
+
+    it('should reject page zero', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 0,
+          limit: 20,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400);
+    });
+
+    it('should reject a negative page', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: -1,
+          limit: 20,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400);
+    });
+
+    it('should reject a zero limit', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 0,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400);
+    });
+
+    it('should reject a limit greater than 100', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 101,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400);
+    });
+
+    it('should reject an invalid account id', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: 'invalid-account-id',
+          page: 1,
+          limit: 20,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400);
+    });
+
+    it('should reject unexpected query parameters', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 20,
+          unexpected: 'value',
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400);
+    });
+
+    it('should paginate transactions using page and limit', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 1,
+          limit: 2,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toHaveLength(2);
+
+      expect(
+        response.body.data.map((transaction: { id: string }) => transaction.id),
+      ).toEqual([listNewestTransactionId, listMiddleTransactionId]);
+
+      expect(response.body.meta).toEqual({
+        page: 1,
+        limit: 2,
+        total: 3,
+        totalPages: 2,
+        hasNextPage: true,
+        hasPreviousPage: false,
+      });
+    });
+
+    it('should retrieve the second page of transactions', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query({
+          accountId: listAccountId,
+          page: 2,
+          limit: 2,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toHaveLength(1);
+
+      expect(response.body.data[0]).toEqual(
+        expect.objectContaining({
+          id: listOldestTransactionId,
+          accountId: listAccountId,
+          amount: '75.5000',
+          currency: 'MYR',
+          description: 'List transaction oldest',
+        }),
+      );
+
+      expect(response.body.meta).toEqual({
+        page: 2,
+        limit: 2,
+        total: 3,
+        totalPages: 2,
+        hasNextPage: false,
+        hasPreviousPage: true,
+      });
     });
   });
 });

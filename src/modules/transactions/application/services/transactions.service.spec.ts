@@ -11,12 +11,16 @@ import { TransactionRepository } from '../../domain/repositories/transaction.rep
 import { InvalidTransactionException } from '../../exceptions/invalid-transaction.exception';
 
 import { TransactionsService } from './transactions.service';
+import { TransactionNotFoundException } from '../../exceptions/transaction-not-found.exception';
+import { ListTransactionsInput } from '../inputs/list-transactions.input';
 
 describe('TransactionsService', () => {
   let service: TransactionsService;
 
   let transactionsRepository: {
     create: jest.Mock;
+    findByIdForUser: jest.Mock;
+    findAllByAccountForUser: jest.Mock;
   };
 
   let accountsService: {
@@ -61,6 +65,8 @@ describe('TransactionsService', () => {
   beforeEach(() => {
     transactionsRepository = {
       create: jest.fn(),
+      findByIdForUser: jest.fn(),
+      findAllByAccountForUser: jest.fn(),
     };
 
     accountsService = {
@@ -209,6 +215,181 @@ describe('TransactionsService', () => {
       ).rejects.toThrow(InvalidTransactionException);
 
       expect(accountsService.findById).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('FindById', () => {
+    it('should return the transaction when found', async () => {
+      const transaction = Transaction.create({
+        id: 'transaction-id',
+        accountId: 'account-id',
+        type: TransactionType.EXPENSE,
+        amount: '50.0000',
+        currency: 'MYR',
+        description: 'Lunch',
+        transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+        createdAt: new Date('2026-09-01T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-01T10:00:00.000Z'),
+      });
+
+      transactionsRepository.findByIdForUser.mockResolvedValue(transaction);
+
+      const result = await service.findById('transaction-id', 'user-id');
+
+      expect(result).toBe(transaction);
+
+      expect(transactionsRepository.findByIdForUser).toHaveBeenCalledWith(
+        'transaction-id',
+        'user-id',
+      );
+    });
+
+    it('should throw TransactionNotFoundException when transaction does not exist', async () => {
+      transactionsRepository.findByIdForUser.mockResolvedValue(null);
+
+      await expect(
+        service.findById('transaction-id', 'user-id'),
+      ).rejects.toThrow(TransactionNotFoundException);
+
+      expect(transactionsRepository.findByIdForUser).toHaveBeenCalledWith(
+        'transaction-id',
+        'user-id',
+      );
+    });
+  });
+
+  describe('FindAll', () => {
+    it('should return transactions for the account', async () => {
+      const transactions = [createdTransaction];
+
+      const input: ListTransactionsInput = {
+        accountId: activeAccount.id,
+        userId: 'user-1',
+        offset: 0,
+        limit: 20,
+      };
+
+      accountsService.findById.mockResolvedValue(activeAccount);
+
+      transactionsRepository.findAllByAccountForUser.mockResolvedValue({
+        transactions,
+        total: 1,
+      });
+
+      const result = await service.findAll(input);
+
+      expect(result).toEqual({
+        transactions,
+        total: 1,
+      });
+
+      expect(accountsService.findById).toHaveBeenCalledWith(
+        activeAccount.id,
+        input.userId,
+      );
+
+      expect(
+        transactionsRepository.findAllByAccountForUser,
+      ).toHaveBeenCalledWith(input);
+    });
+
+    it('should pass the pagination values to the repository', async () => {
+      const input: ListTransactionsInput = {
+        accountId: activeAccount.id,
+        userId: 'user-1',
+        offset: 20,
+        limit: 10,
+      };
+
+      accountsService.findById.mockResolvedValue(activeAccount);
+
+      transactionsRepository.findAllByAccountForUser.mockResolvedValue({
+        transactions: [createdTransaction],
+        total: 25,
+      });
+
+      const result = await service.findAll(input);
+
+      expect(result).toEqual({
+        transactions: [createdTransaction],
+        total: 25,
+      });
+
+      expect(
+        transactionsRepository.findAllByAccountForUser,
+      ).toHaveBeenCalledWith({
+        accountId: activeAccount.id,
+        userId: 'user-1',
+        offset: 20,
+        limit: 10,
+      });
+    });
+
+    it('should verify account ownership before retrieving transactions', async () => {
+      const input: ListTransactionsInput = {
+        accountId: activeAccount.id,
+        userId: 'user-1',
+        offset: 0,
+        limit: 20,
+      };
+
+      accountsService.findById.mockResolvedValue(activeAccount);
+
+      transactionsRepository.findAllByAccountForUser.mockResolvedValue({
+        transactions: [],
+        total: 0,
+      });
+
+      await service.findAll(input);
+
+      expect(accountsService.findById).toHaveBeenCalledWith(
+        activeAccount.id,
+        'user-1',
+      );
+
+      expect(transactionsRepository.findAllByAccountForUser).toHaveBeenCalled();
+    });
+
+    it('should not retrieve transactions when account ownership validation fails', async () => {
+      const input: ListTransactionsInput = {
+        accountId: activeAccount.id,
+        userId: 'user-2',
+        offset: 0,
+        limit: 20,
+      };
+
+      const error = new Error('Account not found');
+
+      accountsService.findById.mockRejectedValue(error);
+
+      await expect(service.findAll(input)).rejects.toThrow('Account not found');
+
+      expect(
+        transactionsRepository.findAllByAccountForUser,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should return an empty result when the account has no transactions', async () => {
+      const input: ListTransactionsInput = {
+        accountId: activeAccount.id,
+        userId: 'user-1',
+        offset: 0,
+        limit: 20,
+      };
+
+      accountsService.findById.mockResolvedValue(activeAccount);
+
+      transactionsRepository.findAllByAccountForUser.mockResolvedValue({
+        transactions: [],
+        total: 0,
+      });
+
+      const result = await service.findAll(input);
+
+      expect(result).toEqual({
+        transactions: [],
+        total: 0,
+      });
     });
   });
 });
