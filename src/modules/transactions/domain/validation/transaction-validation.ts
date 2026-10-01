@@ -20,3 +20,12 @@ export const isValidTransactionAmount = (amount: string): boolean => {
 export const isValidTransactionDate = (date: Date): boolean => {
   return !Number.isNaN(date.getTime());
 };
+
+export const isValidTransactionDescription = (
+  description: string | null,
+): boolean => {
+  return (
+    description === null ||
+    description.length <= TRANSACTION_DESCRIPTION_MAX_LENGTH
+  );
+};
