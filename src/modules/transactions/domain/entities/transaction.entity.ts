@@ -11,6 +11,7 @@ export interface TransactionProps {
   currency: string;
   description: string | null;
   transactionDate: Date;
+  reversalOfTransactionId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -48,6 +49,10 @@ export class Transaction {
 
   get transactionDate(): Date {
     return this.props.transactionDate;
+  }
+
+  get reversalOfTransactionId(): string | null {
+    return this.props.reversalOfTransactionId;
   }
 
   get createdAt(): Date {

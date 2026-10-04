@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { AccountStatus } from '../../../accounts/domain/entities/account.entity';
 import { AccountsService } from '../../../accounts/application/services/accounts.service';
 
-import { Transaction } from '../../domain/entities/transaction.entity';
+import {
+  Transaction,
+  TransactionType,
+} from '../../domain/entities/transaction.entity';
 
 import {
   isTransactionType,
@@ -23,6 +26,7 @@ import { CreateTransactionInput } from '../inputs/create-transaction.input';
 import { InvalidTransactionException } from '../../exceptions/invalid-transaction.exception';
 import { TransactionNotFoundException } from '../../exceptions/transaction-not-found.exception';
 import { ListTransactionsInput } from '../inputs/list-transactions.input';
+import { ReverseTransactionInput } from '../inputs/reverse-transaction.input';
 
 @Injectable()
 export class TransactionsService {
@@ -89,6 +93,63 @@ export class TransactionsService {
       currency,
       description,
       transactionDate: input.transactionDate,
+      reversalOfTransactionId: null,
+    });
+  }
+
+  async reverse(input: ReverseTransactionInput): Promise<Transaction> {
+    const description = input.description?.trim() || null;
+
+    if (!isValidTransactionDescription(description)) {
+      throw new InvalidTransactionException(
+        `Description must be not exceed ${TRANSACTION_DESCRIPTION_MAX_LENGTH} characters`,
+      );
+    }
+
+    if (!isValidTransactionDate(input.transactionDate)) {
+      throw new InvalidTransactionException('Transaction date must be valid');
+    }
+
+    const transaction = await this.transactionsRepository.findByIdForUser(
+      input.transactionId,
+      input.userId,
+    );
+
+    if (!transaction) {
+      throw new TransactionNotFoundException('Transaction not found');
+    }
+
+    if (transaction.reversalOfTransactionId !== null) {
+      throw new InvalidTransactionException(
+        'A reversal transaction cannot be reversed',
+      );
+    }
+
+    const existingReversal =
+      await this.transactionsRepository.findReversalForTransaction(
+        transaction.id,
+        input.userId,
+      );
+
+    if (existingReversal) {
+      throw new InvalidTransactionException(
+        'Transaction has already been reversed',
+      );
+    }
+
+    const reversalType =
+      transaction.type === TransactionType.INCOME
+        ? TransactionType.EXPENSE
+        : TransactionType.INCOME;
+
+    return this.transactionsRepository.create({
+      accountId: transaction.accountId,
+      type: reversalType,
+      amount: transaction.amount,
+      currency: transaction.currency,
+      description,
+      transactionDate: input.transactionDate,
+      reversalOfTransactionId: transaction.id,
     });
   }
 

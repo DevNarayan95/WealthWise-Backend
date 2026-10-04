@@ -4,18 +4,25 @@ enum TransactionType {
 }
 
 model Transaction {
-  id              String          @id @default(uuid()) @db.Uuid
-  accountId       String          @map("account_id") @db.Uuid
-  type            TransactionType
-  amount          Decimal         @db.Decimal(19, 4)
-  currency        String          @db.Char(3)
-  description     String?         @db.VarChar(255)
-  transactionDate DateTime        @map("transaction_date")
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
+  id                      String          @id @default(uuid()) @db.Uuid
+  accountId               String          @map("account_id") @db.Uuid
+  type                    TransactionType
+  amount                  Decimal         @db.Decimal(19, 4)
+  currency                String          @db.Char(3)
+  description             String?         @db.VarChar(255)
+  transactionDate         DateTime        @map("transaction_date")
+  reversalOfTransactionId String?         @map("reversal_of_transaction_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   account Account @relation(fields: [accountId], references: [id])
 
+  reversalOf Transaction? @relation("TransactionReversal", fields: [reversalOfTransactionId], references: [id], onDelete: Restrict)
+
+  reversal Transaction? @relation("TransactionReversal")
+
+  @@unique([reversalOfTransactionId])
   @@index([accountId])
   @@index([accountId, transactionDate])
   @@map("transactions")

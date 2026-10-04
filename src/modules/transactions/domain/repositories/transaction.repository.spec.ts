@@ -1,10 +1,10 @@
 import { Transaction, TransactionType } from '../entities/transaction.entity';
+
 import {
   CreateTransactionRepositoryInput,
   FindTransactionsRepositoryInput,
-  FindAccountsRepositoryOutput,
-  TransactionRepository,
   FindTransactionsRepositoryOutput,
+  TransactionRepository,
 } from './transaction.repository';
 
 class FakeTransactionRepository extends TransactionRepository {
@@ -17,12 +17,20 @@ class FakeTransactionRepository extends TransactionRepository {
       currency: 'MYR',
       description: null,
       transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+      reversalOfTransactionId: null,
       createdAt: new Date('2026-09-20T00:00:00.000Z'),
       updatedAt: new Date('2026-09-20T00:00:00.000Z'),
     });
   }
 
   async findByIdForUser(
+    _transactionId: string,
+    _userId: string,
+  ): Promise<Transaction | null> {
+    return null;
+  }
+
+  async findReversalForTransaction(
     _transactionId: string,
     _userId: string,
   ): Promise<Transaction | null> {
@@ -50,15 +58,33 @@ describe('TransactionRepository', () => {
       currency: 'MYR',
       description: null,
       transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+      reversalOfTransactionId: null,
     });
 
     expect(transaction).toBeInstanceOf(Transaction);
+    expect(transaction.id).toBe('transaction-1');
+    expect(transaction.accountId).toBe('account-1');
+    expect(transaction.type).toBe(TransactionType.INCOME);
+    expect(transaction.amount).toBe('1000.000');
+    expect(transaction.currency).toBe('MYR');
+    expect(transaction.reversalOfTransactionId).toBeNull();
   });
 
   it('should support user-scoped transaction lookup', async () => {
     const repository: TransactionRepository = new FakeTransactionRepository();
 
     const result = await repository.findByIdForUser('transaction-1', 'user-1');
+
+    expect(result).toBeNull();
+  });
+
+  it('should support user-scoped reversal lookup', async () => {
+    const repository: TransactionRepository = new FakeTransactionRepository();
+
+    const result = await repository.findReversalForTransaction(
+      'transaction-1',
+      'user-1',
+    );
 
     expect(result).toBeNull();
   });

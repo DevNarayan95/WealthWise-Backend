@@ -20,6 +20,7 @@ describe('TransactionsService', () => {
   let transactionsRepository: {
     create: jest.Mock;
     findByIdForUser: jest.Mock;
+    findReversalForTransaction: jest.Mock;
     findAllByAccountForUser: jest.Mock;
   };
 
@@ -58,6 +59,7 @@ describe('TransactionsService', () => {
     currency: 'MYR',
     description: 'Lunch',
     transactionDate,
+    reversalOfTransactionId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
@@ -66,6 +68,7 @@ describe('TransactionsService', () => {
     transactionsRepository = {
       create: jest.fn(),
       findByIdForUser: jest.fn(),
+      findReversalForTransaction: jest.fn(),
       findAllByAccountForUser: jest.fn(),
     };
 
@@ -105,6 +108,7 @@ describe('TransactionsService', () => {
         currency: 'MYR',
         description: 'Salary',
         transactionDate,
+        reversalOfTransactionId: null,
       });
 
       expect(result).toBe(createdTransaction);
@@ -125,6 +129,7 @@ describe('TransactionsService', () => {
         currency: 'MYR',
         description: 'Lunch',
         transactionDate,
+        reversalOfTransactionId: null,
       });
     });
 
@@ -218,6 +223,305 @@ describe('TransactionsService', () => {
     });
   });
 
+  describe('Reverse', () => {
+    it('should create an expense reversal for an income transaction', async () => {
+      const originalTransaction = Transaction.create({
+        id: 'transaction-1',
+        accountId: 'account-1',
+        type: TransactionType.INCOME,
+        amount: '5000.5000',
+        currency: 'MYR',
+        description: 'Salary',
+        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        reversalOfTransactionId: null,
+        createdAt: new Date('2026-09-20T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-20T10:00:00.000Z'),
+      });
+
+      const reversalTransaction = Transaction.create({
+        id: 'reversal-1',
+        accountId: 'account-1',
+        type: TransactionType.EXPENSE,
+        amount: '5000.5000',
+        currency: 'MYR',
+        description: 'Salary reversal',
+        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        reversalOfTransactionId: 'transaction-1',
+        createdAt: new Date('2026-09-21T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-21T10:00:00.000Z'),
+      });
+
+      transactionsRepository.findByIdForUser.mockResolvedValue(
+        originalTransaction,
+      );
+
+      transactionsRepository.findReversalForTransaction.mockResolvedValue(null);
+
+      transactionsRepository.create.mockResolvedValue(reversalTransaction);
+
+      const reversalDate = new Date('2026-09-21T00:00:00.000Z');
+
+      const result = await service.reverse({
+        transactionId: 'transaction-1',
+        userId: 'user-1',
+        transactionDate: reversalDate,
+        description: 'Salary reversal',
+      });
+
+      expect(result).toBe(reversalTransaction);
+
+      expect(transactionsRepository.findByIdForUser).toHaveBeenCalledWith(
+        'transaction-1',
+        'user-1',
+      );
+
+      expect(
+        transactionsRepository.findReversalForTransaction,
+      ).toHaveBeenCalledWith('transaction-1', 'user-1');
+
+      expect(transactionsRepository.create).toHaveBeenCalledWith({
+        accountId: 'account-1',
+        type: TransactionType.EXPENSE,
+        amount: '5000.5000',
+        currency: 'MYR',
+        description: 'Salary reversal',
+        transactionDate: reversalDate,
+        reversalOfTransactionId: 'transaction-1',
+      });
+    });
+
+    it('should create an income reversal for an expense transaction', async () => {
+      const originalTransaction = Transaction.create({
+        id: 'transaction-1',
+        accountId: 'account-1',
+        type: TransactionType.EXPENSE,
+        amount: '100.0000',
+        currency: 'MYR',
+        description: 'Groceries',
+        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        reversalOfTransactionId: null,
+        createdAt: new Date('2026-09-20T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-20T10:00:00.000Z'),
+      });
+
+      const reversalTransaction = Transaction.create({
+        id: 'reversal-1',
+        accountId: 'account-1',
+        type: TransactionType.INCOME,
+        amount: '100.0000',
+        currency: 'MYR',
+        description: 'Groceries reversal',
+        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        reversalOfTransactionId: 'transaction-1',
+        createdAt: new Date('2026-09-21T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-21T10:00:00.000Z'),
+      });
+
+      transactionsRepository.findByIdForUser.mockResolvedValue(
+        originalTransaction,
+      );
+
+      transactionsRepository.findReversalForTransaction.mockResolvedValue(null);
+
+      transactionsRepository.create.mockResolvedValue(reversalTransaction);
+
+      const result = await service.reverse({
+        transactionId: 'transaction-1',
+        userId: 'user-1',
+        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        description: 'Groceries reversal',
+      });
+
+      expect(result.type).toBe(TransactionType.INCOME);
+
+      expect(transactionsRepository.create).toHaveBeenCalledWith({
+        accountId: 'account-1',
+        type: TransactionType.INCOME,
+        amount: '100.0000',
+        currency: 'MYR',
+        description: 'Groceries reversal',
+        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        reversalOfTransactionId: 'transaction-1',
+      });
+    });
+
+    it('should reject reversal when the original transaction does not exist', async () => {
+      transactionsRepository.findByIdForUser.mockResolvedValue(null);
+
+      await expect(
+        service.reverse({
+          transactionId: 'transaction-1',
+          userId: 'user-1',
+          transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+          description: 'Reversal',
+        }),
+      ).rejects.toThrow(TransactionNotFoundException);
+
+      expect(transactionsRepository.findByIdForUser).toHaveBeenCalledWith(
+        'transaction-1',
+        'user-1',
+      );
+
+      expect(
+        transactionsRepository.findReversalForTransaction,
+      ).not.toHaveBeenCalled();
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should reject reversing a reversal transaction', async () => {
+      const reversalTransaction = Transaction.create({
+        id: 'reversal-1',
+        accountId: 'account-1',
+        type: TransactionType.EXPENSE,
+        amount: '100.0000',
+        currency: 'MYR',
+        description: 'Reversal',
+        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        reversalOfTransactionId: 'transaction-1',
+        createdAt: new Date('2026-09-21T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-21T10:00:00.000Z'),
+      });
+
+      transactionsRepository.findByIdForUser.mockResolvedValue(
+        reversalTransaction,
+      );
+
+      await expect(
+        service.reverse({
+          transactionId: 'reversal-1',
+          userId: 'user-1',
+          transactionDate: new Date('2026-09-22T00:00:00.000Z'),
+          description: 'Invalid reversal',
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+
+      expect(
+        transactionsRepository.findReversalForTransaction,
+      ).not.toHaveBeenCalled();
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should reject a transaction that has already been reversed', async () => {
+      const originalTransaction = Transaction.create({
+        id: 'transaction-1',
+        accountId: 'account-1',
+        type: TransactionType.EXPENSE,
+        amount: '100.0000',
+        currency: 'MYR',
+        description: 'Groceries',
+        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        reversalOfTransactionId: null,
+        createdAt: new Date('2026-09-20T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-20T10:00:00.000Z'),
+      });
+
+      const existingReversal = Transaction.create({
+        id: 'reversal-1',
+        accountId: 'account-1',
+        type: TransactionType.INCOME,
+        amount: '100.0000',
+        currency: 'MYR',
+        description: 'Existing reversal',
+        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        reversalOfTransactionId: 'transaction-1',
+        createdAt: new Date('2026-09-21T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-21T10:00:00.000Z'),
+      });
+
+      transactionsRepository.findByIdForUser.mockResolvedValue(
+        originalTransaction,
+      );
+
+      transactionsRepository.findReversalForTransaction.mockResolvedValue(
+        existingReversal,
+      );
+
+      await expect(
+        service.reverse({
+          transactionId: 'transaction-1',
+          userId: 'user-1',
+          transactionDate: new Date('2026-09-22T00:00:00.000Z'),
+          description: 'Second reversal',
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+
+      expect(
+        transactionsRepository.findReversalForTransaction,
+      ).toHaveBeenCalledWith('transaction-1', 'user-1');
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should reject an invalid reversal date', async () => {
+      await expect(
+        service.reverse({
+          transactionId: 'transaction-1',
+          userId: 'user-1',
+          transactionDate: new Date('invalid'),
+          description: 'Reversal',
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+
+      expect(transactionsRepository.findByIdForUser).not.toHaveBeenCalled();
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should reject an excessive reversal description', async () => {
+      await expect(
+        service.reverse({
+          transactionId: 'transaction-1',
+          userId: 'user-1',
+          transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+          description: 'a'.repeat(256),
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+
+      expect(transactionsRepository.findByIdForUser).not.toHaveBeenCalled();
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should trim the reversal description', async () => {
+      const originalTransaction = Transaction.create({
+        id: 'transaction-1',
+        accountId: 'account-1',
+        type: TransactionType.EXPENSE,
+        amount: '50.0000',
+        currency: 'MYR',
+        description: 'Lunch',
+        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        reversalOfTransactionId: null,
+        createdAt: new Date('2026-09-20T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-20T10:00:00.000Z'),
+      });
+
+      transactionsRepository.findByIdForUser.mockResolvedValue(
+        originalTransaction,
+      );
+
+      transactionsRepository.findReversalForTransaction.mockResolvedValue(null);
+
+      transactionsRepository.create.mockResolvedValue(createdTransaction);
+
+      await service.reverse({
+        transactionId: 'transaction-1',
+        userId: 'user-1',
+        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        description: '  Lunch reversal  ',
+      });
+
+      expect(transactionsRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: 'Lunch reversal',
+          reversalOfTransactionId: 'transaction-1',
+        }),
+      );
+    });
+  });
+
   describe('FindById', () => {
     it('should return the transaction when found', async () => {
       const transaction = Transaction.create({
@@ -228,6 +532,7 @@ describe('TransactionsService', () => {
         currency: 'MYR',
         description: 'Lunch',
         transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+        reversalOfTransactionId: null,
         createdAt: new Date('2026-09-01T10:00:00.000Z'),
         updatedAt: new Date('2026-09-01T10:00:00.000Z'),
       });

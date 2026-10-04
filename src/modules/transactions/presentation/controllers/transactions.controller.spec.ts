@@ -14,6 +14,7 @@ describe('TransactionsController', () => {
     create: jest.Mock;
     findById: jest.Mock;
     findAll: jest.Mock;
+    reverse: jest.Mock;
   };
 
   const transactionDate = new Date('2026-09-01T00:00:00.000Z');
@@ -26,6 +27,7 @@ describe('TransactionsController', () => {
     currency: 'MYR',
     description: 'Lunch',
     transactionDate,
+    reversalOfTransactionId: null,
     createdAt: new Date('2026-09-01T10:00:00.000Z'),
     updatedAt: new Date('2026-09-01T10:00:00.000Z'),
   };
@@ -38,6 +40,7 @@ describe('TransactionsController', () => {
     currency: 'MYR',
     description: 'Lunch',
     transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+    reversalOfTransactionId: null,
     createdAt: new Date('2026-09-01T10:00:00.000Z'),
     updatedAt: new Date('2026-09-01T10:00:00.000Z'),
   });
@@ -54,6 +57,7 @@ describe('TransactionsController', () => {
       create: jest.fn(),
       findById: jest.fn(),
       findAll: jest.fn(),
+      reverse: jest.fn(),
     };
 
     controller = new TransactionsController(
@@ -103,6 +107,7 @@ describe('TransactionsController', () => {
           currency: transaction.currency,
           description: transaction.description,
           transactionDate: transaction.transactionDate,
+          reversalOfTransactionId: null,
           createdAt: transaction.createdAt,
           updatedAt: transaction.updatedAt,
         },
@@ -161,6 +166,7 @@ describe('TransactionsController', () => {
           currency: 'MYR',
           description: 'Lunch',
           transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+          reversalOfTransactionId: null,
           createdAt: new Date('2026-09-01T10:00:00.000Z'),
           updatedAt: new Date('2026-09-01T10:00:00.000Z'),
         },
@@ -221,6 +227,7 @@ describe('TransactionsController', () => {
         currency: 'MYR',
         description: 'Lunch',
         transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+        reversalOfTransactionId: null,
         createdAt: new Date('2026-09-01T10:00:00.000Z'),
         updatedAt: new Date('2026-09-01T10:00:00.000Z'),
       });
@@ -255,6 +262,7 @@ describe('TransactionsController', () => {
             currency: 'MYR',
             description: 'Lunch',
             transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+            reversalOfTransactionId: null,
             createdAt: transaction.createdAt,
             updatedAt: transaction.updatedAt,
           },
@@ -396,6 +404,120 @@ describe('TransactionsController', () => {
       await expect(controller.findAll(query, request)).rejects.toThrow(
         'Account not found',
       );
+    });
+  });
+
+  describe('Reverse', () => {
+    it('should create a reversal for the authenticated user', async () => {
+      const reversalDate = new Date('2026-09-02T00:00:00.000Z');
+
+      const reversalTransaction = Transaction.create({
+        id: 'reversal-1',
+        accountId: 'account-id',
+        type: TransactionType.INCOME,
+        amount: '50.0000',
+        currency: 'MYR',
+        description: 'Lunch reversal',
+        transactionDate: reversalDate,
+        reversalOfTransactionId: 'transaction-id',
+        createdAt: new Date('2026-09-02T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-02T10:00:00.000Z'),
+      });
+
+      transactionsService.reverse.mockResolvedValue(reversalTransaction);
+
+      const dto = {
+        transactionDate: reversalDate.toISOString(),
+        description: 'Lunch reversal',
+      };
+
+      const result = await controller.reverse(
+        'transaction-id',
+        dto,
+        authenticatedRequest,
+      );
+
+      expect(transactionsService.reverse).toHaveBeenCalledWith({
+        transactionId: 'transaction-id',
+        userId: 'user-id',
+        transactionDate: reversalDate,
+        description: 'Lunch reversal',
+      });
+
+      expect(result).toEqual({
+        success: true,
+        data: {
+          id: 'reversal-1',
+          accountId: 'account-id',
+          type: TransactionType.INCOME,
+          amount: '50.0000',
+          currency: 'MYR',
+          description: 'Lunch reversal',
+          transactionDate: reversalDate,
+          reversalOfTransactionId: 'transaction-id',
+          createdAt: new Date('2026-09-02T10:00:00.000Z'),
+          updatedAt: new Date('2026-09-02T10:00:00.000Z'),
+        },
+        meta: {},
+      });
+    });
+
+    it('should convert missing reversal description to null', async () => {
+      const reversalDate = new Date('2026-09-02T00:00:00.000Z');
+
+      transactionsService.reverse.mockResolvedValue(transactionEntity);
+
+      const dto = {
+        transactionDate: reversalDate.toISOString(),
+      };
+
+      await controller.reverse('transaction-id', dto, authenticatedRequest);
+
+      expect(transactionsService.reverse).toHaveBeenCalledWith({
+        transactionId: 'transaction-id',
+        userId: 'user-id',
+        transactionDate: reversalDate,
+        description: null,
+      });
+    });
+
+    it('should pass the authenticated user id to the reversal service', async () => {
+      const reversalDate = new Date('2026-09-02T00:00:00.000Z');
+
+      transactionsService.reverse.mockResolvedValue(transactionEntity);
+
+      await controller.reverse(
+        'transaction-123',
+        {
+          transactionDate: reversalDate.toISOString(),
+          description: 'Reversal',
+        },
+        authenticatedRequest,
+      );
+
+      expect(transactionsService.reverse).toHaveBeenCalledWith({
+        transactionId: 'transaction-123',
+        userId: 'user-id',
+        transactionDate: reversalDate,
+        description: 'Reversal',
+      });
+    });
+
+    it('should propagate errors from the reversal service', async () => {
+      const error = new Error('Transaction has already been reversed');
+
+      transactionsService.reverse.mockRejectedValue(error);
+
+      await expect(
+        controller.reverse(
+          'transaction-id',
+          {
+            transactionDate: '2026-09-02T00:00:00.000Z',
+            description: 'Second reversal',
+          },
+          authenticatedRequest,
+        ),
+      ).rejects.toThrow('Transaction has already been reversed');
     });
   });
 });

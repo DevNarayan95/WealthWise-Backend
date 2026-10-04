@@ -11,6 +11,7 @@ export class TransactionResponseMapper {
       currency: transaction.currency,
       description: transaction.description,
       transactionDate: transaction.transactionDate,
+      reversalOfTransactionId: transaction.reversalOfTransactionId,
       createdAt: transaction.createdAt,
       updatedAt: transaction.updatedAt,
     };

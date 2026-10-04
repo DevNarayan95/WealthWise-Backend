@@ -169,6 +169,7 @@ exports.Prisma.TransactionScalarFieldEnum = {
   currency: 'currency',
   description: 'description',
   transactionDate: 'transactionDate',
+  reversalOfTransactionId: 'reversalOfTransactionId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

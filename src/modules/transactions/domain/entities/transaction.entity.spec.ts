@@ -12,6 +12,7 @@ describe('Transaction', () => {
     amount: '5000.000',
     currency: 'MYR',
     description: 'September salary',
+    reversalOfTransactionId: null,
     transactionDate,
     createdAt,
     updatedAt,
@@ -32,6 +33,7 @@ describe('Transaction', () => {
     expect(transaction.currency).toBe('MYR');
     expect(transaction.description).toBe('September salary');
     expect(transaction.transactionDate).toBe(transactionDate);
+    expect(transaction.reversalOfTransactionId).toBeNull();
     expect(transaction.createdAt).toBe(createdAt);
     expect(transaction.updatedAt).toBe(updatedAt);
   });
@@ -55,5 +57,20 @@ describe('Transaction', () => {
     });
 
     expect(transaction.description).toBeNull();
+  });
+
+  it('should support reversal transactions', () => {
+    const transaction = Transaction.create({
+      ...props,
+      id: 'reversal-1',
+      type: TransactionType.EXPENSE,
+      description: 'Reversal of September salary',
+      reversalOfTransactionId: 'transaction-1',
+    });
+
+    expect(transaction.reversalOfTransactionId).toBe('transaction-1');
+
+    expect(transaction.type).toBe(TransactionType.EXPENSE);
+    expect(transaction.amount).toBe('5000.000');
   });
 });

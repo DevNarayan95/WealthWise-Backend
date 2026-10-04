@@ -7126,6 +7126,7 @@ export namespace Prisma {
     currency: string | null
     description: string | null
     transactionDate: Date | null
+    reversalOfTransactionId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7138,6 +7139,7 @@ export namespace Prisma {
     currency: string | null
     description: string | null
     transactionDate: Date | null
+    reversalOfTransactionId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7150,6 +7152,7 @@ export namespace Prisma {
     currency: number
     description: number
     transactionDate: number
+    reversalOfTransactionId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -7172,6 +7175,7 @@ export namespace Prisma {
     currency?: true
     description?: true
     transactionDate?: true
+    reversalOfTransactionId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7184,6 +7188,7 @@ export namespace Prisma {
     currency?: true
     description?: true
     transactionDate?: true
+    reversalOfTransactionId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7196,6 +7201,7 @@ export namespace Prisma {
     currency?: true
     description?: true
     transactionDate?: true
+    reversalOfTransactionId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -7295,6 +7301,7 @@ export namespace Prisma {
     currency: string
     description: string | null
     transactionDate: Date
+    reversalOfTransactionId: string | null
     createdAt: Date
     updatedAt: Date
     _count: TransactionCountAggregateOutputType | null
@@ -7326,9 +7333,12 @@ export namespace Prisma {
     currency?: boolean
     description?: boolean
     transactionDate?: boolean
+    reversalOfTransactionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | AccountDefaultArgs<ExtArgs>
+    reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
+    reversal?: boolean | Transaction$reversalArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7339,9 +7349,11 @@ export namespace Prisma {
     currency?: boolean
     description?: boolean
     transactionDate?: boolean
+    reversalOfTransactionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | AccountDefaultArgs<ExtArgs>
+    reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7352,9 +7364,11 @@ export namespace Prisma {
     currency?: boolean
     description?: boolean
     transactionDate?: boolean
+    reversalOfTransactionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | AccountDefaultArgs<ExtArgs>
+    reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectScalar = {
@@ -7365,25 +7379,32 @@ export namespace Prisma {
     currency?: boolean
     description?: boolean
     transactionDate?: boolean
+    reversalOfTransactionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accountId" | "type" | "amount" | "currency" | "description" | "transactionDate" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accountId" | "type" | "amount" | "currency" | "description" | "transactionDate" | "reversalOfTransactionId" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | AccountDefaultArgs<ExtArgs>
+    reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
+    reversal?: boolean | Transaction$reversalArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | AccountDefaultArgs<ExtArgs>
+    reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
   }
   export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | AccountDefaultArgs<ExtArgs>
+    reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
   }
 
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Transaction"
     objects: {
       account: Prisma.$AccountPayload<ExtArgs>
+      reversalOf: Prisma.$TransactionPayload<ExtArgs> | null
+      reversal: Prisma.$TransactionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7393,6 +7414,7 @@ export namespace Prisma {
       currency: string
       description: string | null
       transactionDate: Date
+      reversalOfTransactionId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["transaction"]>
@@ -7790,6 +7812,8 @@ export namespace Prisma {
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     account<T extends AccountDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AccountDefaultArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    reversalOf<T extends Transaction$reversalOfArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$reversalOfArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    reversal<T extends Transaction$reversalArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$reversalArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7826,6 +7850,7 @@ export namespace Prisma {
     readonly currency: FieldRef<"Transaction", 'String'>
     readonly description: FieldRef<"Transaction", 'String'>
     readonly transactionDate: FieldRef<"Transaction", 'DateTime'>
+    readonly reversalOfTransactionId: FieldRef<"Transaction", 'String'>
     readonly createdAt: FieldRef<"Transaction", 'DateTime'>
     readonly updatedAt: FieldRef<"Transaction", 'DateTime'>
   }
@@ -8226,6 +8251,44 @@ export namespace Prisma {
      * Limit how many Transactions to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Transaction.reversalOf
+   */
+  export type Transaction$reversalOfArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+  }
+
+  /**
+   * Transaction.reversal
+   */
+  export type Transaction$reversalArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
   }
 
   /**
@@ -9480,6 +9543,7 @@ export namespace Prisma {
     currency: 'currency',
     description: 'description',
     transactionDate: 'transactionDate',
+    reversalOfTransactionId: 'reversalOfTransactionId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -9954,9 +10018,12 @@ export namespace Prisma {
     currency?: StringFilter<"Transaction"> | string
     description?: StringNullableFilter<"Transaction"> | string | null
     transactionDate?: DateTimeFilter<"Transaction"> | Date | string
+    reversalOfTransactionId?: UuidNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     account?: XOR<AccountScalarRelationFilter, AccountWhereInput>
+    reversalOf?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    reversal?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
   }
 
   export type TransactionOrderByWithRelationInput = {
@@ -9967,13 +10034,17 @@ export namespace Prisma {
     currency?: SortOrder
     description?: SortOrderInput | SortOrder
     transactionDate?: SortOrder
+    reversalOfTransactionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     account?: AccountOrderByWithRelationInput
+    reversalOf?: TransactionOrderByWithRelationInput
+    reversal?: TransactionOrderByWithRelationInput
   }
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    reversalOfTransactionId?: string
     AND?: TransactionWhereInput | TransactionWhereInput[]
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
@@ -9986,7 +10057,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     account?: XOR<AccountScalarRelationFilter, AccountWhereInput>
-  }, "id">
+    reversalOf?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    reversal?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+  }, "id" | "reversalOfTransactionId">
 
   export type TransactionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -9996,6 +10069,7 @@ export namespace Prisma {
     currency?: SortOrder
     description?: SortOrderInput | SortOrder
     transactionDate?: SortOrder
+    reversalOfTransactionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TransactionCountOrderByAggregateInput
@@ -10016,6 +10090,7 @@ export namespace Prisma {
     currency?: StringWithAggregatesFilter<"Transaction"> | string
     description?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     transactionDate?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
+    reversalOfTransactionId?: UuidNullableWithAggregatesFilter<"Transaction"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
   }
@@ -10406,6 +10481,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     account: AccountCreateNestedOneWithoutTransactionsInput
+    reversalOf?: TransactionCreateNestedOneWithoutReversalInput
+    reversal?: TransactionCreateNestedOneWithoutReversalOfInput
   }
 
   export type TransactionUncheckedCreateInput = {
@@ -10416,8 +10493,10 @@ export namespace Prisma {
     currency: string
     description?: string | null
     transactionDate: Date | string
+    reversalOfTransactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    reversal?: TransactionUncheckedCreateNestedOneWithoutReversalOfInput
   }
 
   export type TransactionUpdateInput = {
@@ -10430,6 +10509,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     account?: AccountUpdateOneRequiredWithoutTransactionsNestedInput
+    reversalOf?: TransactionUpdateOneWithoutReversalNestedInput
+    reversal?: TransactionUpdateOneWithoutReversalOfNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
@@ -10440,8 +10521,10 @@ export namespace Prisma {
     currency?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversal?: TransactionUncheckedUpdateOneWithoutReversalOfNestedInput
   }
 
   export type TransactionCreateManyInput = {
@@ -10452,6 +10535,7 @@ export namespace Prisma {
     currency: string
     description?: string | null
     transactionDate: Date | string
+    reversalOfTransactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10475,6 +10559,7 @@ export namespace Prisma {
     currency?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10953,9 +11038,26 @@ export namespace Prisma {
     not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
   }
 
+  export type UuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
   export type AccountScalarRelationFilter = {
     is?: AccountWhereInput
     isNot?: AccountWhereInput
+  }
+
+  export type TransactionNullableScalarRelationFilter = {
+    is?: TransactionWhereInput | null
+    isNot?: TransactionWhereInput | null
   }
 
   export type TransactionCountOrderByAggregateInput = {
@@ -10966,6 +11068,7 @@ export namespace Prisma {
     currency?: SortOrder
     description?: SortOrder
     transactionDate?: SortOrder
+    reversalOfTransactionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10982,6 +11085,7 @@ export namespace Prisma {
     currency?: SortOrder
     description?: SortOrder
     transactionDate?: SortOrder
+    reversalOfTransactionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10994,6 +11098,7 @@ export namespace Prisma {
     currency?: SortOrder
     description?: SortOrder
     transactionDate?: SortOrder
+    reversalOfTransactionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11010,6 +11115,21 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
     _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumUserStatusFilter<$PrismaModel = never> = {
@@ -11372,6 +11492,24 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput
   }
 
+  export type TransactionCreateNestedOneWithoutReversalInput = {
+    create?: XOR<TransactionCreateWithoutReversalInput, TransactionUncheckedCreateWithoutReversalInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutReversalInput
+    connect?: TransactionWhereUniqueInput
+  }
+
+  export type TransactionCreateNestedOneWithoutReversalOfInput = {
+    create?: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutReversalOfInput
+    connect?: TransactionWhereUniqueInput
+  }
+
+  export type TransactionUncheckedCreateNestedOneWithoutReversalOfInput = {
+    create?: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutReversalOfInput
+    connect?: TransactionWhereUniqueInput
+  }
+
   export type EnumTransactionTypeFieldUpdateOperationsInput = {
     set?: $Enums.TransactionType
   }
@@ -11382,6 +11520,36 @@ export namespace Prisma {
     upsert?: AccountUpsertWithoutTransactionsInput
     connect?: AccountWhereUniqueInput
     update?: XOR<XOR<AccountUpdateToOneWithWhereWithoutTransactionsInput, AccountUpdateWithoutTransactionsInput>, AccountUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type TransactionUpdateOneWithoutReversalNestedInput = {
+    create?: XOR<TransactionCreateWithoutReversalInput, TransactionUncheckedCreateWithoutReversalInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutReversalInput
+    upsert?: TransactionUpsertWithoutReversalInput
+    disconnect?: TransactionWhereInput | boolean
+    delete?: TransactionWhereInput | boolean
+    connect?: TransactionWhereUniqueInput
+    update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutReversalInput, TransactionUpdateWithoutReversalInput>, TransactionUncheckedUpdateWithoutReversalInput>
+  }
+
+  export type TransactionUpdateOneWithoutReversalOfNestedInput = {
+    create?: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutReversalOfInput
+    upsert?: TransactionUpsertWithoutReversalOfInput
+    disconnect?: TransactionWhereInput | boolean
+    delete?: TransactionWhereInput | boolean
+    connect?: TransactionWhereUniqueInput
+    update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutReversalOfInput, TransactionUpdateWithoutReversalOfInput>, TransactionUncheckedUpdateWithoutReversalOfInput>
+  }
+
+  export type TransactionUncheckedUpdateOneWithoutReversalOfNestedInput = {
+    create?: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutReversalOfInput
+    upsert?: TransactionUpsertWithoutReversalOfInput
+    disconnect?: TransactionWhereInput | boolean
+    delete?: TransactionWhereInput | boolean
+    connect?: TransactionWhereUniqueInput
+    update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutReversalOfInput, TransactionUpdateWithoutReversalOfInput>, TransactionUncheckedUpdateWithoutReversalOfInput>
   }
 
   export type UserRoleCreateNestedManyWithoutUserInput = {
@@ -11678,6 +11846,17 @@ export namespace Prisma {
     not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
   }
 
+  export type NestedUuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
     in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
@@ -11686,6 +11865,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
     _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumUserStatusFilter<$PrismaModel = never> = {
@@ -11770,6 +11963,8 @@ export namespace Prisma {
     transactionDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    reversalOf?: TransactionCreateNestedOneWithoutReversalInput
+    reversal?: TransactionCreateNestedOneWithoutReversalOfInput
   }
 
   export type TransactionUncheckedCreateWithoutAccountInput = {
@@ -11779,8 +11974,10 @@ export namespace Prisma {
     currency: string
     description?: string | null
     transactionDate: Date | string
+    reversalOfTransactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    reversal?: TransactionUncheckedCreateNestedOneWithoutReversalOfInput
   }
 
   export type TransactionCreateOrConnectWithoutAccountInput = {
@@ -11857,6 +12054,7 @@ export namespace Prisma {
     currency?: StringFilter<"Transaction"> | string
     description?: StringNullableFilter<"Transaction"> | string | null
     transactionDate?: DateTimeFilter<"Transaction"> | Date | string
+    reversalOfTransactionId?: UuidNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
   }
@@ -12240,6 +12438,68 @@ export namespace Prisma {
     create: XOR<AccountCreateWithoutTransactionsInput, AccountUncheckedCreateWithoutTransactionsInput>
   }
 
+  export type TransactionCreateWithoutReversalInput = {
+    id?: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    description?: string | null
+    transactionDate: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    account: AccountCreateNestedOneWithoutTransactionsInput
+    reversalOf?: TransactionCreateNestedOneWithoutReversalInput
+  }
+
+  export type TransactionUncheckedCreateWithoutReversalInput = {
+    id?: string
+    accountId: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    description?: string | null
+    transactionDate: Date | string
+    reversalOfTransactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionCreateOrConnectWithoutReversalInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutReversalInput, TransactionUncheckedCreateWithoutReversalInput>
+  }
+
+  export type TransactionCreateWithoutReversalOfInput = {
+    id?: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    description?: string | null
+    transactionDate: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    account: AccountCreateNestedOneWithoutTransactionsInput
+    reversal?: TransactionCreateNestedOneWithoutReversalOfInput
+  }
+
+  export type TransactionUncheckedCreateWithoutReversalOfInput = {
+    id?: string
+    accountId: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    description?: string | null
+    transactionDate: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reversal?: TransactionUncheckedCreateNestedOneWithoutReversalOfInput
+  }
+
+  export type TransactionCreateOrConnectWithoutReversalOfInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
+  }
+
   export type AccountUpsertWithoutTransactionsInput = {
     update: XOR<AccountUpdateWithoutTransactionsInput, AccountUncheckedUpdateWithoutTransactionsInput>
     create: XOR<AccountCreateWithoutTransactionsInput, AccountUncheckedCreateWithoutTransactionsInput>
@@ -12273,6 +12533,80 @@ export namespace Prisma {
     status?: EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUpsertWithoutReversalInput = {
+    update: XOR<TransactionUpdateWithoutReversalInput, TransactionUncheckedUpdateWithoutReversalInput>
+    create: XOR<TransactionCreateWithoutReversalInput, TransactionUncheckedCreateWithoutReversalInput>
+    where?: TransactionWhereInput
+  }
+
+  export type TransactionUpdateToOneWithWhereWithoutReversalInput = {
+    where?: TransactionWhereInput
+    data: XOR<TransactionUpdateWithoutReversalInput, TransactionUncheckedUpdateWithoutReversalInput>
+  }
+
+  export type TransactionUpdateWithoutReversalInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    account?: AccountUpdateOneRequiredWithoutTransactionsNestedInput
+    reversalOf?: TransactionUpdateOneWithoutReversalNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutReversalInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountId?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUpsertWithoutReversalOfInput = {
+    update: XOR<TransactionUpdateWithoutReversalOfInput, TransactionUncheckedUpdateWithoutReversalOfInput>
+    create: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
+    where?: TransactionWhereInput
+  }
+
+  export type TransactionUpdateToOneWithWhereWithoutReversalOfInput = {
+    where?: TransactionWhereInput
+    data: XOR<TransactionUpdateWithoutReversalOfInput, TransactionUncheckedUpdateWithoutReversalOfInput>
+  }
+
+  export type TransactionUpdateWithoutReversalOfInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    account?: AccountUpdateOneRequiredWithoutTransactionsNestedInput
+    reversal?: TransactionUpdateOneWithoutReversalOfNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutReversalOfInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountId?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversal?: TransactionUncheckedUpdateOneWithoutReversalOfNestedInput
   }
 
   export type UserRoleCreateWithoutUserInput = {
@@ -12383,6 +12717,7 @@ export namespace Prisma {
     currency: string
     description?: string | null
     transactionDate: Date | string
+    reversalOfTransactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12396,6 +12731,8 @@ export namespace Prisma {
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOf?: TransactionUpdateOneWithoutReversalNestedInput
+    reversal?: TransactionUpdateOneWithoutReversalOfNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutAccountInput = {
@@ -12405,8 +12742,10 @@ export namespace Prisma {
     currency?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversal?: TransactionUncheckedUpdateOneWithoutReversalOfNestedInput
   }
 
   export type TransactionUncheckedUpdateManyWithoutAccountInput = {
@@ -12416,6 +12755,7 @@ export namespace Prisma {
     currency?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -26,6 +26,7 @@ import { successResponse } from '../../../../common/utils/api-response.util';
 import { TransactionResponseEnvelopeDto } from '../dto/transaction-response-envelope.dto';
 import { TransactionListResponseEnvelopeDto } from '../dto/transaction-list-response-envelope.dto';
 import { ListTransactionsQueryDto } from '../dto/list-transactions-query.dto';
+import { ReverseTransactionDto } from '../dto/reverse-transaction.dto';
 
 @ApiTags('Transactions')
 @Controller({
@@ -160,5 +161,45 @@ export class TransactionsController {
         hasPreviousPage: query.page > 1,
       },
     };
+  }
+
+  @Post(':id/reversal')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Reverse a transaction',
+    description:
+      'Creates a reversal transaction for an existing transaction owned by the authenticated user.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Transaction reversed successfully.',
+    type: TransactionResponseEnvelopeDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid reversal request or transaction cannot be reversed.',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Authentication is required.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transaction not found.',
+  })
+  async reverse(
+    @Param('id') id: string,
+    @Body() dto: ReverseTransactionDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<ApiSuccessResponse<TransactionResponseDto>> {
+    const transaction = await this.transactionsService.reverse({
+      transactionId: id,
+      userId: request.user.userId,
+      transactionDate: new Date(dto.transactionDate),
+      description: dto.description ?? null,
+    });
+
+    return successResponse(TransactionResponseMapper.toDto(transaction));
   }
 }

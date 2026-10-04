@@ -31,6 +31,8 @@ describe('Transactions E2E', () => {
   let listMiddleTransactionId: string;
   let listOldestTransactionId: string;
 
+  let reversalTransactionId: string;
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -932,6 +934,243 @@ describe('Transactions E2E', () => {
         hasNextPage: false,
         hasPreviousPage: true,
       });
+    });
+  });
+
+  describe('POST /api/v1/transactions/:id/reversal', () => {
+    it('should create a reversal transaction for the authenticated owner', async () => {
+      const transactionDate = '2026-09-11T00:00:00.000Z';
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${transactionId}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate,
+          description: 'Reversal of retrieve transaction test',
+        })
+        .expect(201);
+
+      expect(response.body.success).toBe(true);
+
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          accountId,
+          type: 'INCOME',
+          amount: '75.5000',
+          currency: 'MYR',
+          description: 'Reversal of retrieve transaction test',
+          transactionDate,
+          reversalOfTransactionId: transactionId,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      );
+
+      reversalTransactionId = response.body.data.id;
+
+      const persistedReversal = await prisma.transaction.findUnique({
+        where: {
+          id: reversalTransactionId,
+        },
+      });
+
+      expect(persistedReversal).not.toBeNull();
+      expect(persistedReversal?.accountId).toBe(accountId);
+      expect(persistedReversal?.type).toBe('INCOME');
+      expect(persistedReversal?.amount.toString()).toBe('75.5');
+      expect(persistedReversal?.currency.trim()).toBe('MYR');
+      expect(persistedReversal?.description).toBe(
+        'Reversal of retrieve transaction test',
+      );
+      expect(persistedReversal?.reversalOfTransactionId).toBe(transactionId);
+    });
+
+    it('should reject creating a reversal without authentication', async () => {
+      await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${transactionId}/reversal`)
+        .send({
+          transactionDate: '2026-09-12T00:00:00.000Z',
+          description: 'Unauthorized reversal',
+        })
+        .expect(401);
+    });
+
+    it('should reverse an expense into an income transaction', async () => {
+      const sourceTransaction = await prisma.transaction.create({
+        data: {
+          accountId,
+          type: 'EXPENSE',
+          amount: '125.2500',
+          currency: 'MYR',
+          description: 'Expense reversal source',
+          transactionDate: new Date('2026-09-13T00:00:00.000Z'),
+        },
+      });
+
+      const transactionDate = '2026-09-14T00:00:00.000Z';
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${sourceTransaction.id}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate,
+          description: 'Expense reversal',
+        })
+        .expect(201);
+
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          type: 'INCOME',
+          amount: '125.2500',
+          currency: 'MYR',
+          description: 'Expense reversal',
+          transactionDate,
+          reversalOfTransactionId: sourceTransaction.id,
+        }),
+      );
+    });
+
+    it('should reject reversing the same transaction twice', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${transactionId}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate: '2026-09-15T00:00:00.000Z',
+          description: 'Duplicate reversal',
+        })
+        .expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject reversing a reversal transaction', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${reversalTransactionId}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate: '2026-09-16T00:00:00.000Z',
+          description: 'Reversal of reversal',
+        })
+        .expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should return 404 when the transaction does not exist', async () => {
+      const nonExistentTransactionId = '00000000-0000-0000-0000-000000000000';
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${nonExistentTransactionId}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate: '2026-09-17T00:00:00.000Z',
+          description: 'Missing transaction reversal',
+        })
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should return 404 when another user tries to reverse the transaction', async () => {
+      const sourceTransaction = await prisma.transaction.create({
+        data: {
+          accountId,
+          type: 'EXPENSE',
+          amount: '90.0000',
+          currency: 'MYR',
+          description: 'Cross-user reversal source',
+          transactionDate: new Date('2026-09-23T00:00:00.000Z'),
+        },
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${sourceTransaction.id}/reversal`)
+        .set('Authorization', `Bearer ${secondAccessToken}`)
+        .send({
+          transactionDate: '2026-09-24T00:00:00.000Z',
+          description: 'Unauthorized reversal',
+        })
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+
+      const unauthorizedReversal = await prisma.transaction.findFirst({
+        where: {
+          reversalOfTransactionId: sourceTransaction.id,
+        },
+      });
+
+      expect(unauthorizedReversal).toBeNull();
+    });
+
+    it('should reject an invalid reversal date', async () => {
+      await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${transactionId}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate: 'not-a-date',
+          description: 'Invalid reversal date',
+        })
+        .expect(400);
+    });
+
+    it('should reject a reversal description longer than 255 characters', async () => {
+      await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${transactionId}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate: '2026-09-19T00:00:00.000Z',
+          description: 'a'.repeat(256),
+        })
+        .expect(400);
+    });
+
+    it('should reject unexpected fields in the reversal request', async () => {
+      await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${transactionId}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate: '2026-09-20T00:00:00.000Z',
+          description: 'Unexpected reversal field',
+          accountId,
+          type: 'INCOME',
+          amount: '75.5000',
+          currency: 'MYR',
+        })
+        .expect(400);
+    });
+
+    it('should allow a null reversal description', async () => {
+      const sourceTransaction = await prisma.transaction.create({
+        data: {
+          accountId,
+          type: 'INCOME',
+          amount: '300.0000',
+          currency: 'MYR',
+          description: 'Income reversal source',
+          transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        },
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/api/v1/transactions/${sourceTransaction.id}/reversal`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          transactionDate: '2026-09-22T00:00:00.000Z',
+          description: null,
+        })
+        .expect(201);
+
+      expect(response.body.data).toEqual(
+        expect.objectContaining({
+          type: 'EXPENSE',
+          amount: '300.0000',
+          currency: 'MYR',
+          description: null,
+          reversalOfTransactionId: sourceTransaction.id,
+        }),
+      );
     });
   });
 });

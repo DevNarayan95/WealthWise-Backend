@@ -29,6 +29,7 @@ export class PrismaTransactionRepository extends TransactionRepository {
         currency: input.currency,
         description: input.description,
         transactionDate: input.transactionDate,
+        reversalOfTransactionId: input.reversalOfTransactionId,
       },
     });
 
@@ -42,6 +43,22 @@ export class PrismaTransactionRepository extends TransactionRepository {
     const transaction = await this.prisma.transaction.findFirst({
       where: {
         id: transactionId,
+        account: {
+          userId,
+        },
+      },
+    });
+
+    return transaction ? this.toDomain(transaction) : null;
+  }
+
+  async findReversalForTransaction(
+    transactionId: string,
+    userId: string,
+  ): Promise<Transaction | null> {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: {
+        reversalOfTransactionId: transactionId,
         account: {
           userId,
         },
@@ -96,6 +113,7 @@ export class PrismaTransactionRepository extends TransactionRepository {
     currency: string;
     description: string | null;
     transactionDate: Date;
+    reversalOfTransactionId: string | null;
     createdAt: Date;
     updatedAt: Date;
   }): Transaction {
@@ -107,6 +125,7 @@ export class PrismaTransactionRepository extends TransactionRepository {
       currency: transaction.currency.trim(),
       description: transaction.description,
       transactionDate: transaction.transactionDate,
+      reversalOfTransactionId: transaction.reversalOfTransactionId,
       createdAt: transaction.createdAt,
       updatedAt: transaction.updatedAt,
     });

@@ -38,16 +38,28 @@ export class TransactionResponseDto {
 
   @ApiProperty({
     example: '2026-09-01T00:00:00.000Z',
+    format: 'date-time',
   })
   transactionDate!: Date;
 
+  @ApiPropertyOptional({
+    example: '8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12',
+    format: 'uuid',
+    nullable: true,
+    description:
+      'ID of the original transaction when this transaction is a reversal.',
+  })
+  reversalOfTransactionId!: string | null;
+
   @ApiProperty({
-    example: '2026-09-01T10:15:00.000Z',
+    example: '2026-09-01T00:00:00.000Z',
+    format: 'date-time',
   })
   createdAt!: Date;
 
   @ApiProperty({
-    example: '2026-09-01T10:15:00.000Z',
+    example: '2026-09-01T00:00:00.000Z',
+    format: 'date-time',
   })
   updatedAt!: Date;
 }

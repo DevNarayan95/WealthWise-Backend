@@ -7,6 +7,7 @@ export interface CreateTransactionRepositoryInput {
   currency: string;
   description: string | null;
   transactionDate: Date;
+  reversalOfTransactionId: string | null;
 }
 
 export interface FindTransactionsRepositoryInput {
@@ -27,6 +28,11 @@ export abstract class TransactionRepository {
   ): Promise<Transaction>;
 
   abstract findByIdForUser(
+    transactionId: string,
+    userId: string,
+  ): Promise<Transaction | null>;
+
+  abstract findReversalForTransaction(
     transactionId: string,
     userId: string,
   ): Promise<Transaction | null>;
