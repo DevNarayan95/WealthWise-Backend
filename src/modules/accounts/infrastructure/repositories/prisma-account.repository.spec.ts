@@ -3,6 +3,7 @@ import {
   AccountType,
 } from '../../domain/entities/account.entity';
 import { PrismaAccountRepository } from './prisma-account.repository';
+import { Prisma } from '../../../../../prisma/generated/prisma/client';
 
 describe('PrismaAccountRepository', () => {
   const prisma = {
@@ -12,6 +13,9 @@ describe('PrismaAccountRepository', () => {
       findMany: jest.fn(),
       count: jest.fn(),
       updateMany: jest.fn(),
+    },
+    transaction: {
+      groupBy: jest.fn(),
     },
   };
 
@@ -320,6 +324,226 @@ describe('PrismaAccountRepository', () => {
       const result = await repository.findByIdForUser('account-id', 'user-id');
 
       expect(result?.currency).toBe('USD');
+    });
+  });
+
+  describe('getBalanceForUser', () => {
+    it('should calculate balance from opening balance, income, and expenses', async () => {
+      prisma.account.findFirst.mockResolvedValue({
+        id: 'account-id',
+        currency: 'MYR',
+        openingBalance: new Prisma.Decimal('1300.0000'),
+      });
+
+      prisma.transaction.groupBy.mockResolvedValue([
+        {
+          type: 'INCOME',
+          _sum: {
+            amount: new Prisma.Decimal('500.0000'),
+          },
+        },
+        {
+          type: 'EXPENSE',
+          _sum: {
+            amount: new Prisma.Decimal('500.0000'),
+          },
+        },
+      ]);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'user-id',
+      });
+
+      expect(prisma.account.findFirst).toHaveBeenCalledWith({
+        where: {
+          id: 'account-id',
+          userId: 'user-id',
+        },
+        select: {
+          id: true,
+          currency: true,
+          openingBalance: true,
+        },
+      });
+
+      expect(prisma.transaction.groupBy).toHaveBeenCalledWith({
+        by: ['type'],
+        where: {
+          accountId: 'account-id',
+        },
+        _sum: {
+          amount: true,
+        },
+      });
+
+      expect(result).toEqual({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1300.0000',
+      });
+    });
+
+    it('should return opening balance when the account has no transactions', async () => {
+      prisma.account.findFirst.mockResolvedValue({
+        id: 'account-id',
+        currency: 'MYR',
+        openingBalance: new Prisma.Decimal('1000.0000'),
+      });
+
+      prisma.transaction.groupBy.mockResolvedValue([]);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'user-id',
+      });
+
+      expect(result).toEqual({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1000.0000',
+      });
+    });
+
+    it('should return null when the account does not belong to the user', async () => {
+      prisma.account.findFirst.mockResolvedValue(null);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'different-user-id',
+      });
+
+      expect(result).toBeNull();
+
+      expect(prisma.transaction.groupBy).not.toHaveBeenCalled();
+    });
+
+    it('should calculate balance using only transactions up to the asOf date', async () => {
+      const asOf = new Date('2026-08-31T00:00:00.000Z');
+
+      prisma.account.findFirst.mockResolvedValue({
+        id: 'account-id',
+        currency: 'MYR',
+        openingBalance: new Prisma.Decimal('1400.0000'),
+      });
+
+      prisma.transaction.groupBy.mockResolvedValue([
+        {
+          type: 'INCOME',
+          _sum: {
+            amount: new Prisma.Decimal('500.0000'),
+          },
+        },
+        {
+          type: 'EXPENSE',
+          _sum: {
+            amount: new Prisma.Decimal('500.0000'),
+          },
+        },
+      ]);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'user-id',
+        asOf,
+      });
+
+      expect(prisma.transaction.groupBy).toHaveBeenCalledWith({
+        by: ['type'],
+        where: {
+          accountId: 'account-id',
+          transactionDate: {
+            lte: asOf,
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+      });
+
+      expect(result).toEqual({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1400.0000',
+      });
+    });
+
+    it('should handle an income-only account', async () => {
+      prisma.account.findFirst.mockResolvedValue({
+        id: 'account-id',
+        currency: 'MYR',
+        openingBalance: new Prisma.Decimal('1000.0000'),
+      });
+
+      prisma.transaction.groupBy.mockResolvedValue([
+        {
+          type: 'INCOME',
+          _sum: {
+            amount: new Prisma.Decimal('500.0000'),
+          },
+        },
+      ]);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'user-id',
+      });
+
+      expect(result?.balance).toBe('1500.0000');
+    });
+
+    it('should handle an expense-only account', async () => {
+      prisma.account.findFirst.mockResolvedValue({
+        id: 'account-id',
+        currency: 'MYR',
+        openingBalance: new Prisma.Decimal('1000.0000'),
+      });
+
+      prisma.transaction.groupBy.mockResolvedValue([
+        {
+          type: 'EXPENSE',
+          _sum: {
+            amount: new Prisma.Decimal('250.0000'),
+          },
+        },
+      ]);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'user-id',
+      });
+
+      expect(result?.balance).toBe('750.0000');
+    });
+
+    it('should preserve exact decimal precision when calculating balance', async () => {
+      prisma.account.findFirst.mockResolvedValue({
+        id: 'account-id',
+        currency: 'MYR',
+        openingBalance: new Prisma.Decimal('123456789.1234'),
+      });
+
+      prisma.transaction.groupBy.mockResolvedValue([
+        {
+          type: 'INCOME',
+          _sum: {
+            amount: new Prisma.Decimal('0.8766'),
+          },
+        },
+        {
+          type: 'EXPENSE',
+          _sum: {
+            amount: new Prisma.Decimal('0.1000'),
+          },
+        },
+      ]);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'user-id',
+      });
+
+      expect(result?.balance).toBe('123456789.9000');
     });
   });
 });

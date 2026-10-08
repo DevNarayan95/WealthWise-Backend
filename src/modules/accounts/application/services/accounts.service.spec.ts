@@ -3,7 +3,6 @@ import {
   AccountStatus,
   AccountType,
 } from '../../domain/entities/account.entity';
-import { AccountAlreadyArchivedException } from '../../domain/exceptions/account-already-archived.exception';
 import { AccountAlreadyArchivedApplicationException } from '../../exceptions/account-already-archived.exception';
 import { AccountNotFoundException } from '../../exceptions/account-not-found.exception';
 import { InvalidAccountException } from '../../exceptions/invalid-account.exception';
@@ -15,6 +14,7 @@ describe('AccountsService', () => {
     findByIdForUser: jest.fn(),
     findAllByUserId: jest.fn(),
     update: jest.fn(),
+    getBalanceForUser: jest.fn(),
   };
 
   let service: AccountsService;
@@ -487,6 +487,68 @@ describe('AccountsService', () => {
         accountId: 'account-id',
         userId: 'user-id',
         status: AccountStatus.ARCHIVED,
+      });
+    });
+  });
+
+  describe('getBalance', () => {
+    it('should return the current account balance', async () => {
+      accountRepository.getBalanceForUser.mockResolvedValue({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1300.0000',
+      });
+
+      const result = await service.getBalance('account-id', 'user-id');
+
+      expect(accountRepository.getBalanceForUser).toHaveBeenCalledWith({
+        accountId: 'account-id',
+        userId: 'user-id',
+        asOf: undefined,
+      });
+
+      expect(result).toEqual({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1300.0000',
+      });
+    });
+
+    it('should return the account balance as of the requested date', async () => {
+      const asOf = new Date('2026-08-31T00:00:00.000Z');
+
+      accountRepository.getBalanceForUser.mockResolvedValue({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1200.0000',
+      });
+
+      const result = await service.getBalance('account-id', 'user-id', asOf);
+
+      expect(accountRepository.getBalanceForUser).toHaveBeenCalledWith({
+        accountId: 'account-id',
+        userId: 'user-id',
+        asOf,
+      });
+
+      expect(result).toEqual({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1200.0000',
+      });
+    });
+
+    it('should throw AccountNotFoundException when the account does not exist or is not owned by the user', async () => {
+      accountRepository.getBalanceForUser.mockResolvedValue(null);
+
+      await expect(
+        service.getBalance('account-id', 'user-id'),
+      ).rejects.toBeInstanceOf(AccountNotFoundException);
+
+      expect(accountRepository.getBalanceForUser).toHaveBeenCalledWith({
+        accountId: 'account-id',
+        userId: 'user-id',
+        asOf: undefined,
       });
     });
   });

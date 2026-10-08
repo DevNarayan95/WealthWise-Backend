@@ -6,14 +6,19 @@ import {
   isValidOpeningBalance,
   ACCOUNT_NAME_MAX_LENGTH,
 } from '../../domain/validations/account-validation';
+
 import { Account, AccountStatus } from '../../domain/entities/account.entity';
+
 import { AccountRepository } from '../../domain/repositories/account.repository';
+import { AccountAlreadyArchivedException } from '../../domain/exceptions/account-already-archived.exception';
+
 import { InvalidAccountException } from '../../exceptions/invalid-account.exception';
 import { AccountNotFoundException } from '../../exceptions/account-not-found.exception';
+import { AccountAlreadyArchivedApplicationException } from '../../exceptions/account-already-archived.exception';
+
 import { CreateAccountInput } from '../inputs/create-account.input';
 import { PaginatedAccountsOutput } from '../outputs/paginated-accounts.output';
-import { AccountAlreadyArchivedException } from '../../domain/exceptions/account-already-archived.exception';
-import { AccountAlreadyArchivedApplicationException } from '../../exceptions/account-already-archived.exception';
+import { AccountBalanceOutput } from '../outputs/account-balance.output';
 
 @Injectable()
 export class AccountsService {
@@ -140,5 +145,23 @@ export class AccountsService {
     }
 
     return archivedAccount;
+  }
+
+  async getBalance(
+    accountId: string,
+    userId: string,
+    asOf?: Date,
+  ): Promise<AccountBalanceOutput> {
+    const result = await this.accountRepository.getBalanceForUser({
+      accountId,
+      userId,
+      asOf,
+    });
+
+    if (!result) {
+      throw new AccountNotFoundException();
+    }
+
+    return result;
   }
 }

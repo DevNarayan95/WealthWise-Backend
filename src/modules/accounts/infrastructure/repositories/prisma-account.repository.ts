@@ -10,8 +10,12 @@ import {
   CreateAccountRepositoryInput,
   FindAccountsRepositoryInput,
   FindAccountsRepositoryOutput,
+  GetAccountBalanceRepositoryInput,
+  GetAccountBalanceRepositoryOutput,
   UpdateAccountRepositoryInput,
 } from '../../domain/repositories/account.repository';
+
+import { Prisma } from '../../../../../prisma/generated/prisma/client';
 
 @Injectable()
 export class PrismaAccountRepository implements AccountRepository {
@@ -95,6 +99,62 @@ export class PrismaAccountRepository implements AccountRepository {
     });
 
     return account ? this.toDomain(account) : null;
+  }
+
+  async getBalanceForUser(
+    input: GetAccountBalanceRepositoryInput,
+  ): Promise<GetAccountBalanceRepositoryOutput | null> {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: input.accountId,
+        userId: input.userId,
+      },
+      select: {
+        id: true,
+        currency: true,
+        openingBalance: true,
+      },
+    });
+
+    if (!account) {
+      return null;
+    }
+
+    const transactionWhere = {
+      accountId: input.accountId,
+      ...(input.asOf ? { transactionDate: { lte: input.asOf } } : {}),
+    };
+
+    const transactionTotals = await this.prisma.transaction.groupBy({
+      by: ['type'],
+      where: transactionWhere,
+      _sum: {
+        amount: true,
+      },
+    });
+
+    let income = new Prisma.Decimal(0);
+    let expense = new Prisma.Decimal(0);
+
+    for (const total of transactionTotals) {
+      const amount = total._sum.amount?.toString() ?? new Prisma.Decimal(0);
+
+      if (total.type === 'INCOME') {
+        income = income.plus(amount);
+      }
+
+      if (total.type === 'EXPENSE') {
+        expense = expense.plus(amount);
+      }
+    }
+
+    const balance = account.openingBalance.plus(income).minus(expense);
+
+    return {
+      accountId: account.id,
+      currency: account.currency.trim(),
+      balance: balance.toFixed(4),
+    };
   }
 
   private toDomain(account: {

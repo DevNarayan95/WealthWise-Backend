@@ -29,6 +29,18 @@ export interface UpdateAccountRepositoryInput {
   status: AccountStatus;
 }
 
+export interface GetAccountBalanceRepositoryInput {
+  accountId: string;
+  userId: string;
+  asOf?: Date;
+}
+
+export interface GetAccountBalanceRepositoryOutput {
+  accountId: string;
+  currency: string;
+  balance: string;
+}
+
 export abstract class AccountRepository {
   abstract create(input: CreateAccountRepositoryInput): Promise<Account>;
 
@@ -42,4 +54,8 @@ export abstract class AccountRepository {
   ): Promise<FindAccountsRepositoryOutput>;
 
   abstract update(input: UpdateAccountRepositoryInput): Promise<Account | null>;
+
+  abstract getBalanceForUser(
+    input: GetAccountBalanceRepositoryInput,
+  ): Promise<GetAccountBalanceRepositoryOutput | null>;
 }

@@ -36,6 +36,7 @@ import { CreateAccountDto } from '../dto/create-account.dto';
 import { AccountResponseMapper } from '../mappers/account-response.mapper';
 import { ListAccountsQueryDto } from '../dto/list-accounts-query.dto';
 import { PaginatedAccountsResponseDto } from '../dto/paginated-accounts-response.dto';
+import { AccountBalanceResponseDto } from '../dto/account-balance-response.dto';
 
 @ApiTags('Accounts')
 @Controller({
@@ -234,5 +235,51 @@ export class AccountsController {
     );
 
     return successResponse(AccountResponseMapper.toDto(account));
+  }
+
+  @Get(':id/balance')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('accounts:read')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Get account balance',
+    description:
+      'Returns the calculated balance of a financial account belonging to the authenticated user. ' +
+      'The balance is calculated from the account opening balance and its transactions. ' +
+      'Requires the accounts:read permission.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Account UUID.',
+    example: '7d7c6f6e-9b13-4c68-a6b5-123456789abc',
+  })
+  @ApiOkResponse({
+    description: 'Account balance returned successfully.',
+    type: AccountBalanceResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Authentication is required.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have the accounts:read permission.',
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Account was not found or does not belong to the authenticated user.',
+  })
+  async getBalance(
+    @Req() request: AuthenticatedRequest,
+    @Param('id') accountId: string,
+  ): Promise<ApiSuccessResponse<AccountBalanceResponseDto>> {
+    const balance = await this.accountsService.getBalance(
+      accountId,
+      request.user.userId,
+    );
+
+    return successResponse({
+      accountId: balance.accountId,
+      currency: balance.currency,
+      balance: balance.balance,
+    });
   }
 }

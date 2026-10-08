@@ -12,6 +12,7 @@ describe('AccountsController', () => {
     findAll: jest.fn(),
     findById: jest.fn(),
     archive: jest.fn(),
+    getBalance: jest.fn(),
   };
 
   let controller: AccountsController;
@@ -194,6 +195,37 @@ describe('AccountsController', () => {
       expect(result.success).toBe(true);
       expect(result.data.id).toBe('account-id');
       expect(result.data.status).toBe(AccountStatus.ARCHIVED);
+    });
+  });
+
+  describe('getBalance', () => {
+    it('should return the account balance for the authenticated user', async () => {
+      accountsService.getBalance.mockResolvedValue({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1300.0000',
+      });
+
+      const request = {
+        user: {
+          userId: 'user-id',
+          email: 'user@example.com',
+        },
+      } as AuthenticatedRequest;
+
+      const result = await controller.getBalance(request, 'account-id');
+
+      expect(accountsService.getBalance).toHaveBeenCalledWith(
+        'account-id',
+        'user-id',
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual({
+        accountId: 'account-id',
+        currency: 'MYR',
+        balance: '1300.0000',
+      });
     });
   });
 });

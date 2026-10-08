@@ -113,8 +113,6 @@ domain
 infrastructure
 ```
 
-The responsibilities are:
-
 ## Presentation
 
 Responsible for HTTP/API concerns.
@@ -128,8 +126,6 @@ Examples:
 
 Presentation should not contain business logic.
 
----
-
 ## Application
 
 Responsible for application use cases and orchestration.
@@ -139,12 +135,11 @@ Examples:
 - Application services
 - Use-case-oriented services
 - Application inputs
+- Application outputs where appropriate
 
 Application services coordinate domain objects and infrastructure abstractions.
 
 They should not contain unnecessary HTTP-specific concerns.
-
----
 
 ## Domain
 
@@ -163,8 +158,6 @@ The domain layer should remain independent from:
 - HTTP
 - PostgreSQL
 - Controllers
-
----
 
 ## Infrastructure
 
@@ -190,8 +183,8 @@ The current source structure is:
 
 ```text
 src/
-
 ├── app.module.ts
+├── main.ts
 │
 ├── common/
 │   ├── constants/
@@ -222,7 +215,6 @@ src/
 │   │   └── prisma/
 │   │       ├── prisma.module.ts
 │   │       └── prisma.service.ts
-│   │
 │   └── security/
 │       ├── password-hasher.service.spec.ts
 │       └── password-hasher.service.ts
@@ -230,6 +222,10 @@ src/
 ├── modules/
 │   ├── auth/
 │   │   ├── application/
+│   │   │   ├── inputs/
+│   │   │   │   └── login.input.ts
+│   │   │   ├── outputs/
+│   │   │   │   └── login.output.ts
 │   │   │   └── services/
 │   │   │       ├── auth.service.spec.ts
 │   │   │       └── auth.service.ts
@@ -242,11 +238,14 @@ src/
 │   │   │   ├── interfaces/
 │   │   │   │   └── authenticated-request.interface.ts
 │   │   │   └── strategies/
+│   │   │       ├── jwt.strategy.spec.ts
 │   │   │       └── jwt.strategy.ts
 │   │   ├── presentation/
 │   │   │   ├── controllers/
 │   │   │   │   └── auth.controller.ts
 │   │   │   └── dto/
+│   │   │       ├── login-data.dto.ts
+│   │   │       ├── login-response.dto.ts
 │   │   │       └── login.dto.ts
 │   │   └── auth.module.ts
 │   │
@@ -254,37 +253,93 @@ src/
 │   │   ├── health.controller.ts
 │   │   └── health.module.ts
 │   │
-│   └── users/
+│   ├── users/
+│   │   ├── application/
+│   │   │   ├── inputs/
+│   │   │   │   └── create-user.input.ts
+│   │   │   └── services/
+│   │   │       ├── users.service.spec.ts
+│   │   │       └── users.service.ts
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   └── user.entity.ts
+│   │   │   └── repositories/
+│   │   │       └── user.repository.ts
+│   │   ├── infrastructure/
+│   │   │   └── repositories/
+│   │   │       └── prisma-user.repository.ts
+│   │   ├── presentation/
+│   │   │   ├── controllers/
+│   │   │   │   └── users.controller.ts
+│   │   │   ├── dto/
+│   │   │   │   ├── create-user.dto.ts
+│   │   │   │   ├── user-response.dto.ts
+│   │   │   │   └── user-response-envelope.dto.ts
+│   │   │   ├── exceptions/
+│   │   │   │   └── user-already-exists.exception.ts
+│   │   │   └── mappers/
+│   │   │       └── user-response.mapper.ts
+│   │   └── users.module.ts
+│   │
+│   ├── accounts/
+│   │   ├── application/
+│   │   │   ├── inputs/
+│   │   │   └── services/
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   └── repositories/
+│   │   ├── infrastructure/
+│   │   │   └── repositories/
+│   │   ├── presentation/
+│   │   │   ├── controllers/
+│   │   │   ├── dto/
+│   │   │   ├── exceptions/
+│   │   │   └── mappers/
+│   │   └── accounts.module.ts
+│   │
+│   └── transactions/
 │       ├── application/
 │       │   ├── inputs/
-│       │   │   └── create-user.input.ts
+│       │   │   ├── create-transaction.input.ts
+│       │   │   ├── list-transactions.input.ts
+│       │   │   └── reverse-transaction.input.ts
 │       │   └── services/
-│       │       ├── users.service.spec.ts
-│       │       └── users.service.ts
+│       │       ├── transactions.service.spec.ts
+│       │       └── transactions.service.ts
 │       ├── domain/
 │       │   ├── entities/
-│       │   │   └── user.entity.ts
-│       │   └── repositories/
-│       │       └── user.repository.ts
+│       │   │   └── transaction.entity.ts
+│       │   ├── repositories/
+│       │   │   └── transaction.repository.ts
+│       │   └── validation/
+│       │       └── transaction.validation.ts
 │       ├── infrastructure/
 │       │   └── repositories/
-│       │       └── prisma-user.repository.ts
+│       │       └── prisma-transaction.repository.ts
 │       ├── presentation/
 │       │   ├── controllers/
-│       │   │   └── users.controller.ts
+│       │   │   ├── transactions.controller.spec.ts
+│       │   │   └── transactions.controller.ts
 │       │   ├── dto/
-│       │   │   ├── create-user.dto.ts
-│       │   │   └── user-response.dto.ts
+│       │   │   ├── create-transaction.dto.ts
+│       │   │   ├── list-transactions-query.dto.ts
+│       │   │   ├── reverse-transaction.dto.ts
+│       │   │   ├── transaction-list-response-envelope.dto.ts
+│       │   │   ├── transaction-response.dto.ts
+│       │   │   └── transaction-response-envelope.dto.ts
 │       │   ├── exceptions/
-│       │   │   └── user-already-exists.exception.ts
+│       │   │   ├── invalid-transaction.exception.ts
+│       │   │   ├── transaction-already-reversed.exception.ts
+│       │   │   ├── transaction-cannot-be-reversed.exception.ts
+│       │   │   └── transaction-not-found.exception.ts
 │       │   └── mappers/
-│       │       └── user-response.mapper.ts
-│       └── users.module.ts
+│       │       └── transaction-response.mapper.ts
+│       └── transactions.module.ts
 │
 └── main.ts
 ```
 
-This structure is the current source of truth.
+**Important:** the actual source tree remains authoritative. If the tree above differs from the current repository, inspect the repository before making assumptions.
 
 ---
 
@@ -309,7 +364,6 @@ Examples:
 
 ```text
 common/
-
 ├── constants
 ├── exceptions
 ├── filters
@@ -336,20 +390,6 @@ Owns:
 - User-specific exceptions
 - User response mapping
 
-Current structure:
-
-```text
-users/
-
-├── application/
-├── domain/
-├── infrastructure/
-├── presentation/
-└── users.module.ts
-```
-
----
-
 ## Auth Module
 
 Owns:
@@ -363,18 +403,39 @@ Owns:
 - Permission decorator
 - Authenticated request abstraction
 
-Current structure:
+## Accounts Module
 
-```text
-auth/
+Owns:
 
-├── application/
-├── infrastructure/
-├── presentation/
-└── auth.module.ts
-```
+- Account entity
+- Account repository abstraction
+- Account persistence implementation
+- Account application service
+- Account inputs
+- Account DTOs
+- Account controllers
+- Account-specific exceptions
+- Account response mapping
+- Account lifecycle rules
 
----
+## Transactions Module
+
+Owns:
+
+- Transaction entity
+- Transaction repository abstraction
+- Transaction persistence implementation
+- Transaction application service
+- Transaction inputs
+- Transaction validation rules
+- Transaction DTOs
+- Transaction controllers
+- Transaction-specific exceptions
+- Transaction response mapping
+- Transaction creation
+- Transaction retrieval
+- Transaction listing
+- Transaction reversal workflow
 
 ## Infrastructure
 
@@ -384,7 +445,6 @@ Examples:
 
 ```text
 infrastructure/
-
 ├── database/
 └── security/
 ```
@@ -412,9 +472,9 @@ Infrastructure may implement domain/application abstractions.
 For example:
 
 ```text
-UserRepository
-      ↑
-PrismaUserRepository
+TransactionRepository
+        ↑
+PrismaTransactionRepository
 ```
 
 The domain should not depend directly on Prisma.
@@ -423,38 +483,33 @@ The domain should not depend directly on Prisma.
 
 # 9. Repository Pattern
 
-Repositories are defined as abstractions in the domain:
+Repositories are defined as abstractions in the domain.
+
+Example:
 
 ```text
-modules/users/domain/repositories/
+modules/transactions/domain/repositories/
 ```
 
 Concrete implementations belong in:
 
 ```text
-modules/users/infrastructure/repositories/
+modules/transactions/infrastructure/repositories/
 ```
 
 Example:
 
 ```text
-UserRepository
-      ↑
-PrismaUserRepository
+TransactionRepository
+        ↑
+PrismaTransactionRepository
 ```
 
 NestJS dependency injection binds the abstraction to the implementation.
 
 Do not inject Prisma directly into application/domain services when a repository abstraction already exists.
 
-The current `UserRepository` supports:
-
-- `create`
-- `findByEmail`
-- `findById`
-- `findPermissionsByUserId`
-
-This allows authentication and authorization logic to remain independent from Prisma.
+Ownership checks for user-owned resources must be enforced at the repository boundary.
 
 ---
 
@@ -478,18 +533,10 @@ src/infrastructure/database/prisma/
 Business-specific Prisma repositories belong under their respective module:
 
 ```text
-src/modules/users/infrastructure/repositories/
+src/modules/<module>/infrastructure/repositories/
 ```
 
-Current implementation:
-
-```text
-PrismaService
-      ↓
-PrismaUserRepository
-      ↓
-UserRepository abstraction
-```
+Prisma Decimal values must be converted at the infrastructure/domain boundary.
 
 ---
 
@@ -505,25 +552,16 @@ Examples:
 
 ```text
 *.service.spec.ts
+*.controller.spec.ts
+*.guard.spec.ts
+*.strategy.spec.ts
 ```
 
 Unit tests should mock dependencies.
 
 They should not require a real database.
 
-Current authorization unit coverage includes:
-
-- No permissions required
-- Required permission exists
-- Missing permission
-- Wildcard permission
-- Missing authenticated identity
-- Multiple required permissions
-- All required permissions
-- Wildcard with multiple required permissions
-- Permission metadata lookup
-
----
+Every implementation change must have corresponding test coverage appropriate to the layer being changed.
 
 ## Integration Tests
 
@@ -539,13 +577,11 @@ Integration tests may use the real PostgreSQL test database.
 
 The test database must be separate from development/production databases.
 
-Current test database expectation:
+Current test database:
 
 ```text
 wealthwise_test_db
 ```
-
----
 
 ## E2E Tests
 
@@ -573,32 +609,11 @@ Current E2E coverage includes:
 
 ```text
 test/e2e/
-
 ├── users.e2e-spec.ts
 ├── auth.e2e-spec.ts
-└── authorization.e2e-spec.ts
+├── authorization.e2e-spec.ts
+└── transactions.e2e-spec.ts
 ```
-
-Authentication E2E coverage includes:
-
-- Successful login
-- Unknown email
-- Invalid password
-- Invalid email
-- Invalid password length
-- Unexpected fields
-- Missing JWT
-- Invalid JWT
-- Valid JWT
-- JWT payload verification
-
-Authorization E2E coverage includes:
-
-- Super admin can perform protected operation
-- Normal user is authenticated but forbidden
-- User without roles cannot create users
-- Valid JWT alone does not grant permissions
-- Permission-based access is enforced through the HTTP layer
 
 ---
 
@@ -648,7 +663,7 @@ Full validation:
 npm run check
 ```
 
-The preferred validation sequence when making substantial backend changes is:
+For substantial backend changes, the preferred validation sequence is:
 
 ```bash
 npm run db:validate
@@ -658,6 +673,8 @@ npm test
 npm run test:integration
 npm run test:e2e -- --runInBand
 ```
+
+Use the smallest relevant test command during incremental development, then run the appropriate full validation before establishing a milestone checkpoint.
 
 ---
 
@@ -719,6 +736,10 @@ npm run db:test:migrate
 npm run db:seed:test
 ```
 
+The development and test databases must remain separate.
+
+When a schema migration already exists, apply it to the appropriate database rather than creating a duplicate migration.
+
 ---
 
 # 14. Coding Style
@@ -749,6 +770,8 @@ Avoid:
 - Duplicated business rules
 - Global utility dumping grounds
 - Premature microservices
+
+For Jest mocks, prefer precise typing or `as never` where necessary rather than introducing `any`.
 
 ---
 
@@ -808,14 +831,16 @@ This keeps API contracts separate from application use-case inputs.
 For example:
 
 ```text
-CreateUserDto
-      ↓
-UsersController
-      ↓
-CreateUserInput
-      ↓
-UsersService
+CreateTransactionDto
+        ↓
+TransactionsController
+        ↓
+CreateTransactionInput
+        ↓
+TransactionsService
 ```
+
+Do not create DTO-specific unit tests unless there is a concrete reason to test behavior that cannot be covered adequately through controller/E2E validation.
 
 ---
 
@@ -829,19 +854,9 @@ domain/entities/
 
 They should represent business concepts rather than database records.
 
-The current `User` entity contains:
+Domain entities must remain independent from Prisma and HTTP.
 
-- id
-- email
-- passwordHash
-- firstName
-- lastName
-- createdAt
-- updatedAt
-
-The domain entity is independent from Prisma.
-
-The `passwordHash` exists because authentication requires access to the credential representation internally, but it must never cross the public API boundary.
+Financial domain entities must not expose Prisma Decimal types.
 
 ---
 
@@ -864,26 +879,33 @@ Business-specific exceptions belong inside the owning module.
 Example:
 
 ```text
-users/presentation/exceptions/
+transactions/presentation/exceptions/
 ```
 
 Do not create module-specific exceptions in `common`.
 
-Current authentication behavior distinguishes:
+Current transaction error codes include:
+
+```text
+INVALID_TRANSACTION
+TRANSACTION_NOT_FOUND
+TRANSACTION_ALREADY_REVERSED
+TRANSACTION_CANNOT_BE_REVERSED
+```
+
+Authentication failures use:
 
 ```text
 401 Unauthorized
 ```
 
-from:
+Authorization failures use:
 
 ```text
 403 Forbidden
 ```
 
-Authentication failures use `401`.
-
-Authorization failures use `403`.
+Resource ownership failures intentionally use not-found semantics where appropriate to avoid exposing another user's resources.
 
 ---
 
@@ -943,7 +965,7 @@ JwtService.signAsync()
 Access Token
 ```
 
-The JWT currently contains:
+The JWT contains only the required identity claims, currently:
 
 ```typescript
 {
@@ -970,15 +992,8 @@ Password handling follows these rules:
 8. Passwords and password hashes must never be logged.
 9. Password input must have a reasonable minimum and bounded maximum length.
 10. Password policy should prioritize length and resistance to guessing rather than arbitrary complexity requirements.
-11. Brute-force protection must eventually be implemented for authentication endpoints.
+11. Login brute-force protection is implemented.
 12. Password reset/change flows require dedicated security design.
-
-Current login DTO validates:
-
-```text
-email → valid email format
-password → string + minimum length
-```
 
 ---
 
@@ -1013,12 +1028,16 @@ users:create
 users:read
 users:update
 users:delete
+
+accounts:create
+accounts:read
+accounts:update
 ```
 
 Controllers declare required permissions:
 
 ```typescript
-@Permissions('users:create')
+@Permissions('accounts:read')
 ```
 
 The `PermissionsGuard` retrieves the authenticated user's permissions and determines whether access is allowed.
@@ -1059,25 +1078,33 @@ Current authorization behavior:
 
 ```text
 No @Permissions(...)
+
        ↓
+
 Request allowed by PermissionsGuard
 ```
 
 ### Required permission exists
 
 ```text
-users:create
+accounts:read
+
        ↓
+
 Allowed
 ```
 
 ### Required permission missing
 
 ```text
-users:create
+accounts:update
+
        ↓
-User only has users:read
+
+User only has accounts:read
+
        ↓
+
 403 Forbidden
 ```
 
@@ -1085,7 +1112,9 @@ User only has users:read
 
 ```text
 *
+
        ↓
+
 All permissions allowed
 ```
 
@@ -1093,7 +1122,7 @@ All permissions allowed
 
 The current implementation uses **AND semantics**:
 
-```text
+```typescript
 @Permissions(
   'users:create',
   'users:read',
@@ -1114,30 +1143,36 @@ Expected API format:
 /api/v1/...
 ```
 
-Health endpoint remains unversioned.
-
-Example:
+Health endpoint remains unversioned:
 
 ```text
 /health
 ```
 
-Current authentication endpoint:
+Current endpoints include:
 
 ```text
 POST /api/v1/auth/login
-```
 
-Current user endpoint:
-
-```text
 GET /api/v1/users/me
-```
 
-Current protected user creation endpoint:
-
-```text
 POST /api/v1/users
+
+POST /api/v1/accounts
+
+GET /api/v1/accounts
+
+GET /api/v1/accounts/:id
+
+PATCH /api/v1/accounts/:id/archive
+
+POST /api/v1/transactions
+
+GET /api/v1/transactions
+
+GET /api/v1/transactions/:id
+
+POST /api/v1/transactions/:id/reversal
 ```
 
 ---
@@ -1162,13 +1197,6 @@ Current configuration areas include:
 - Environment validation
 
 Use `ConfigService` where configuration is required.
-
-JWT configuration includes:
-
-```text
-JWT_SECRET
-JWT_EXPIRES_IN
-```
 
 Secrets must come from environment/secret management and must not be committed to source control.
 
@@ -1197,7 +1225,7 @@ Never log:
 - Refresh tokens
 - Sensitive financial information
 
-Authentication and authorization failures should eventually provide useful operational information without exposing credentials or sensitive data.
+Authentication and authorization failures should provide useful operational information without exposing credentials or sensitive data.
 
 ---
 
@@ -1205,14 +1233,15 @@ Authentication and authorization failures should eventually provide useful opera
 
 Swagger/OpenAPI is part of the backend.
 
-When adding public APIs, consider:
+When adding public APIs, document as appropriate:
 
-- Request DTO documentation
-- Response documentation
+- Request DTOs
+- Response DTOs
 - Authentication requirements
 - API versioning
 - Error responses
 - Authorization requirements
+- Pagination semantics
 
 ---
 
@@ -1235,6 +1264,7 @@ Always consider:
 - Brute-force protection
 - Credential lifecycle
 - Token lifecycle
+- User ownership/isolation
 
 Never log:
 
@@ -1262,24 +1292,7 @@ The admin user is created/upserted with the `SUPER_ADMIN` role.
 
 The password hash is regenerated from the configured seed password.
 
-When the admin user already exists, the seed must synchronize the password hash as well as the account metadata.
-
-Current seed behavior:
-
-```text
-SEED_ADMIN_PASSWORD
-        ↓
-bcrypt.hash()
-        ↓
-passwordHash
-        ↓
-User upsert
-        ↓
-existing user → passwordHash updated
-new user      → passwordHash created
-```
-
-This prevents stale test/development credentials when the environment password changes.
+When the admin user already exists, the seed must synchronize the password hash as well as account metadata.
 
 The admin role assignment is also idempotent through the `UserRole` upsert.
 
@@ -1287,38 +1300,60 @@ The admin role assignment is also idempotent through the `UserRole` upsert.
 
 # 31. Current Testing Status
 
-The authentication and authorization implementation has passed the current regression tests.
-
-Current status:
+The current backend foundation, authentication, authorization, Accounts module, and Transactions module are green.
 
 ```text
-User E2E                         ✅
-Authentication E2E               ✅
-Authorization E2E                ✅
-PermissionsGuard unit tests      ✅
-User service tests               ✅
-Password hasher tests            ✅
-Repository integration tests     ✅
-Build                            ✅
-Lint                             ✅
+User E2E                              ✅
+Authentication E2E                    ✅
+Authorization E2E                     ✅
+PermissionsGuard unit tests           ✅
+User service tests                    ✅
+Password hasher tests                 ✅
+Repository integration tests          ✅
+Accounts tests                        ✅
+Transactions service tests            ✅
+Transactions controller tests         ✅
+Transactions E2E                      ✅
+Build                                 ✅
+Lint                                  ✅
+Full project check                    ✅
 ```
 
-The authorization E2E suite validates the important distinction:
+Transactions E2E coverage includes:
 
 ```text
-No/invalid authentication
-        ↓
-401 Unauthorized
-```
-
-versus:
-
-```text
-Valid authentication
-        ↓
-Missing permission
-        ↓
-403 Forbidden
+Create transaction
+Unauthenticated create
+Cross-user ownership protection
+Amount validation
+Decimal precision validation
+Integer digit validation
+Transaction type validation
+Currency validation
+Account currency consistency
+Archived account protection
+Transaction date validation
+Description validation
+Unexpected-field rejection
+Maximum amount boundary
+Currency normalization
+Null description
+Get transaction
+Cross-user transaction protection
+List transactions
+Pagination
+Deterministic ordering
+Reversal creation
+Unauthenticated reversal
+Expense → income reversal
+Duplicate reversal protection
+Reversal-of-reversal protection
+Missing transaction reversal
+Cross-user reversal protection
+Invalid reversal date
+Reversal description validation
+Unexpected reversal fields
+Null reversal description
 ```
 
 ---
@@ -1393,9 +1428,11 @@ The architecture currently satisfies the major requirements:
 
 ---
 
-# 33. Known Architectural Review Item
+# 33. Known Architectural Review Items
 
-There is one known implementation-level ownership issue that should be reviewed later.
+Known improvements that are not currently required to complete the active milestone should be recorded rather than forcing unnecessary refactoring.
+
+One known authorization ownership issue:
 
 `PermissionsGuard` belongs conceptually to the Auth module:
 
@@ -1403,20 +1440,20 @@ There is one known implementation-level ownership issue that should be reviewed 
 modules/auth/infrastructure/guards/permissions.guard.ts
 ```
 
-However, the current NestJS provider wiring requires it to be available through the Users module because it depends on `UserRepository`.
+However, current NestJS provider wiring requires availability through the Users module because it depends on `UserRepository`.
 
 This currently works and is covered by tests.
 
 **Do not perform a file move or module redesign merely to correct this.**
 
-Treat it as a future architectural refinement when the Auth module is hardened.
-
-Any future change must preserve:
+Future changes must preserve:
 
 - Auth module ownership
 - User repository abstraction
 - Existing authorization behavior
 - Existing E2E tests
+
+Other production-hardening opportunities may similarly be recorded as review items when they are not required immediately.
 
 ---
 
@@ -1456,6 +1493,7 @@ First determine:
 - What dependencies already exist?
 - What tests should change?
 - What security implications exist?
+- Does the requested change reopen a completed milestone unnecessarily?
 
 ## Step 2 — Preserve Architecture
 
@@ -1463,15 +1501,28 @@ Reuse the existing architecture before introducing new abstractions.
 
 Do not create duplicate patterns.
 
-For example, if a repository abstraction already exists, use it.
+If a repository abstraction already exists, use it.
 
-Do not create another repository pattern beside it.
+## Step 3 — Check Existing Code
 
-## Step 3 — Implement
+Before adding files or changing structure:
+
+- Inspect the existing implementation.
+- Inspect existing tests.
+- Reuse existing exceptions.
+- Reuse existing response patterns.
+- Reuse existing validation patterns.
+- Do not assume a missing abstraction exists merely because documentation is old.
+
+## Step 4 — Implement
 
 Make the smallest clean change that satisfies the requirement.
 
-## Step 4 — Test
+Do not make unrelated improvements at the same time.
+
+## Step 5 — Test
+
+Every implementation change must have corresponding tests.
 
 Add/update the appropriate:
 
@@ -1479,9 +1530,11 @@ Add/update the appropriate:
 - Integration tests
 - E2E tests
 
-## Step 5 — Validate
+Do not add redundant tests solely for the sake of increasing test count.
 
-Prefer running:
+## Step 6 — Validate
+
+Prefer:
 
 ```bash
 npm run db:validate
@@ -1492,7 +1545,9 @@ npm run test:integration
 npm run test:e2e -- --runInBand
 ```
 
-## Step 6 — Explain
+Use targeted tests first during development.
+
+## Step 7 — Explain
 
 When reporting the change, explain:
 
@@ -1501,7 +1556,8 @@ When reporting the change, explain:
 - Files affected
 - Architectural impact
 - Tests executed
-- Any remaining risks
+- Remaining risks
+- Whether a Git checkpoint should be created
 
 ---
 
@@ -1522,8 +1578,9 @@ Unless explicitly requested, do not:
 - Change API contracts
 - Change database schema
 - Modify unrelated modules
+- Reopen completed modules without a concrete requirement
 
-If a change appears architecturally necessary, explain it first.
+If a potential improvement is discovered but is not required, record it as a review item and continue with the planned roadmap.
 
 ---
 
@@ -1557,13 +1614,15 @@ feature + refactor + dependency upgrade + unrelated formatting
 
 in one commit.
 
-Current authentication/authorization milestone was committed after all tests became green.
+Each major completed milestone should establish a clean Git checkpoint.
+
+The Transactions milestone has already been committed after the implementation and full test suite became green.
 
 ---
 
 # 38. Current Project Progress
 
-The WealthWise backend foundation and the first financial domain module have been implemented.
+The WealthWise backend foundation, authentication/authorization, financial foundation, Accounts module, and Transactions module have been implemented.
 
 The actual source tree and current implementation remain the source of truth.
 
@@ -1571,6 +1630,7 @@ The actual source tree and current implementation remain the source of truth.
 
 ```text
 Foundation
+
 ├── NestJS application                    ✅
 ├── Configuration                         ✅
 ├── Environment validation                ✅
@@ -1592,6 +1652,7 @@ Foundation
 
 ```text
 Users
+
 ├── User domain entity                    ✅
 ├── Repository abstraction                ✅
 ├── Prisma repository                     ✅
@@ -1608,6 +1669,7 @@ Users
 
 ```text
 Authentication
+
 ├── Password hashing                      ✅
 ├── Login                                 ✅
 ├── JWT generation                        ✅
@@ -1625,6 +1687,7 @@ Authentication
 
 ```text
 Authorization
+
 ├── Permission model                      ✅
 ├── Permissions decorator                 ✅
 ├── PermissionsGuard                      ✅
@@ -1640,10 +1703,9 @@ Authorization
 
 ## Authentication Hardening
 
-Authentication hardening has been completed.
-
 ```text
 Authentication Hardening
+
 ├── Password & credential security         ✅
 ├── JWT security review                   ✅
 ├── Login failure handling                ✅
@@ -1657,35 +1719,6 @@ Authentication Hardening
 └── Production authentication review      ✅
 ```
 
-Important security decisions:
-
-```text
-Passwords
-├── Plaintext storage                     ❌
-├── Password in JWT                       ❌
-├── Password in API response              ❌
-└── Password/hash in logs                 ❌
-
-JWT
-├── Secret from configuration             ✅
-├── Expiration configured                 ✅
-├── Signature validation                  ✅
-├── Invalid token rejection               ✅
-├── User existence validation             ✅
-└── Sensitive claims excluded             ✅
-
-Authorization
-├── Permission checked at request time    ✅
-├── Permission changes take effect        ✅
-└── Wildcard permission supported         ✅
-
-Logging
-├── Passwords excluded                    ✅
-├── Password hashes excluded              ✅
-├── JWT/access tokens excluded             ✅
-└── Sensitive financial information       ✅
-```
-
 ---
 
 # 39. Financial Domain Foundation
@@ -1696,6 +1729,7 @@ The financial domain foundation has been established before implementing financi
 
 ```text
 Financial Domain
+
 ├── Money representation                  ✅
 ├── Decimal / NUMERIC strategy            ✅
 ├── Currency strategy                     ✅
@@ -1713,7 +1747,7 @@ Financial Domain
 └── Architecture review                   ✅
 ```
 
-### Money
+## Money
 
 JavaScript `number` is not used as the authoritative representation of financial amounts.
 
@@ -1731,7 +1765,7 @@ Domain monetary string
 
 A dedicated Money value object can be introduced later if domain complexity requires it.
 
-### Currency
+## Currency
 
 Currencies use ISO-4217-style three-character currency codes.
 
@@ -1743,21 +1777,21 @@ USD
 SGD
 ```
 
-Currency conversion is not part of the Accounts module.
+Currency conversion is not part of the basic Accounts or Transactions calculation model.
 
-### Ownership
+## Ownership
 
 All user-owned financial resources must enforce ownership at the repository boundary.
 
 Example:
 
 ```text
-findByIdForUser(accountId, userId)
+findByIdForUser(resourceId, userId)
 ```
 
 A resource belonging to another user must not be exposed merely because its ID is known.
 
-### Financial Record Lifecycle
+## Financial Record Lifecycle
 
 Financial records should not be physically deleted when doing so would destroy financial history.
 
@@ -1769,6 +1803,18 @@ ACTIVE
    │ archive
    ▼
 ARCHIVED
+```
+
+For Transactions:
+
+```text
+Created
+   │
+   ├── immutable
+   │
+   └── correction
+          ↓
+       reversal
 ```
 
 ---
@@ -1783,6 +1829,7 @@ It is the first completed financial business module in WealthWise.
 
 ```text
 Accounts
+
 ├── Account creation                     ✅
 ├── Account retrieval                    ✅
 ├── Account listing                      ✅
@@ -1899,7 +1946,7 @@ Prisma
 PostgreSQL
 ```
 
-The module follows the project's established:
+The module follows:
 
 ```text
 Presentation
@@ -1911,68 +1958,632 @@ Domain
 Infrastructure
 ```
 
-architecture.
-
 Prisma remains an infrastructure concern.
 
 ---
 
-# 41. Accounts Testing Status
+# 41. Transactions Module
 
-The Accounts module has completed the required testing layers.
+The Transactions module is **COMPLETE**.
+
+Transactions are the second completed financial business module.
+
+## Transaction Scope
+
+The initial Transactions module supports:
 
 ```text
-Accounts Domain Tests                  ✅
-Accounts Service Tests                ✅
-Accounts Repository Tests             ✅
-Accounts Controller Tests             ✅
-Accounts Integration Tests            ✅
-Accounts E2E Tests                    ✅
-Ownership Isolation Tests              ✅
-Authentication Tests                  ✅
-Authorization Tests                    ✅
-Archive Lifecycle Tests                ✅
-Swagger/API documentation              ✅
-Build                                  ✅
-Lint                                   ✅
-Full project validation                ✅
+Transactions
+
+├── Transaction creation                ✅
+├── Transaction retrieval               ✅
+├── Transaction listing                 ✅
+├── Pagination                          ✅
+├── Deterministic ordering              ✅
+├── Ownership isolation                 ✅
+├── Transaction validation              ✅
+├── Currency validation                 ✅
+├── Account currency consistency        ✅
+├── Account status validation           ✅
+├── Transaction date validation         ✅
+├── Description validation              ✅
+├── Immutable transaction model         ✅
+├── Reversal workflow                   ✅
+├── Reversal ownership protection       ✅
+├── Duplicate reversal protection       ✅
+├── Reversal-of-reversal protection     ✅
+├── Authentication                     ✅
+├── Swagger documentation               ✅
+├── Service tests                       ✅
+├── Controller tests                    ✅
+├── E2E tests                           ✅
+└── Green validation                    ✅
 ```
 
-Important E2E scenarios include:
+## Transaction Types
 
 ```text
-Unauthenticated request
-        ↓
-401 Unauthorized
+INCOME
+EXPENSE
+```
 
-Authenticated user
-        ↓
-Missing accounts:update
-        ↓
-403 Forbidden
+The transaction amount is always represented as a positive monetary value.
 
-Account owner
-        ↓
-PATCH /accounts/:id/archive
-        ↓
-200 OK
-        ↓
-ARCHIVED
+The transaction type determines its financial direction.
 
-Already archived
-        ↓
-409 Conflict
+```text
+INCOME
+    → increases account balance
 
-Another user's account
+EXPENSE
+    → decreases account balance
+```
+
+Negative transaction amounts are not used.
+
+## Transaction Ownership
+
+A Transaction belongs to exactly one Account.
+
+An Account belongs to exactly one User.
+
+Therefore:
+
+```text
+Transaction
+    ↓
+Account
+    ↓
+User
+```
+
+The Transaction table does **not** duplicate `userId`.
+
+Ownership is enforced through the Account relationship.
+
+Repository methods use user-aware queries such as:
+
+```text
+findByIdForUser(transactionId, userId)
+```
+
+and:
+
+```text
+findAllByAccountForUser(...)
+```
+
+Cross-user access behaves as not-found where appropriate.
+
+## Transaction Dates
+
+Two different timestamps are maintained:
+
+```text
+transactionDate
+    ↓
+When the financial event occurred
+
+createdAt
+    ↓
+When the record was created
+```
+
+Financial reporting and historical calculations must use `transactionDate`, not `createdAt`.
+
+## Transaction Immutability
+
+Transactions are treated as immutable financial records.
+
+There is no initial physical-delete workflow.
+
+Corrections use reversal transactions.
+
+---
+
+# 42. Transaction Reversal Model
+
+A transaction can be reversed by creating a new transaction.
+
+Example:
+
+```text
+Original:
+
+EXPENSE
+RM 200
+```
+
+Reversal:
+
+```text
+INCOME
+RM 200
+reversalOfTransactionId = original.id
+```
+
+Therefore:
+
+```text
+Original Expense       -RM 200
+Reversal Income        +RM 200
+                       --------
+Net financial effect       RM 0
+```
+
+The reversal itself is an ordinary transaction and therefore naturally participates in future balance/reporting calculations.
+
+## Reversal Rules
+
+```text
+Original transaction
         ↓
-404 Not Found
+Can be reversed once
+        ↓
+Reversal transaction
+```
+
+A reversal cannot itself be reversed.
+
+A transaction cannot have multiple reversal transactions.
+
+The database enforces the one-reversal relationship using:
+
+```prisma
+@@unique([reversalOfTransactionId])
+```
+
+This database constraint provides the final concurrency-level protection against duplicate reversals.
+
+The application also performs a pre-check to provide a clean business response during normal sequential requests.
+
+## Reversal API
+
+```text
+POST /api/v1/transactions/:id/reversal
+```
+
+The client supplies only:
+
+```text
+transactionDate
+description
+```
+
+The service derives:
+
+```text
+accountId
+type
+amount
+currency
+reversalOfTransactionId
+```
+
+from the original transaction.
+
+---
+
+# 43. Transaction Database Model
+
+Current transaction schema conceptually:
+
+```text
+Transaction
+
+id
+accountId
+type
+amount
+currency
+description
+transactionDate
+reversalOfTransactionId
+createdAt
+updatedAt
+```
+
+Relevant database constraints/indexes include:
+
+```text
+Primary key:
+id
+
+Index:
+accountId
+
+Index:
+accountId + transactionDate
+
+Unique:
+reversalOfTransactionId
+```
+
+Transaction monetary amounts use:
+
+```text
+Decimal(19,4)
+```
+
+The application/domain representation remains a string.
+
+The Prisma repository converts Decimal values into fixed four-decimal string representations.
+
+---
+
+# 44. Transaction Validation
+
+Current transaction validation rules include:
+
+```text
+Transaction type
+    → INCOME | EXPENSE
+
+Currency
+    → exactly 3 uppercase ISO-style letters
+
+Amount
+    → positive
+    → 1–15 integer digits
+    → optional 1–4 decimal digits
+
+Description
+    → nullable
+    → maximum 255 characters
+
+Transaction date
+    → valid date
+
+Account
+    → must exist
+    → must belong to authenticated user
+    → currency must match
+    → must satisfy account status rules
+```
+
+The validation helpers remain in the existing transaction validation file.
+
+Do not create a new `domain/utils` directory merely for transaction validation helpers.
+
+---
+
+# 45. Transaction API
+
+Current APIs:
+
+```text
+POST /api/v1/transactions
+
+GET /api/v1/transactions
+
+GET /api/v1/transactions/:id
+
+POST /api/v1/transactions/:id/reversal
+```
+
+Transaction listing uses page-based HTTP pagination.
+
+Current request semantics:
+
+```text
+page
+limit
+accountId
+```
+
+The repository internally uses:
+
+```text
+offset
+limit
+```
+
+This is an intentional separation between API pagination semantics and database pagination mechanics.
+
+Current deterministic transaction ordering:
+
+```text
+transactionDate DESC
+createdAt DESC
+```
+
+The transaction list response includes pagination metadata:
+
+```text
+page
+limit
+total
+totalPages
+hasNextPage
+hasPreviousPage
 ```
 
 ---
 
-# 42. Completed Milestones
+# 46. Transaction Testing Status
 
-The current completed milestones are:
+The Transactions module has completed its required current testing scope.
+
+```text
+Transaction domain                    ✅
+Transaction validation                ✅
+Transaction service tests             ✅
+Transaction controller tests          ✅
+Transaction repository implementation ✅
+Transaction E2E tests                 ✅
+Ownership isolation                   ✅
+Authentication                        ✅
+Pagination                            ✅
+Ordering                              ✅
+Reversal workflow                     ✅
+Reversal E2E coverage                 ✅
+Database migration                    ✅
+Build                                 ✅
+Lint                                  ✅
+Full project check                    ✅
+```
+
+The transaction E2E test database migration was required because the new:
+
+```text
+reversal_of_transaction_id
+```
+
+column must exist in the test database as well as the development database.
+
+The existing migration was applied to the test database; a duplicate migration was not created.
+
+---
+
+# 47. Account Balance — Next Financial Capability
+
+The next financial capability is **Account Balance**.
+
+Transactions are complete and should not be reopened merely because balance calculation will consume transaction data.
+
+The next milestone begins from the completed state:
+
+```text
+Accounts
+    ↓
+Transactions
+    ↓
+Account Balance
+```
+
+## Balance Definition
+
+For a single account:
+
+```text
+Current Balance
+=
+Opening Balance
++
+SUM(INCOME)
+-
+SUM(EXPENSE)
+```
+
+Reversals require no special balance formula because they are ordinary transactions.
+
+Example:
+
+```text
+Opening balance              RM 1,000.00
+
+Salary — INCOME              +RM 5,000.00
+Lunch — EXPENSE              -RM    50.00
+Shopping — EXPENSE           -RM   200.00
+Shopping reversal — INCOME   +RM   200.00
+
+Current balance              RM 5,950.00
+```
+
+## Balance Source of Truth
+
+The initial implementation should **not** add a mutable `currentBalance` column to `Account`.
+
+The authoritative information remains:
+
+```text
+openingBalance
++
+immutable transaction history
+```
+
+The balance is derived from those records.
+
+This avoids maintaining two competing financial sources of truth.
+
+## Currency
+
+An Account has one currency.
+
+Transactions belonging to the Account must use the same currency.
+
+Therefore an individual account balance does not require FX conversion.
+
+Multi-currency aggregation is a separate future concern.
+
+## Archived Accounts
+
+Archived accounts retain their financial history and balance.
+
+Archiving means:
+
+```text
+No new supported activity
+```
+
+It does not mean:
+
+```text
+Financial history disappears
+```
+
+Therefore an archived account can still have its balance calculated/retrieved.
+
+---
+
+# 48. Account Balance Architecture
+
+The initial balance capability should follow:
+
+```text
+HTTP
+ │
+ ▼
+AccountsController
+ │
+ ▼
+AccountsService
+ │
+ ▼
+AccountRepository
+ │
+ ▼
+PrismaAccountRepository
+ │
+ ▼
+PostgreSQL aggregate
+ │
+ ▼
+Decimal result
+ │
+ ▼
+API response string
+```
+
+The controller should not:
+
+- load all transactions
+- perform financial aggregation
+- perform database queries directly
+- implement ownership logic
+
+The database should perform the aggregate calculation rather than loading an entire transaction history into Node.js.
+
+This is important for production scalability.
+
+The exact repository abstraction should be inspected before introducing another abstraction.
+
+Do not create a second account repository pattern if the existing `AccountRepository` can naturally support the use case.
+
+---
+
+# 49. Account Balance API — Planned
+
+The planned initial endpoint is:
+
+```text
+GET /api/v1/accounts/:id/balance
+```
+
+Conceptual response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "accountId": "...",
+    "currency": "MYR",
+    "balance": "5750.0000"
+  },
+  "meta": {}
+}
+```
+
+The final response precision/format must follow the existing financial representation conventions and implementation after the repository calculation is established.
+
+The balance must remain a string at the API boundary.
+
+Ownership must be enforced:
+
+```text
+Authenticated User
+        ↓
+Account ID
+        ↓
+Account belongs to user?
+        ↓
+Yes → balance
+No  → not found
+```
+
+---
+
+# 50. Account Balance Implementation Sequence
+
+The Account Balance milestone should proceed in this order:
+
+```text
+Account Balance
+
+├── 1. Domain/business rules                ⏳
+├── 2. Existing repository review           ⏳
+├── 3. Repository balance abstraction       ⏳
+├── 4. Prisma aggregate implementation      ⏳
+├── 5. Application service                  ⏳
+├── 6. Response DTO                         ⏳
+├── 7. Controller endpoint                  ⏳
+├── 8. Unit tests                           ⏳
+├── 9. Integration tests                    ⏳
+├── 10. E2E tests                           ⏳
+├── 11. Ownership tests                     ⏳
+├── 12. Decimal/reversal tests              ⏳
+├── 13. Archived-account tests              ⏳
+├── 14. Full validation                     ⏳
+└── 15. Focused Git checkpoint              ⏳
+```
+
+Do not implement balance logic before confirming the existing Accounts repository/service structure.
+
+---
+
+# 51. Financial Development Roadmap
+
+The current financial roadmap is:
+
+```text
+Financial Domain
+
+├── Foundation                         ✅
+│
+├── Accounts                           ✅ COMPLETE
+│
+├── Transactions                       ✅ COMPLETE
+│
+├── Account Balance                    ⏳ NEXT
+│
+├── Income                             ⏳
+│
+├── Expenses                           ⏳
+│
+├── Transfers                          ⏳
+│
+├── Budgets                            ⏳
+│
+├── Savings                            ⏳
+│
+├── Financial Goals                    ⏳
+│
+├── Fixed Deposits                     ⏳
+│
+├── Recurring Deposits                 ⏳
+│
+├── Investments                        ⏳
+│
+└── Reporting / Analytics              ⏳
+```
+
+The ordering may evolve as architectural dependencies become clearer, but completed milestones should not be reopened without a concrete reason.
+
+---
+
+# 52. Completed Milestones
+
+Current completed milestones:
 
 ```text
 WealthWise Backend Foundation
@@ -1998,123 +2609,142 @@ Financial Domain Foundation
 Accounts Module
         ↓
         ✅ COMPLETE
+
+Transactions Module
+        ↓
+        ✅ COMPLETE
 ```
 
 ---
 
-# 43. Current Financial Development Phase
-
-The project is now entering the next financial capability.
-
-```text
-Financial Domain
-│
-├── Foundation                         ✅
-│
-├── Accounts                           ✅ COMPLETE
-│
-├── Transactions                       ⏳ NEXT
-│
-├── Income                             ⏳
-├── Expenses                           ⏳
-├── Budgets                            ⏳
-├── Savings                            ⏳
-├── Financial Goals                    ⏳
-├── Fixed Deposits                     ⏳
-├── Recurring Deposits                 ⏳
-├── Investments                        ⏳
-└── Reporting / Analytics               ⏳
-```
-
-The next module is **Transactions**.
-
-However, implementation should not begin immediately.
-
-Transactions are more financially sensitive than Accounts because they introduce:
-
-- money movement
-- debit/credit semantics
-- account balance effects
-- transaction dates
-- immutable financial records
-- reversal/correction strategy
-- database transactions
-- concurrency
-- idempotency considerations
-- ownership enforcement
-- currency consistency
-- future reporting requirements
-
-Therefore, the next milestone begins with:
-
-```text
-Transactions
-    ↓
-Domain & Business Rules
-    ↓
-Transaction Model
-    ↓
-Money Movement Semantics
-    ↓
-Database Design
-    ↓
-Architecture Review
-    ↓
-Implementation
-    ↓
-Tests
-    ↓
-E2E
-    ↓
-Validation
-    ↓
-Focused Commit
-```
-
-Do not add transaction implementation before these rules are explicitly established.
-
----
-
-# 44. Current Project Status
+# 53. Current Project Status
 
 ```text
 WEALTHWISE BACKEND
+
 ────────────────────────────────────────
 
 Core Foundation                    ✅ COMPLETE
+
 Users                              ✅ COMPLETE
+
 Authentication                     ✅ COMPLETE
+
 Authorization                      ✅ COMPLETE
+
 Authentication Hardening           ✅ COMPLETE
 
 Financial Domain Foundation        ✅ COMPLETE
+
 Accounts                           ✅ COMPLETE
 
-Transactions                       ⏳ NEXT
+Transactions                       ✅ COMPLETE
+
+Account Balance                    ⏳ NEXT
+
 Income                             ⏳
+
 Expenses                           ⏳
+
+Transfers                          ⏳
+
 Budgets                            ⏳
+
 Savings                            ⏳
+
 Financial Goals                    ⏳
-Deposits                           ⏳
+
+Deposits                            ⏳
+
 Investments                        ⏳
+
 Reporting                          ⏳
 
 ────────────────────────────────────────
 
 CURRENT MILESTONE
-└── Accounts                        ✅ COMPLETE
+
+└── Transactions                   ✅ COMPLETE
 
 CURRENT PHASE
+
 └── Financial Modules
 
 CURRENT TOPIC
-└── Transactions — Domain Design    ⏳ NEXT
+
+└── Account Balance — Domain Design  ⏳ NEXT
 ```
 
 ---
 
-# 45. Continuation Rule
+# 54. Current Engineering Checkpoint
+
+The latest completed checkpoint is:
+
+```text
+Transactions Module
+
+├── Implementation                   ✅
+├── Validation                       ✅
+├── Reversal workflow                ✅
+├── Unit tests                       ✅
+├── Controller tests                 ✅
+├── E2E tests                        ✅
+├── Test database migration          ✅
+├── Build                            ✅
+├── Lint                             ✅
+├── Full check                       ✅
+└── Git commit                       ✅
+```
+
+This is a **green checkpoint**.
+
+Do not modify the completed Transactions implementation unless:
+
+- a real defect is discovered,
+- a security issue is discovered,
+- a failing integration requirement requires it,
+- or the user explicitly requests a change.
+
+Potential future hardening improvements should not automatically interrupt the roadmap.
+
+---
+
+# 55. Known Transaction Hardening Review Items
+
+The current transaction implementation is complete for the current milestone.
+
+There are potential future hardening areas, including infrastructure-level handling of database constraint violations.
+
+For example, the database protects:
+
+```prisma
+@@unique([reversalOfTransactionId])
+```
+
+against concurrent duplicate reversals.
+
+The application currently performs an application-level duplicate reversal check before creation.
+
+A future infrastructure refinement may map a Prisma unique-constraint violation for `reversalOfTransactionId` to the existing:
+
+```text
+TRANSACTION_ALREADY_REVERSED
+```
+
+business exception.
+
+However:
+
+**Do not implement this merely because it is theoretically possible.**
+
+It is a hardening item and should only be introduced when we deliberately enter the relevant hardening step.
+
+The application service must remain independent from Prisma.
+
+---
+
+# 56. Continuation Rule
 
 When continuing WealthWise development:
 
@@ -2136,34 +2766,59 @@ When continuing WealthWise development:
 16. Do not assume a feature is production-ready merely because its happy path works.
 17. Record architectural improvements as review items when they are not required immediately.
 18. Keep implementation, tests, architecture, and documentation synchronized.
+19. Do not reopen completed Accounts or Transactions work without a concrete reason.
+20. Do not introduce new architecture simply to make two existing modules look identical unless the inconsistency creates a real engineering problem.
+21. When multiple valid implementation patterns already exist, prefer consistency for new work rather than retroactively rewriting completed modules.
+22. If a proposed improvement is not required for the current milestone, record it as a future review item and continue the roadmap.
+23. Always distinguish between **functional completion** and **future hardening opportunities**.
 
 ---
 
-# 46. Next Topic
+# 57. Next Topic
 
-## Transactions — Domain Design
+## Account Balance — Domain Design
 
-The next session should begin with the **Transactions domain design**, not implementation.
+The next session should begin with **Account Balance domain design**, not implementation.
 
-We will first answer:
+We will first establish:
 
 ```text
-What is a financial transaction?
-Why does WealthWise need it?
-What problem does it solve?
-What makes a transaction different from an Account?
-What data must be immutable?
-How does money move between accounts?
-How are income and expenses represented?
-What is the transaction date?
-What happens when a transaction is corrected?
-What is a reversal?
-How do database transactions protect financial consistency?
-How do we prevent cross-user access?
-How will future reporting depend on this model?
+What exactly is an account balance?
+
+What is the source of truth?
+
+How does openingBalance participate?
+
+How do INCOME transactions affect it?
+
+How do EXPENSE transactions affect it?
+
+How do reversal transactions affect it?
+
+Should transactionDate or createdAt be used?
+
+How does currency affect the calculation?
+
+What happens for archived accounts?
+
+How do we enforce ownership?
+
+Should balance be calculated in application code or PostgreSQL?
+
+What repository abstraction should expose the calculation?
+
+How should Decimal values cross the infrastructure boundary?
+
+How should the balance API be represented?
+
+How do we test correctness with reversals?
+
+How do we test large transaction histories?
+
+How do we avoid loading every transaction into memory?
 ```
 
-Only after these decisions are finalized will we design the Prisma schema and implementation.
+Only after these decisions are established should implementation begin.
 
 **Current position:**
 
@@ -2171,8 +2826,12 @@ Only after these decisions are finalized will we design the Prisma schema and im
 Accounts Module
       ↓
       ✅ COMPLETE
+
+Transactions Module
       ↓
-Transactions Domain Design
+      ✅ COMPLETE
+
+Account Balance — Domain Design
       ↓
       ⏳ NEXT
 ```
