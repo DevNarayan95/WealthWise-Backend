@@ -29,6 +29,16 @@ describe('Accounts (E2E)', () => {
   const testPrefix = `accounts-e2e-${Date.now()}`;
 
   const cleanupTestAccounts = async (): Promise<void> => {
+    await prisma.transaction.deleteMany({
+      where: {
+        account: {
+          userId: {
+            in: [authorizedUserId, secondAuthorizedUserId],
+          },
+        },
+      },
+    });
+
     await prisma.account.deleteMany({
       where: {
         userId: {
@@ -232,6 +242,16 @@ describe('Accounts (E2E)', () => {
   });
 
   afterAll(async () => {
+    await prisma.transaction.deleteMany({
+      where: {
+        account: {
+          userId: {
+            in: [authorizedUserId, secondAuthorizedUserId, unauthorizedUserId],
+          },
+        },
+      },
+    });
+
     /**
      * Remove only data created by this E2E suite.
      */
@@ -321,6 +341,23 @@ describe('Accounts (E2E)', () => {
         openingBalance: '1000.50',
         ...overrides,
       });
+  };
+
+  const createTransaction = (
+    accountId: string,
+    type: 'INCOME' | 'EXPENSE',
+    amount: string,
+    transactionDate = new Date('2026-08-15T12:00:00.000Z'),
+  ) => {
+    return prisma.transaction.create({
+      data: {
+        accountId,
+        type,
+        amount,
+        currency: 'MYR',
+        transactionDate,
+      },
+    });
   };
 
   describe('Authentication', () => {
@@ -914,6 +951,105 @@ describe('Accounts (E2E)', () => {
           currency: 'MYR',
           openingBalance: '-1250.5',
           status: 'ARCHIVED',
+        }),
+      );
+    });
+  });
+
+  describe('GET /api/v1/accounts/:id/balance', () => {
+    it('should return the opening balance when the account has no transactions', async () => {
+      const created = await createAccount(authorizedUserToken, {
+        openingBalance: '1000.50',
+      }).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/accounts/${created.body.data.id}/balance`)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.meta).toEqual({});
+      expect(response.body.data).toEqual({
+        accountId: created.body.data.id,
+        currency: 'MYR',
+        balance: '1000.5000',
+      });
+    });
+
+    it('should calculate balance from opening balance, income, and expenses', async () => {
+      const created = await createAccount(authorizedUserToken, {
+        openingBalance: '1000.0000',
+      }).expect(201);
+
+      const accountId = created.body.data.id;
+
+      await createTransaction(accountId, 'INCOME', '500.0000');
+      await createTransaction(accountId, 'EXPENSE', '200.0000');
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/accounts/${accountId}/balance`)
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toEqual({
+        accountId,
+        currency: 'MYR',
+        balance: '1300.0000',
+      });
+    });
+
+    it('should reject balance retrieval without authentication', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/accounts/${created.body.data.id}/balance`)
+        .expect(401);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject balance retrieval without accounts:read permission', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/accounts/${created.body.data.id}/balance`)
+        .set('Authorization', `Bearer ${unauthorizedUserToken}`)
+        .expect(403);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should return 404 when the account does not exist', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/accounts/4990c246-06bf-4a81-9c23-62e8265e895f/balance')
+        .set('Authorization', `Bearer ${authorizedUserToken}`)
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toEqual(
+        expect.objectContaining({
+          code: 'ACCOUNT_NOT_FOUND',
+          message: 'Account not found',
+        }),
+      );
+    });
+
+    it('should not expose another authorized user account balance', async () => {
+      const created = await createAccount(authorizedUserToken).expect(201);
+
+      await createTransaction(created.body.data.id, 'INCOME', '500.0000');
+
+      const response = await request(app.getHttpServer())
+        .get(`/api/v1/accounts/${created.body.data.id}/balance`)
+        .set('Authorization', `Bearer ${secondAuthorizedUserToken}`)
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toEqual(
+        expect.objectContaining({
+          code: 'ACCOUNT_NOT_FOUND',
+          message: 'Account not found',
         }),
       );
     });
