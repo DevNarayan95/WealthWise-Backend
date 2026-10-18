@@ -351,7 +351,11 @@ const appConfigFileSchema = joi
           .object({
             enabled: joi.boolean().required(),
             slowRequestMs: joi.number().integer().min(1).required(),
-            criticalRequestMs: joi.number().integer().min(1).required(),
+            criticalRequestMs: joi
+              .number()
+              .integer()
+              .min(joi.ref('slowRequestMs'))
+              .required(),
           })
           .required(),
         queryLogging: joi

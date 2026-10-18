@@ -122,6 +122,30 @@ describe('app-config', () => {
 
       expect(() => validateAppConfigFile(raw)).toThrow('mail.smtp.port');
     });
+
+    it('accepts a critical API threshold equal to the slow threshold', () => {
+      const raw = loadRawDefaults();
+      const apiBenchmark = (
+        raw.monitoring as { apiBenchmark: Record<string, number> }
+      ).apiBenchmark;
+      apiBenchmark.slowRequestMs = 1000;
+      apiBenchmark.criticalRequestMs = 1000;
+
+      expect(() => validateAppConfigFile(raw)).not.toThrow();
+    });
+
+    it('rejects a critical API threshold below the slow threshold', () => {
+      const raw = loadRawDefaults();
+      const apiBenchmark = (
+        raw.monitoring as { apiBenchmark: Record<string, number> }
+      ).apiBenchmark;
+      apiBenchmark.slowRequestMs = 2000;
+      apiBenchmark.criticalRequestMs = 1000;
+
+      expect(() => validateAppConfigFile(raw)).toThrow(
+        'monitoring.apiBenchmark.criticalRequestMs',
+      );
+    });
   });
 
   describe('assertSslFilesExist', () => {

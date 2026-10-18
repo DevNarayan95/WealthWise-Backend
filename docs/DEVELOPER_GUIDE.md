@@ -171,6 +171,15 @@ Search by request ID to follow one request:
 grep '<requestId>' logs/app.*.log
 ```
 
+Find slow requests and slow database queries (each line is JSON, so search on the `msg` field):
+
+```bash
+grep -E '"msg":"(Slow API request|Critical API request)"' logs/app.*.log
+grep '"msg":"Slow database query"' logs/app.*.log
+```
+
+Slow database query lines do not carry a request ID yet. Use the timestamp to match them with request lines.
+
 Common problems:
 
 | Problem                                           | Likely cause and fix                                                                                                                 |

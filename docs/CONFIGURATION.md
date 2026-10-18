@@ -198,15 +198,15 @@ Logs are written to two rolling files: an application log and an error log. A ne
 
 ### `monitoring`
 
-| Key                              | Default | Status                             |
-| -------------------------------- | ------- | ---------------------------------- |
-| `apiBenchmark.enabled`           | `true`  | Validated. Runtime use is planned. |
-| `apiBenchmark.slowRequestMs`     | `1000`  | Validated. Runtime use is planned. |
-| `apiBenchmark.criticalRequestMs` | `3000`  | Validated. Runtime use is planned. |
-| `queryLogging.enabled`           | `true`  | Validated. Runtime use is planned. |
-| `queryLogging.slowQueryMs`       | `500`   | Validated. Runtime use is planned. |
+| Key                              | Default | Effect                                                                                                                   |
+| -------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `apiBenchmark.enabled`           | `true`  | Turns on slow and critical API request logging.                                                                          |
+| `apiBenchmark.slowRequestMs`     | `1000`  | Requests at or above this duration log `Slow API request` (warn).                                                        |
+| `apiBenchmark.criticalRequestMs` | `3000`  | Requests at or above this duration log `Critical API request` (error). Must be greater than or equal to `slowRequestMs`. |
+| `queryLogging.enabled`           | `true`  | Turns on slow database query logging.                                                                                    |
+| `queryLogging.slowQueryMs`       | `500`   | Queries at or above this duration log `Slow database query` (warn).                                                      |
 
-These settings exist so that thresholds can be set per environment now. The code that applies them is not built yet.
+Thresholds are per environment, so UAT can use stricter values than local development. Query parameters are never logged.
 
 ### `cache` and `thirdParty`
 
