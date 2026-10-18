@@ -125,20 +125,21 @@ $ openssl rand -hex 32      # API keys
 
 ### Key settings in `config/default.json`
 
-| Section      | Examples                                                                               |
-| ------------ | -------------------------------------------------------------------------------------- |
-| `app`        | Name, base URL, API prefix (`api`).                                                    |
-| `server`     | Host, port, and SSL file paths.                                                        |
-| `errors`     | Status code prefix (`WS`), used in error responses.                                    |
-| `security`   | API key header, registered API clients, CORS origins, throttling limits.               |
-| `auth`       | Access token lifetime, password salt rounds.                                           |
-| `otp`        | Code length, expiry, max attempts, resend cooldown.                                    |
-| `mail`       | From address and SMTP host, port, and timeouts.                                        |
-| `database`   | Connection pool size, timeouts, SSL.                                                   |
-| `logging`    | Level, pretty printing, log folder (`logs`), retention, redacted fields.               |
-| `monitoring` | API benchmark thresholds (`slowRequestMs`, `criticalRequestMs`), slow query threshold. |
-| `swagger`    | Enabled flag, UI path (`docs`), title, version.                                        |
-| `pm2`        | Application name, instances, memory restart limit, restart policy.                     |
+| Section               | Examples                                                                         |
+| --------------------- | -------------------------------------------------------------------------------- |
+| `app`                 | Name, base URL, API prefix (`api`).                                              |
+| `server`              | Host, port, and SSL file paths.                                                  |
+| `errors`              | Status code prefix (`WS`), used in error responses.                              |
+| `security`            | API key header, registered API clients, CORS origins, throttling limits.         |
+| `auth`                | Access token lifetime, password salt rounds.                                     |
+| `otp`                 | Code length, expiry, max attempts, resend cooldown.                              |
+| `mail`                | From address and SMTP host, port, and timeouts.                                  |
+| `database`            | Connection pool size, timeouts, SSL.                                             |
+| `logging`             | Level, pretty printing, log folder (`logs`), retention, redacted fields.         |
+| `monitoring`          | API benchmark and slow query thresholds (validated, not yet applied at runtime). |
+| `cache`, `thirdParty` | Reserved for future features (validated, not yet used).                          |
+| `swagger`             | Enabled flag, UI path (`docs`), title, version.                                  |
+| `pm2`                 | Application name, instances, memory restart limit, restart policy.               |
 
 ## Running the application
 
@@ -224,8 +225,7 @@ The HTTP status is the normal numeric code. `statusCode` adds the configured pre
 - Logs are written to `logs/`, one file per day and type, for example `logs/app.2026-10-18.1.log` and `logs/error.2026-10-18.1.log`.
 - Old log files are removed automatically. Retention is set by `logging.retentionDays` in `config/default.json`.
 - Sensitive fields (authorization and cookie headers, the API key header, passwords) are redacted by `logging.redactPaths`.
-- API benchmarks flag requests slower than `slowRequestMs`, and requests slower than `criticalRequestMs` as critical.
-- Queries slower than `slowQueryMs` are logged.
+- API benchmark and slow query logging are planned. Their settings (`monitoring.apiBenchmark`, `monitoring.queryLogging`) are validated but not yet used by the application.
 - Health endpoints report the application and database status for load balancers and PM2.
 
 ## Security
@@ -292,10 +292,12 @@ $ npm run test:e2e
 
 ## Documentation
 
-| Document                                   | Contents                                         |
-| ------------------------------------------ | ------------------------------------------------ |
-| [AI-INSTRUCTIONS.md](AI-INSTRUCTIONS.md)   | Project rules, coding standards, and workflow.   |
-| [docs/ERROR_CODES.md](docs/ERROR_CODES.md) | Error codes, HTTP status, and `WS` status codes. |
+| Document                                           | Contents                                                 |
+| -------------------------------------------------- | -------------------------------------------------------- |
+| [AI-INSTRUCTIONS.md](AI-INSTRUCTIONS.md)           | Project rules, coding standards, and workflow.           |
+| [docs/ERROR_CODES.md](docs/ERROR_CODES.md)         | Error codes, HTTP status, and `WS` status codes.         |
+| [docs/CONFIGURATION.md](docs/CONFIGURATION.md)     | Environments, settings reference, and how to add config. |
+| [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | Adding modules and endpoints, testing, troubleshooting.  |
 
 ## License
 
