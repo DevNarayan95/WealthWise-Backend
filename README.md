@@ -31,6 +31,8 @@
 $ npm install
 ```
 
+`npm install` also runs `prisma generate`, which creates the Prisma client in `prisma/generated/` (not tracked by git). Run `npm run db:generate` to regenerate it manually.
+
 ## Compile and run the project
 
 ```bash
