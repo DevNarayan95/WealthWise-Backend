@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiForbiddenResponse,
@@ -23,6 +22,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
+import { RequiresApiKeyAndJwt } from '../../../../common/decorators/api-security.decorator';
 
 import { PAGINATION } from '../../../../common/pagination/pagination-config';
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
@@ -40,6 +41,7 @@ import { PaginatedAccountsResponseDto } from '../dto/paginated-accounts-response
 import { AccountBalanceResponseDto } from '../dto/account-balance-response.dto';
 
 @ApiTags('Accounts')
+@RequiresApiKeyAndJwt()
 @Controller({
   path: 'accounts',
   version: '1',
@@ -50,7 +52,6 @@ export class AccountsController {
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('accounts:create')
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Create an account',
     description:
@@ -106,7 +107,6 @@ export class AccountsController {
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('accounts:read')
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'List accounts',
     description:
@@ -157,7 +157,6 @@ export class AccountsController {
   @Get(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('accounts:read')
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Get an account',
     description:
@@ -200,7 +199,6 @@ export class AccountsController {
   @Patch(':id/archive')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('accounts:update')
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Archive an account',
     description:
@@ -241,7 +239,6 @@ export class AccountsController {
   @Get(':id/balance')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('accounts:read')
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Get account balance',
     description:

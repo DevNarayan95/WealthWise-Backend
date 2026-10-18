@@ -6,8 +6,6 @@ import {
   TransactionType,
 } from '../../domain/entities/transaction.entity';
 
-import { TransactionRepository } from '../../domain/repositories/transaction.repository';
-
 import { InvalidTransactionException } from '../../presentation/exceptions/invalid-transaction.exception';
 
 import { TransactionsService } from './transactions.service';
@@ -78,8 +76,8 @@ describe('TransactionsService', () => {
     };
 
     service = new TransactionsService(
-      transactionsRepository as never as TransactionRepository,
-      accountsService as never as AccountsService,
+      transactionsRepository,
+      accountsService as unknown as AccountsService,
     );
   });
 

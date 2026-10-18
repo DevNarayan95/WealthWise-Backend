@@ -24,27 +24,29 @@ Budgets, categories, income, investments, loans, savings goals, notifications, r
 
 ## Technology stack
 
-| Area              | Technology                                  | Version                    |
-| ----------------- | ------------------------------------------- | -------------------------- |
-| Language          | TypeScript                                  | ^5.7.3                     |
-| Runtime           | Node.js                                     | 24.x (development)         |
-| Framework         | NestJS (core, common, platform-express)     | ^11.0.1                    |
-| API documentation | @nestjs/swagger                             | ^11.4.6                    |
-| Database          | PostgreSQL                                  | via `pg` ^8.22.0           |
-| ORM               | Prisma (client, adapter-pg)                 | ^7.9.1                     |
-| Authentication    | @nestjs/jwt, @nestjs/passport, passport-jwt | ^11.0.2, ^11.0.5, ^4.0.1   |
-| Password hashing  | bcrypt                                      | ^6.0.0                     |
-| Validation        | class-validator, class-transformer, Joi     | ^0.15.1, ^0.5.1, ^18.2.3   |
-| Rate limiting     | @nestjs/throttler                           | ^6.5.0                     |
-| Security headers  | helmet                                      | ^8.3.0                     |
-| Logging           | nestjs-pino, pino-http                      | ^4.6.1, ^11.0.0            |
-| Email             | nodemailer (SMTP)                           | ^7.0.13                    |
-| Process manager   | PM2                                         | ^7.0.4                     |
-| Testing           | Jest, ts-jest, Supertest                    | ^30.0.0, ^29.2.5           |
-| Linting           | ESLint, typescript-eslint                   | ^9.18.0, ^8.20.0           |
-| Formatting        | Prettier                                    | ^3.4.2                     |
-| Spell checking    | cspell                                      | ^10.4.0                    |
-| Code quality      | SonarCloud                                  | `sonar-project.properties` |
+| Area              | Technology                                  | Version                                           |
+| ----------------- | ------------------------------------------- | ------------------------------------------------- |
+| Language          | TypeScript                                  | ^5.7.3                                            |
+| Runtime           | Node.js                                     | >= 20.19.0 (`engines`), 24.x used for development |
+| Framework         | NestJS (core, common, platform-express)     | ^11.0.1                                           |
+| API documentation | @nestjs/swagger                             | ^11.4.6                                           |
+| Database          | PostgreSQL                                  | via `pg` ^8.22.0                                  |
+| ORM               | Prisma (client, adapter-pg)                 | ^7.9.1                                            |
+| Authentication    | @nestjs/jwt, @nestjs/passport, passport-jwt | ^11.0.2, ^11.0.5, ^4.0.1                          |
+| Password hashing  | bcrypt                                      | ^6.0.0                                            |
+| Validation        | class-validator, class-transformer, Joi     | ^0.15.1, ^0.5.1, ^18.2.3                          |
+| Rate limiting     | @nestjs/throttler                           | ^6.5.0                                            |
+| Security headers  | helmet                                      | ^8.3.0                                            |
+| Logging           | nestjs-pino, pino-http                      | ^4.6.1, ^11.0.0                                   |
+| Email             | nodemailer (SMTP)                           | ^7.0.13                                           |
+| Process manager   | PM2                                         | ^7.0.4                                            |
+| Testing           | Jest, ts-jest, Supertest                    | ^30.0.0, ^29.2.5                                  |
+| Linting           | ESLint, typescript-eslint                   | ^9.18.0, ^8.20.0                                  |
+| Formatting        | Prettier                                    | ^3.4.2                                            |
+| Spell checking    | cspell                                      | ^10.4.0                                           |
+| Code quality      | SonarCloud                                  | `sonar-project.properties`                        |
+| Postman export    | openapi-to-postmanv2                        | ^6.4.0                                            |
+| CI                | GitHub Actions (PostgreSQL 16 service)      | `.github/workflows/ci.yml`                        |
 
 ## Architecture
 
@@ -72,7 +74,7 @@ Shared code lives in these folders:
 
 ## Prerequisites
 
-- Node.js 24 (the version used for development), with npm.
+- Node.js 20.19.0 or newer (the minimum set in `engines`; Prisma 7 needs it). Development uses Node.js 24. npm comes with Node.js.
 - PostgreSQL, reachable from `DATABASE_URL`.
 - An SMTP server for email. Locally, [Mailpit](https://mailpit.axllent.org/) on port `1025` works with the default config.
 
@@ -88,9 +90,18 @@ $ cp .env.example .env
 # 3. Apply database migrations and seed the admin account.
 $ npm run db:migrate:deploy
 $ npm run db:seed
+
+# 4. Start in watch mode.
+$ npm run start:dev
 ```
 
 `npm install` runs `prisma generate`, which writes the Prisma client to `prisma/generated/`. That folder is not tracked by git. Run `npm run db:generate` to regenerate it manually.
+
+### Environment file (`.env`)
+
+`.env` is the only place for secrets on a developer machine. It is loaded by `dotenv` in the app config loader (`src/config/app-config.ts`), the Prisma config, and the seed script. PM2 passes `APP_ENV` through `ecosystem.config.cjs`, and the app reads the secrets from `.env`. Real `.env` and `.env.test` files are git-ignored. Only the `.env.example` and `.env.test.example` templates are committed.
+
+Secrets such as `JWT_SECRET`, `API_KEY_WEB_FRONTEND`, `API_KEY_MOBILE_APP`, `DATABASE_URL`, and SMTP credentials are never written in `config/*.json`. Non-secret values such as the SMTP host and port are in config. Production and other servers should inject these variables from the platform secret store instead of a file.
 
 ## Configuration
 
@@ -217,7 +228,12 @@ The HTTP status is the normal numeric code. `statusCode` adds the configured pre
 
 ### Documentation
 
-- Interactive API docs (Swagger UI): `http://localhost:3000/docs`
+- Interactive API docs (Swagger UI): `http://localhost:3000/docs`. The swagger spec is at `/docs-json`.
+- Testing protected routes in Swagger UI:
+  1. Click **Authorize** and set `api-key` to the value of `API_KEY_WEB_FRONTEND` (or `API_KEY_MOBILE_APP`) from `.env`.
+  2. Call `POST /api/v1/auth/login`, copy `accessToken` from the response, then set `access-token` to that value. Swagger adds the `Bearer` prefix.
+  3. Protected routes now send both headers. Without the API key, every route returns 401.
+- Postman collection: `docs/postman/wealthwise.postman_collection.json`. It has a sample request body for each endpoint and uses the variables `baseUrl`, `apiKey`, and `accessToken`. Regenerate it after API changes with the server running: `npm run docs:postman`.
 - Error code reference, with HTTP status and `WS` status for each code: [docs/ERROR_CODES.md](docs/ERROR_CODES.md)
 
 ## Logging and monitoring
@@ -228,6 +244,7 @@ The HTTP status is the normal numeric code. `statusCode` adds the configured pre
 - API benchmark logging: requests slower than `monitoring.apiBenchmark.slowRequestMs` log a `warn` entry (`Slow API request`). Requests at or above `criticalRequestMs` log an `error` entry (`Critical API request`). Each entry has the request ID, route pattern, duration, and outcome, but never the raw URL or query string.
 - Slow query logging: database queries at or above `monitoring.queryLogging.slowQueryMs` log a `warn` entry (`Slow database query`) with the duration and SQL text. Query parameters are never logged because they can contain user data. Set `traceAllQueries` to `true` to log every query at debug level. Each request logs `Request started` at debug level. All of its database, slow-query, and completion lines share one `requestId`, so you can follow a full request flow in the logs.
 - Health endpoints report the application and database status for load balancers and PM2.
+- Notification logs: each email send logs `Notification send started` (debug), then `Notification sent` (debug, with `durationMs`) or `Notification delivery failed` (error, with `durationMs` and `errorCode`). Recipient addresses and message bodies are never logged.
 
 ## Security
 
@@ -266,6 +283,10 @@ $ npm run db:seed:test             # optional: seed test data
 $ npm run test:e2e
 ```
 
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on every push and pull request. It starts a PostgreSQL 16 service, generates the JWT and API key secrets at runtime, and runs in order: format check, ESLint, spell check, Prisma schema validation, migrations, seed, unit tests, e2e tests, and the build. CI secrets are generated for each run, so none are stored in the repository.
+
 ## Code quality
 
 | Tool     | Config file                      | Scripts                                  |
@@ -278,18 +299,19 @@ $ npm run test:e2e
 - ESLint uses typed rules (`recommendedTypeChecked`) and reports Prettier differences as errors. `npm run lint` auto-fixes what it can; `npm run lint:check` only reports.
 - cspell checks spelling in source, config, and docs. Add project words to `cspell.json` rather than disabling the check.
 - The VS Code settings in `.vscode/settings.json` format on save and remove unused imports.
-- SonarCloud settings are in `sonar-project.properties`. The token is never stored in the repo. Export `SONAR_TOKEN` in your shell or CI secret store.
+- SonarCloud settings are in `sonar-project.properties`. The organization and project key are placeholders until the SonarCloud project exists. The token is never stored in the repo. Export `SONAR_TOKEN` in your shell or CI secret store.
 
 ## Project scripts
 
-| Script                | Purpose                                 |
-| --------------------- | --------------------------------------- |
-| `npm run build`       | Compile TypeScript to `dist/`.          |
-| `npm run start:dev`   | Run in watch mode.                      |
-| `npm run start:prod`  | Run the compiled app (`dist/main.js`).  |
-| `npm run db:generate` | Regenerate the Prisma client.           |
-| `npm run db:seed`     | Seed the database.                      |
-| `npm run pm2:start`   | Build and start with PM2 for `APP_ENV`. |
+| Script                 | Purpose                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `npm run build`        | Compile TypeScript to `dist/`.                                                |
+| `npm run start:dev`    | Run in watch mode.                                                            |
+| `npm run start:prod`   | Run the compiled app (`dist/src/main.js`).                                    |
+| `npm run db:generate`  | Regenerate the Prisma client.                                                 |
+| `npm run db:seed`      | Seed the database.                                                            |
+| `npm run docs:postman` | Regenerate the Postman collection from `/docs-json` (server must be running). |
+| `npm run pm2:start`    | Build and start with PM2 for `APP_ENV`.                                       |
 
 ## Documentation
 

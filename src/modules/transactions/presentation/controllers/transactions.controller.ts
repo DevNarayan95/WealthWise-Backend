@@ -8,12 +8,9 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { RequiresApiKeyAndJwt } from '../../../../common/decorators/api-security.decorator';
 
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
 import { TransactionsService } from '../../application/services/transactions.service';
@@ -29,6 +26,7 @@ import { ListTransactionsQueryDto } from '../dto/list-transactions-query.dto';
 import { ReverseTransactionDto } from '../dto/reverse-transaction.dto';
 
 @ApiTags('Transactions')
+@RequiresApiKeyAndJwt()
 @Controller({
   path: 'transactions',
   version: '1',
@@ -38,7 +36,6 @@ export class TransactionsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Create a transaction',
     description:
@@ -80,7 +77,6 @@ export class TransactionsController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Get a transaction',
     description: 'Retrieves a transaction owned by the authenticated user.',
@@ -112,7 +108,6 @@ export class TransactionsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'List transactions',
     description:
@@ -165,7 +160,6 @@ export class TransactionsController {
 
   @Post(':id/reversal')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Reverse a transaction',
     description:

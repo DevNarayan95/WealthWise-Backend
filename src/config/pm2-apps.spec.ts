@@ -50,7 +50,7 @@ const writeConfigTree = (
 const PM2_DEFAULTS = {
   pm2: {
     appName: 'wealthwise-backend',
-    script: 'dist/main.js',
+    script: 'dist/src/main.js',
     instances: 1,
     execMode: 'fork',
     maxMemoryRestart: '512M',
@@ -81,7 +81,7 @@ describe('pm2-apps', () => {
     expect(app).toEqual(
       expect.objectContaining({
         name: 'wealthwise-backend',
-        script: 'dist/main.js',
+        script: 'dist/src/main.js',
         instances: 1,
         exec_mode: 'fork',
         max_memory_restart: '512M',
@@ -152,7 +152,7 @@ describe('pm2-apps', () => {
       const [app] = buildPm2Apps({ projectRoot: REPO_ROOT, appEnv });
 
       expect(app.env.APP_ENV).toBe(appEnv);
-      expect(app.script).toBe('dist/main.js');
+      expect(app.script).toBe('dist/src/main.js');
     }
   });
 });

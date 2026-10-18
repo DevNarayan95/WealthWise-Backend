@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, test, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: wealthwise_test_db
+          POSTGRES_USER: wealthwise
+          # Throwaway password for an ephemeral service container only.
+          POSTGRES_PASSWORD: ci-ephemeral-${{ github.run_id }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U wealthwise -d wealthwise_test_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgresql://wealthwise:ci-ephemeral-${{ github.run_id }}@localhost:5432/wealthwise_test_db
+      SEED_ADMIN_EMAIL: admin@test.local
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Generate per-run secrets
+        # Secrets are created at runtime and never stored in the repository.
+        run: |
+          {
+            echo "JWT_SECRET=$(openssl rand -base64 48)"
+            echo "API_KEY_WEB_FRONTEND=$(openssl rand -hex 32)"
+            echo "API_KEY_MOBILE_APP=$(openssl rand -hex 32)"
+            echo "SEED_ADMIN_PASSWORD=$(openssl rand -base64 24)"
+          } >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npx eslint src test config scripts
+
+      - name: Spell check
+        run: npm run spellcheck
+
+      - name: Validate Prisma schema
+        run: npm run db:validate
+
+      - name: Apply database migrations and seed
+        run: |
+          npm run db:migrate:deploy
+          npm run db:seed
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+      - name: Build
+        run: npm run build

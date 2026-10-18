@@ -57,5 +57,5 @@ export const configureApp = (app: NestExpressApplication): void => {
     exposedHeaders: ['X-Request-Id'],
   });
 
-  setupSwagger(app, swagger, appConfig.baseUrl);
+  setupSwagger(app, swagger, appConfig.baseUrl, security.apiKeyHeader);
 };

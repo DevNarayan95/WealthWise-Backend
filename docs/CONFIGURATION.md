@@ -227,18 +227,18 @@ Thresholds are per environment, so UAT can use stricter values than local develo
 
 ### `pm2`
 
-| Key                | Default              | Meaning                                               |
-| ------------------ | -------------------- | ----------------------------------------------------- |
-| `appName`          | `wealthwise-backend` | PM2 process name.                                     |
-| `script`           | `dist/main.js`       | Entry point.                                          |
-| `instances`        | `1`                  | Number of instances (cluster mode).                   |
-| `execMode`         | `fork`               | `fork` or `cluster`.                                  |
-| `maxMemoryRestart` | `512M`               | Restart a process above this memory.                  |
-| `autorestart`      | `true`               | Restart after a crash.                                |
-| `maxRestarts`      | `10`                 | Restart attempts before PM2 gives up.                 |
-| `minUptimeMs`      | `5000`               | A process must stay up this long to count as started. |
-| `killTimeoutMs`    | `5000`               | Grace period for shutdown.                            |
-| `listenTimeoutMs`  | `10000`              | Time allowed for the app to start listening.          |
+| Key                | Default              | Meaning                                                |
+| ------------------ | -------------------- | ------------------------------------------------------ |
+| `appName`          | `wealthwise-backend` | PM2 process name.                                      |
+| `script`           | `dist/src/main.js`   | Entry point. The build output keeps the `src/` folder. |
+| `instances`        | `1`                  | Number of instances (cluster mode).                    |
+| `execMode`         | `fork`               | `fork` or `cluster`.                                   |
+| `maxMemoryRestart` | `512M`               | Restart a process above this memory.                   |
+| `autorestart`      | `true`               | Restart after a crash.                                 |
+| `maxRestarts`      | `10`                 | Restart attempts before PM2 gives up.                  |
+| `minUptimeMs`      | `5000`               | A process must stay up this long to count as started.  |
+| `killTimeoutMs`    | `5000`               | Grace period for shutdown.                             |
+| `listenTimeoutMs`  | `10000`              | Time allowed for the app to start listening.           |
 
 ## Environment overlays
 

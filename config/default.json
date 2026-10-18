@@ -125,7 +125,7 @@
   },
   "pm2": {
     "appName": "wealthwise-backend",
-    "script": "dist/main.js",
+    "script": "dist/src/main.js",
     "instances": 1,
     "execMode": "fork",
     "maxMemoryRestart": "512M",

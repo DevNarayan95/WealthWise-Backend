@@ -16,7 +16,7 @@ describe('AuthEmailService', () => {
 
   beforeEach(async () => {
     otpService = { issue: jest.fn().mockResolvedValue('123456') };
-    mailSender = { send: jest.fn().mockResolvedValue(undefined) } as any;
+    mailSender = { send: jest.fn().mockResolvedValue(undefined) };
 
     const configValues: Record<string, unknown> = {
       'app.name': 'WealthWise Backend',

@@ -2,7 +2,6 @@ import {
   AccountStatus,
   AccountType,
 } from '../../domain/entities/account.entity';
-import { AccountsService } from '../../application/services/accounts.service';
 import { AccountsController } from './accounts.controller';
 import { AuthenticatedRequest } from 'src/modules/auth/infrastructure/interfaces/authenticated-request.interface';
 import { request as expressRequest } from 'express';

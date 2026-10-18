@@ -1,10 +1,7 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { RequiresApiKeyAndJwt } from '../../../../common/decorators/api-security.decorator';
 
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
 import { successResponse } from '../../../../common/utils/api-response.util';
@@ -18,6 +15,7 @@ import { UserResponseEnvelopeDto } from '../dto/user-response-envelope.dto';
 import { UserResponseMapper } from '../mappers/user-response.mapper';
 
 @ApiTags('Users')
+@RequiresApiKeyAndJwt()
 @Controller({
   path: 'users',
   version: '1',
@@ -27,7 +25,6 @@ export class UsersController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Get current user',
     description: 'Returns the authenticated user profile.',

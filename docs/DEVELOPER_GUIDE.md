@@ -26,9 +26,9 @@ curl http://localhost:3000/health/live
 curl http://localhost:3000/health/ready
 ```
 
-Open the API docs at `http://localhost:3000/docs`.
+Open the API docs at `http://localhost:3000/docs`. Protected routes need two headers: `x-api-key` and a bearer token. In Swagger UI, click **Authorize**, set `api-key` to the value of `API_KEY_WEB_FRONTEND` from `.env`, then log in with `POST /api/v1/auth/login` and set `access-token` to the returned `accessToken`. The steps are in the [README](../README.md#documentation).
 
-Every API call needs an API key in the `x-api-key` header. Use the value of `API_KEY_WEB_FRONTEND` from `.env`.
+To test in Postman, import `docs/postman/wealthwise.postman_collection.json`, set the `apiKey` variable, and set `accessToken` after login. Regenerate the collection after API changes with the server running: `npm run docs:postman`.
 
 ### Generated Prisma client
 
@@ -139,7 +139,7 @@ Rules for every change:
 
 - **Write the test first** for new behavior, then the code. For bug fixes, first write a test that fails.
 - **Every changed file gets a unit test.** Config-only or documentation-only changes are the exception. Say so in the commit proposal.
-- **Use typed mocks.** Do not disable lint rules to get tests through. Type the mock objects so that ESLint does not report unsafe calls.
+- **Type the mocks and fixtures** wherever practical. Test files have a narrower lint override in `eslint.config.mjs`: the `no-unsafe-*`, `unbound-method`, and `require-await` rules are off for `*.spec.ts` and `test/**`, because Jest mocks and untyped supertest response bodies trigger them. Production code keeps every rule on. Do not add new overrides to production code.
 - **Run the smallest command that covers the change**, then the full check before a commit:
 
 ```bash
@@ -149,7 +149,9 @@ npm run spellcheck
 npm run format:check
 ```
 
-Test files use the Jest globals (`describe`, `it`, `expect`). The editor is configured with Jest types in `tsconfig.json`, so these names resolve without red squiggles. If they still show as not found, reload the VS Code window.
+Continuous integration (`.github/workflows/ci.yml`) runs the same checks against a fresh PostgreSQL 16 service, so a green local `npm run check` is the goal before you push.
+
+Test files use the Jest globals (`describe`, `it`, `expect`). `tsconfig.json` and `tsconfig.spec.json` include the `jest` types, so these names resolve in the editor. If they still show as not found, open the `backend/` folder itself as the VS Code workspace root (not the parent `1 - WealthWise` folder), then reload the window.
 
 ## 8. Database changes
 
@@ -188,24 +190,28 @@ To see every database query, not just slow ones, set `monitoring.queryLogging.tr
 
 Common problems:
 
-| Problem                                           | Likely cause and fix                                                                                                                 |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `Invalid APP_ENV`                                 | Use `local`, `test`, `uat`, `sit`, `staging`, or `prod`.                                                                             |
-| Startup fails with an "Invalid ..." message       | A config or env value is wrong. The message names the key. See [CONFIGURATION.md](./CONFIGURATION.md#troubleshooting-configuration). |
-| `API_KEY_MISSING` or `API_KEY_INVALID` (401)      | Send `x-api-key` with the matching key from `.env`.                                                                                  |
-| `UNAUTHORIZED` or `FORBIDDEN` (401 or 403)        | Send a valid bearer token. Check the user has the permission for the route.                                                          |
-| `EMAIL_NOT_VERIFIED` (403) on login               | Complete email OTP verification first.                                                                                               |
-| `EMAIL_DELIVERY_FAILED` (503)                     | Check SMTP settings. Locally, Mailpit listens for SMTP on port 1025 (see `mail.smtp` in config).                                     |
-| Import error from `prisma/generated/prisma`       | Run `npm run db:generate`.                                                                                                           |
-| Migration drift or missing tables                 | Run `npm run db:migrate` (dev) or `npm run db:test:migrate` (test).                                                                  |
-| Tests fail with database connection errors        | Check `.env.test` and that the test database is running.                                                                             |
-| Editor shows red `describe` or `it` in test files | Reload the VS Code window. Jest types are set in `tsconfig.json`.                                                                    |
-| `429 TOO_MANY_REQUESTS` during manual testing     | Wait for the throttle window (`security.throttle.ttlMs`) to pass.                                                                    |
-| Port 3000 already in use                          | Change `server.port` in your environment overlay, or stop the other process.                                                         |
+| Problem                                           | Likely cause and fix                                                                                                                   |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `Invalid APP_ENV`                                 | Use `local`, `test`, `uat`, `sit`, `staging`, or `prod`.                                                                               |
+| Startup fails with an "Invalid ..." message       | A config or env value is wrong. The message names the key. See [CONFIGURATION.md](./CONFIGURATION.md#troubleshooting-configuration).   |
+| `API_KEY_MISSING` or `API_KEY_INVALID` (401)      | Send `x-api-key` with the matching key from `.env`.                                                                                    |
+| `UNAUTHORIZED` or `FORBIDDEN` (401 or 403)        | Send a valid bearer token. Check the user has the permission for the route.                                                            |
+| `EMAIL_NOT_VERIFIED` (403) on login               | Complete email OTP verification first.                                                                                                 |
+| `EMAIL_DELIVERY_FAILED` (503)                     | Check SMTP settings. Locally, Mailpit listens for SMTP on port 1025 (see `mail.smtp` in config).                                       |
+| Import error from `prisma/generated/prisma`       | Run `npm run db:generate`.                                                                                                             |
+| Migration drift or missing tables                 | Run `npm run db:migrate` (dev) or `npm run db:test:migrate` (test).                                                                    |
+| Tests fail with database connection errors        | Check `.env.test` and that the test database is running.                                                                               |
+| Editor shows red `describe` or `it` in test files | Open `backend/` as the VS Code workspace root, then reload the window. Jest types are set in `tsconfig.json` and `tsconfig.spec.json`. |
+| `API_KEY_MISSING` (401) in Swagger                | Click **Authorize** and set `api-key` (see the Swagger steps in section 1).                                                            |
+| Postman requests return 401                       | Set the `apiKey` variable, and set `accessToken` after login.                                                                          |
+| `429 TOO_MANY_REQUESTS` during manual testing     | Wait for the throttle window (`security.throttle.ttlMs`) to pass.                                                                      |
+| Port 3000 already in use                          | Change `server.port` in your environment overlay, or stop the other process.                                                           |
 
 ## 10. Working rules
 
 - Make changes in small module-sized chunks. Keep each commit focused on one chunk.
+- Developers commit and push. Copilot proposes the commit message and the file list, then waits for the developer.
+- After any API change (routes, DTOs, or Swagger decorators), run `npm run docs:postman` with the server running and commit the regenerated collection.
 - Before committing, check `git status` and make sure only the intended files are staged.
 - Follow [AI-INSTRUCTIONS.md](../AI-INSTRUCTIONS.md). Update it when a rule changes.
 - Do not commit secrets. `.env` and `.env.test` are ignored by git.

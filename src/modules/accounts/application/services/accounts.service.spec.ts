@@ -22,7 +22,7 @@ describe('AccountsService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    service = new AccountsService(accountRepository as never);
+    service = new AccountsService(accountRepository);
   });
 
   describe('create', () => {

@@ -62,7 +62,7 @@ describe('TransactionsController', () => {
     };
 
     controller = new TransactionsController(
-      transactionsService as never as TransactionsService,
+      transactionsService as unknown as TransactionsService,
     );
   });
 

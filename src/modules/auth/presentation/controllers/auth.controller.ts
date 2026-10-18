@@ -22,6 +22,8 @@ import { RegisterResponseDto } from '../dto/register-response.dto';
 
 import { UserResponseMapper } from '../../../users/presentation/mappers/user-response.mapper';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { RequiresApiKey } from '../../../../common/decorators/api-security.decorator';
 import { LoginResponseDto } from '../dto/login-response.dto';
 
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -45,6 +47,7 @@ const sensitiveThrottle = {
 };
 
 @ApiTags('Authentication')
+@RequiresApiKey()
 @Controller({
   path: 'auth',
   version: '1',

@@ -296,7 +296,7 @@ describe('Authentication (E2E)', () => {
 
       const accessToken = loginResponse.body.data.accessToken;
 
-      const [header, payload, signature] = accessToken.split('.');
+      const [header, , signature] = accessToken.split('.');
 
       const tamperedPayload = Buffer.from(
         JSON.stringify({
@@ -434,10 +434,8 @@ describe('Authentication (E2E)', () => {
 
       const accessToken = loginResponse.body.data.accessToken;
 
-      const payload = jwtService.decode(accessToken) as {
-        sub: string;
-        email: string;
-      };
+      const payload: { sub: string; email: string } =
+        jwtService.decode(accessToken);
 
       const admin = await prisma.user.findUnique({
         where: {
@@ -472,10 +470,8 @@ describe('Authentication (E2E)', () => {
 
       const accessToken = loginResponse.body.data.accessToken;
 
-      const payload = jwtService.decode(accessToken) as {
-        iat: number;
-        exp: number;
-      };
+      const payload: { iat: number; exp: number } =
+        jwtService.decode(accessToken);
 
       expect(payload.iat).toEqual(expect.any(Number));
       expect(payload.exp).toEqual(expect.any(Number));
