@@ -93,8 +93,12 @@ The architecture should allow future extraction of modules into microservices if
 
 ## Configuration
 
-- `@nestjs/config`
-- Joi environment validation
+- Non-secret settings live in `config/default.json` (required base) and `config/env/<APP_ENV>.json` (per-environment overrides, deep-merged over the base).
+- Secrets (`JWT_SECRET`, `DATABASE_URL`, API keys, seed admin credentials) come only from environment variables and are never placed in config files.
+- `src/config/app-config.ts` is the single loader and Joi validator. Read config through it, not through ad-hoc `process.env` access.
+- Shared runtime limits belong in config. Pagination uses `pagination.defaultPageSize` and `pagination.maxPageSize`, read through `src/common/pagination/pagination-config.ts`. Do not hard-code page sizes in DTOs or Swagger docs.
+- Decorators and DTO class bodies read config at module load time, so they use the cached `readAppConfigFile()` helpers instead of the Nest container.
+- Any new config key requires: the `AppConfigFile` type, a Joi rule, a value in `config/default.json`, and a spec in `src/config/app-config.spec.ts`.
 
 ---
 
@@ -272,7 +276,6 @@ src/
 │   │   │   ├── controllers/
 │   │   │   │   └── users.controller.ts
 │   │   │   ├── dto/
-│   │   │   │   ├── create-user.dto.ts
 │   │   │   │   ├── user-response.dto.ts
 │   │   │   │   └── user-response-envelope.dto.ts
 │   │   │   ├── exceptions/
@@ -394,7 +397,10 @@ Owns:
 
 Owns:
 
-- Login
+- Registration (`POST /auth/register`) with email OTP verification
+- Resend verification OTP (`POST /auth/resend-verification`)
+- Forgot and reset password by email OTP (`POST /auth/forgot-password`, `POST /auth/reset-password`)
+- Login (blocked until the email is verified)
 - JWT authentication
 - Authentication service
 - JWT strategy
@@ -402,6 +408,15 @@ Owns:
 - Permission guard
 - Permission decorator
 - Authenticated request abstraction
+
+Rules:
+
+- Registration creates the user through `UsersService`. Users module does not expose a create endpoint.
+- OTP codes are random, stored only as HMAC-SHA256 hashes, and never logged or returned.
+- OTP settings (`otp.*`) and `registration.emailVerificationRequired` come from config, not code.
+- Unknown and wrong OTP codes return the same error, so responses do not reveal which emails exist.
+- Email delivery goes through the `MailSender` port. Only `infrastructure/mail` talks to SMTP.
+- Error codes for this module are listed in [docs/ERROR_CODES.md](./docs/ERROR_CODES.md).
 
 ## Accounts Module
 
@@ -614,6 +629,14 @@ test/e2e/
 ├── authorization.e2e-spec.ts
 └── transactions.e2e-spec.ts
 ```
+
+---
+
+E2E request rule:
+
+- Build requests with `test/e2e/support/api-request.ts` (`apiRequest(app.getHttpServer())`). It adds the API key header from `API_KEY_WEB_FRONTEND`.
+- Do not import `supertest` directly in e2e specs. Otherwise requests fail with `401 API_KEY_MISSING`.
+- Tests that change shared seed data must create their own role and user. The seeded super-admin role is shared by parallel suites.
 
 ---
 
@@ -884,6 +907,29 @@ transactions/presentation/exceptions/
 
 Do not create module-specific exceptions in `common`.
 
+Every error response uses the same envelope, produced by `HttpExceptionFilter`:
+
+```json
+{
+  "success": false,
+  "statusCode": "WS404",
+  "error": {
+    "code": "ACCOUNT_NOT_FOUND",
+    "message": "Account not found"
+  },
+  "meta": { "requestId": "..." },
+  "timestamp": "2026-01-01T00:00:00.000Z",
+  "path": "/api/v1/accounts/..."
+}
+```
+
+Rules:
+
+- `statusCode` is `errors.statusCodePrefix` + `errors.statusCodeSeparator` + the HTTP status. The default is `WS404`. The prefix and separator come from `config/default.json` and are configurable.
+- The real HTTP status is still set on the response. Only the body `statusCode` carries the prefix.
+- `error.code` is the plain domain code, such as `ACCOUNT_NOT_FOUND`. Never add the prefix to `ErrorCode` values.
+- `error.details` appears only when validation details exist.
+
 Current transaction error codes include:
 
 ```text
@@ -1024,10 +1070,10 @@ resource:action
 Examples:
 
 ```text
-users:create
-users:read
-users:update
-users:delete
+transactions:create
+transactions:read
+transactions:update
+transactions:delete
 
 accounts:create
 accounts:read
@@ -1124,7 +1170,7 @@ The current implementation uses **AND semantics**:
 
 ```typescript
 @Permissions(
-  'users:create',
+  'accounts:create',
   'users:read',
 )
 ```
@@ -1187,18 +1233,45 @@ Configuration belongs under:
 src/config/
 ```
 
-Current configuration areas include:
+Non-secret configuration is JSON under `config/`:
 
-- Authentication
-- Database
-- Logging
+```text
+config/default.json       base settings; the app will not start without them
+config/env/<env>.json     per-environment overrides: local, test, uat, sit, staging, prod
+config/load-config.cjs    shared loader used by the app and by PM2
+```
+
+Loading rules:
+
+- `APP_ENV` selects the environment file. It defaults to `local`.
+- The environment file is deep-merged over `default.json`. Objects merge and arrays are replaced.
+- The merged result is validated by the Joi schema in `src/config/app-config.ts`. An invalid or missing value stops startup with a readable message.
+- The loader resolves files from `process.cwd()`. Run the app and PM2 from the project root.
+
+Configuration areas include:
+
+- App identity, base URL, and API prefix
+- Server host, port, and SSL
+- Error status-code prefix
+- Security: API keys, CORS, throttling, public-route metadata key
+- Authentication: JWT expiry, password salt rounds
+- Database pool and SSL
+- Health checks
+- Logging and monitoring
 - Swagger
-- General application configuration
-- Environment validation
 
-Use `ConfigService` where configuration is required.
+Secrets rules:
 
-Secrets must come from environment/secret management and must not be committed to source control.
+- Secrets come only from environment variables. Never put them in `config/*.json`, source code, or tests.
+- Config files store only the **name** of an environment variable, such as `keyEnv: "API_KEY_WEB_FRONTEND"`.
+- Required secrets: `DATABASE_URL`, `JWT_SECRET` (at least 32 characters), each `security.apiClients[].keyEnv` (at least 32 characters), `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD`.
+- Local values go in `.env`, which is git-ignored. Test values go in `.env.test`.
+
+Code rules:
+
+- Every tunable value must come from `AppConfig`: ports, timeouts, limits, paths, prefixes, CORS origins, retention, and thresholds. Do not add new literals to services or controllers.
+- Nest providers read config through `ConfigService`. Bootstrap code and decorators read config through `readAppConfigFile()` or `appConfiguration()`, because they run before the Nest container exists.
+- Adding a config key means updating `config/default.json`, the Joi schema and `AppConfig` type in `app-config.ts`, and `app-config.spec.ts`.
 
 ---
 
@@ -1211,6 +1284,14 @@ nestjs-pino
 ```
 
 and Pino logging.
+
+File logging (`src/config/logging.config.ts`, `pino-roll`):
+
+- Logs are JSON lines written to `logging.logsPath` (default `logs`, resolved from the project root).
+- Daily files: `app.YYYY-MM-DD.1.log` (all levels from trace) and `error.YYYY-MM-DD.1.log` (level error and above).
+- Retention: `logging.retentionDays` (default 30). Cleanup runs at each daily roll and keeps the newest `retentionDays` previous files plus the active file.
+- stdout keeps running alongside the files; `logging.pretty` switches stdout to pretty output.
+- Search with `grep` or `jq`, for example `jq . logs/error.*.log`.
 
 Do not use random `console.log` statements in production application code.
 
@@ -1274,6 +1355,24 @@ Never log:
 - Access tokens
 - Refresh tokens
 - Sensitive financial information
+
+---
+
+## API Client Access (API Keys)
+
+Every route requires a valid API client key unless it is marked `@Public()`.
+
+- Header: `x-api-key`. The name comes from `security.apiKeyHeader`.
+- Known clients are listed in `security.apiClients`: `web-frontend` and `mobile-app`. Each entry names the environment variable that holds its key.
+- `ApiClientGuard` is registered globally through `APP_GUARD`. It compares SHA-256 digests in constant time and checks every client.
+- A missing key returns `401` with `API_KEY_MISSING`. An unknown or empty key returns `401` with `API_KEY_INVALID`.
+
+An API key identifies the calling application, not the user. It does not replace JWT authentication.
+
+- Browser and mobile apps can be inspected, so an API key is a gate, not a secret.
+- Protect user data with JWT, permissions, CORS, rate limits, and HTTPS.
+
+E2E tests must send requests through `test/e2e/support/api-request.ts`, which adds the API key header.
 
 ---
 
@@ -1480,6 +1579,18 @@ A green test is evidence of correctness for the tested behavior, not automatical
 ---
 
 # 35. How AI Should Work on This Project
+
+## Working Rules — Chunked Delivery and Commits
+
+- Work in small chunks, one module or one logical concern at a time. Do not batch the whole project.
+- The user commits every chunk. Do not run `git commit`, `git push`, or amend commits.
+- Before proposing a commit for a chunk, run `npx tsc --noEmit` and the unit tests for the touched code. Also run e2e when routes, guards, or the database change.
+- At the end of each chunk, report:
+  - the files changed, grouped by purpose;
+  - what each group does, so the user can follow the code;
+  - test and lint results;
+  - a suggested commit message in Conventional Commits format (`type(scope): summary`, with a short body).
+- Wait for the user to commit and confirm before starting the next chunk.
 
 When asked to implement something:
 

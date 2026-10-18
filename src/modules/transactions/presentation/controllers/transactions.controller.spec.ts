@@ -4,7 +4,7 @@ import {
   Transaction,
   TransactionType,
 } from '../../domain/entities/transaction.entity';
-import { TransactionNotFoundException } from '../../exceptions/transaction-not-found.exception';
+import { TransactionNotFoundException } from '../exceptions/transaction-not-found.exception';
 import type { AuthenticatedRequest } from '../../../auth/infrastructure/interfaces/authenticated-request.interface';
 
 describe('TransactionsController', () => {
@@ -41,6 +41,7 @@ describe('TransactionsController', () => {
     description: 'Lunch',
     transactionDate: new Date('2026-09-01T00:00:00.000Z'),
     reversalOfTransactionId: null,
+    incomeCategoryId: null,
     createdAt: new Date('2026-09-01T10:00:00.000Z'),
     updatedAt: new Date('2026-09-01T10:00:00.000Z'),
   });
@@ -228,6 +229,7 @@ describe('TransactionsController', () => {
         description: 'Lunch',
         transactionDate: new Date('2026-09-01T00:00:00.000Z'),
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-01T10:00:00.000Z'),
         updatedAt: new Date('2026-09-01T10:00:00.000Z'),
       });
@@ -420,6 +422,7 @@ describe('TransactionsController', () => {
         description: 'Lunch reversal',
         transactionDate: reversalDate,
         reversalOfTransactionId: 'transaction-id',
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-02T10:00:00.000Z'),
         updatedAt: new Date('2026-09-02T10:00:00.000Z'),
       });

@@ -12,9 +12,9 @@ import { Account, AccountStatus } from '../../domain/entities/account.entity';
 import { AccountRepository } from '../../domain/repositories/account.repository';
 import { AccountAlreadyArchivedException } from '../../domain/exceptions/account-already-archived.exception';
 
-import { InvalidAccountException } from '../../exceptions/invalid-account.exception';
-import { AccountNotFoundException } from '../../exceptions/account-not-found.exception';
-import { AccountAlreadyArchivedApplicationException } from '../../exceptions/account-already-archived.exception';
+import { InvalidAccountException } from '../../presentation/exceptions/invalid-account.exception';
+import { AccountNotFoundException } from '../../presentation/exceptions/account-not-found.exception';
+import { AccountAlreadyArchivedApplicationException } from '../../presentation/exceptions/account-already-archived.exception';
 
 import { CreateAccountInput } from '../inputs/create-account.input';
 import { PaginatedAccountsOutput } from '../outputs/paginated-accounts.output';

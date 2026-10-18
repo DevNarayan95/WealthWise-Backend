@@ -24,6 +24,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
+import { PAGINATION } from '../../../../common/pagination/pagination-config';
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
 import { successResponse } from '../../../../common/utils/api-response.util';
 import { Permissions } from '../../../auth/infrastructure/decorators/permissions.decorator';
@@ -123,7 +124,7 @@ export class AccountsController {
     required: false,
     type: Number,
     example: 20,
-    description: 'Number of accounts per page. Maximum 100.',
+    description: `Number of accounts per page. Maximum ${PAGINATION.maxPageSize}.`,
   })
   @ApiResponse({
     status: 200,

@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import request from 'supertest';
+import bcrypt from 'bcrypt';
+import request from './support/api-request';
 
 import { AppModule } from '../../src/app.module';
-import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
 import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
 
 describe('Authentication (E2E)', () => {
@@ -40,8 +40,6 @@ describe('Authentication (E2E)', () => {
         transform: true,
       }),
     );
-
-    testApp.useGlobalFilters(new HttpExceptionFilter());
 
     await testApp.init();
 
@@ -356,27 +354,31 @@ describe('Authentication (E2E)', () => {
     });
 
     it('should reject an access token when the user no longer exists', async () => {
-      const loginResponse = await request(app.getHttpServer())
-        .post('/api/v1/auth/login')
-        .send({
-          email: adminEmail,
-          password: adminPassword,
-        })
-        .expect(200);
+      const throwawayEmail = 'deleted-user@wealthwise.test';
+      const throwawayPassword = 'Throwaway123!';
 
-      const accessToken = loginResponse.body.data.accessToken;
+      await prisma.user.deleteMany({ where: { email: throwawayEmail } });
 
-      const admin = await prisma.user.findUnique({
-        where: { email: adminEmail },
-      });
-
-      expect(admin).not.toBeNull();
-
-      await prisma.user.delete({
-        where: { id: admin!.id },
+      await prisma.user.create({
+        data: {
+          email: throwawayEmail,
+          passwordHash: await bcrypt.hash(throwawayPassword, 4),
+          firstName: 'Deleted',
+          lastName: 'User',
+          emailVerifiedAt: new Date(),
+        },
       });
 
       try {
+        const loginResponse = await request(app.getHttpServer())
+          .post('/api/v1/auth/login')
+          .send({ email: throwawayEmail, password: throwawayPassword })
+          .expect(200);
+
+        const accessToken = loginResponse.body.data.accessToken;
+
+        await prisma.user.delete({ where: { email: throwawayEmail } });
+
         const response = await request(app.getHttpServer())
           .get('/api/v1/users/me')
           .set('Authorization', `Bearer ${accessToken}`)
@@ -384,16 +386,7 @@ describe('Authentication (E2E)', () => {
 
         expect(response.body.success).toBe(false);
       } finally {
-        await prisma.user.create({
-          data: {
-            id: admin!.id,
-            email: admin!.email,
-            passwordHash: admin!.passwordHash,
-            firstName: admin!.firstName,
-            lastName: admin!.lastName,
-            status: admin!.status,
-          },
-        });
+        await prisma.user.deleteMany({ where: { email: throwawayEmail } });
       }
     });
 

@@ -1,9 +1,12 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthService } from './auth.service';
 import { UserRepository } from '../../../users/domain/repositories/user.repository';
+import { User, UserProps } from '../../../users/domain/entities/user.entity';
 import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
+import { EmailNotVerifiedException } from '../../presentation/exceptions/email-not-verified.exception';
 import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
@@ -14,29 +17,21 @@ describe('AuthService', () => {
     verify: jest.MockedFunction<PasswordHasherService['verify']>;
   };
   let jwtService: jest.Mocked<JwtService>;
+  let configService: { getOrThrow: jest.Mock };
 
-  const createUser = (
-    overrides: Partial<{
-      id: string;
-      email: string;
-      passwordHash: string;
-      firstName: string;
-      lastName: string;
-      status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
-      createdAt: Date;
-      updatedAt: Date;
-    }> = {},
-  ) => ({
-    id: 'user-id',
-    email: 'test@example.com',
-    passwordHash: 'hashed-password',
-    firstName: 'John',
-    lastName: 'Doe',
-    status: 'ACTIVE' as const,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ...overrides,
-  });
+  const createUser = (overrides: Partial<UserProps> = {}): User =>
+    User.create({
+      id: 'user-id',
+      email: 'test@example.com',
+      passwordHash: 'hashed-password',
+      firstName: 'John',
+      lastName: 'Doe',
+      status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...overrides,
+    });
 
   beforeEach(async () => {
     userRepository = {
@@ -44,6 +39,8 @@ describe('AuthService', () => {
       findByEmail: jest.fn(),
       findById: jest.fn(),
       findPermissionsByUserId: jest.fn(),
+      markEmailVerified: jest.fn(),
+      updatePasswordHash: jest.fn(),
     };
 
     passwordHasher = {
@@ -54,6 +51,10 @@ describe('AuthService', () => {
     jwtService = {
       signAsync: jest.fn(),
     } as any;
+
+    configService = {
+      getOrThrow: jest.fn().mockReturnValue(true),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -69,6 +70,10 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useValue: jwtService,
+        },
+        {
+          provide: ConfigService,
+          useValue: configService,
         },
       ],
     }).compile();
@@ -225,6 +230,54 @@ describe('AuthService', () => {
         'Password123!',
         'hashed-password',
       );
+
+      expect(jwtService.signAsync).not.toHaveBeenCalled();
+    });
+
+    it('should block login for an unverified user when verification is required', async () => {
+      const user = createUser({ emailVerifiedAt: null });
+
+      userRepository.findByEmail.mockResolvedValue(user);
+      passwordHasher.verify.mockResolvedValue(true);
+
+      await expect(
+        service.login({
+          email: user.email,
+          password: 'Password123!',
+        }),
+      ).rejects.toThrow(EmailNotVerifiedException);
+
+      expect(jwtService.signAsync).not.toHaveBeenCalled();
+    });
+
+    it('should allow login for an unverified user when verification is disabled', async () => {
+      const user = createUser({ emailVerifiedAt: null });
+
+      configService.getOrThrow.mockReturnValue(false);
+      userRepository.findByEmail.mockResolvedValue(user);
+      passwordHasher.verify.mockResolvedValue(true);
+      jwtService.signAsync.mockResolvedValue('test-access-token');
+
+      const result = await service.login({
+        email: user.email,
+        password: 'Password123!',
+      });
+
+      expect(result.accessToken).toBe('test-access-token');
+    });
+
+    it('should check the password before revealing the unverified state', async () => {
+      const user = createUser({ emailVerifiedAt: null });
+
+      userRepository.findByEmail.mockResolvedValue(user);
+      passwordHasher.verify.mockResolvedValue(false);
+
+      await expect(
+        service.login({
+          email: user.email,
+          password: 'WrongPassword!',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
 
       expect(jwtService.signAsync).not.toHaveBeenCalled();
     });

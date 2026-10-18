@@ -1,51 +1,67 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 
-import { loggingConfig } from './config/logging.config';
-import configuration from './config/configuration';
-import { envValidationSchema } from './config/env.validation';
+import { appConfiguration, type AppConfig } from './config/app-config';
+import { loggingModule } from './config/logging.config';
+import { ApiClientGuard } from './infrastructure/security/api-client.guard';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { HealthModule } from './modules/health/health.module';
 import { PrismaModule } from './infrastructure/database/prisma/prisma.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
+import { MailModule } from './infrastructure/mail/mail.module';
 
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
-import authConfig from './config/auth.config';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
-    loggingConfig,
+    loggingModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration, authConfig],
-      validationSchema: envValidationSchema,
-      validationOptions: {
-        allowUnknown: true,
-        abortEarly: false,
-      },
+      load: [appConfiguration],
     }),
 
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          name: 'default',
-          ttl: 60_000,
-          limit: 5,
-        },
-      ],
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<AppConfig, true>) => {
+        const throttle =
+          configService.getOrThrow<AppConfig['security']>('security').throttle;
+
+        return {
+          throttlers: [
+            {
+              name: 'default',
+              ttl: throttle.ttlMs,
+              limit: throttle.defaultLimit,
+            },
+          ],
+        };
+      },
     }),
 
     PrismaModule,
     DatabaseModule,
+    MailModule,
     HealthModule,
     UsersModule,
     AuthModule,
     AccountsModule,
     TransactionsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ApiClientGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

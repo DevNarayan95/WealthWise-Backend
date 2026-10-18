@@ -1,10 +1,17 @@
+import { ConfigService } from '@nestjs/config';
+
+import type { AppConfig } from '../../config/app-config';
 import { PasswordHasherService } from './password-hasher.service';
 
 describe('PasswordHasherService', () => {
   let service: PasswordHasherService;
 
   beforeEach(() => {
-    service = new PasswordHasherService();
+    const configService = {
+      getOrThrow: jest.fn().mockReturnValue({ passwordSaltRounds: 4 }),
+    } as unknown as ConfigService<AppConfig, true>;
+
+    service = new PasswordHasherService(configService);
   });
 
   describe('hash', () => {

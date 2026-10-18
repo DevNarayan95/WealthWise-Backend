@@ -7,6 +7,7 @@ export interface UserProps {
   firstName: string;
   lastName: string;
   status: UserStatus;
+  emailVerifiedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,6 +41,14 @@ export class User {
 
   get status(): UserStatus {
     return this.props.status;
+  }
+
+  get emailVerifiedAt(): Date | null {
+    return this.props.emailVerifiedAt;
+  }
+
+  get isEmailVerified(): boolean {
+    return this.props.emailVerifiedAt !== null;
   }
 
   get createdAt(): Date {

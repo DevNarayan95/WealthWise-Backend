@@ -7,8 +7,10 @@ export interface ApiErrorDetail {
 
 export interface ApiErrorResponse {
   success: false;
-  statusCode: number;
+  /** Configured prefix plus HTTP status, e.g. `WS404`. Also sent as the HTTP status code. */
+  statusCode: string;
   error: {
+    /** Stable application error code, e.g. `ACCOUNT_NOT_FOUND`. */
     code: ErrorCode;
     message: string;
     details?: ApiErrorDetail[];
@@ -19,3 +21,5 @@ export interface ApiErrorResponse {
   timestamp: string;
   path: string;
 }
+
+export type { ErrorCode };

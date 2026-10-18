@@ -13,6 +13,7 @@ describe('Transaction', () => {
     currency: 'MYR',
     description: 'September salary',
     reversalOfTransactionId: null,
+    incomeCategoryId: null,
     transactionDate,
     createdAt,
     updatedAt,

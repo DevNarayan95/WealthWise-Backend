@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Account = $Result.DefaultSelection<Prisma.$AccountPayload>
 /**
+ * Model IncomeCategory
+ * 
+ */
+export type IncomeCategory = $Result.DefaultSelection<Prisma.$IncomeCategoryPayload>
+/**
  * Model Permission
  * 
  */
@@ -48,6 +53,11 @@ export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
  * 
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
+/**
+ * Model EmailOtp
+ * 
+ */
+export type EmailOtp = $Result.DefaultSelection<Prisma.$EmailOtpPayload>
 
 /**
  * Enums
@@ -88,6 +98,14 @@ export const UserStatus: {
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
 
+
+export const OtpPurpose: {
+  EMAIL_VERIFICATION: 'EMAIL_VERIFICATION',
+  PASSWORD_RESET: 'PASSWORD_RESET'
+};
+
+export type OtpPurpose = (typeof OtpPurpose)[keyof typeof OtpPurpose]
+
 }
 
 export type AccountType = $Enums.AccountType
@@ -105,6 +123,10 @@ export const TransactionType: typeof $Enums.TransactionType
 export type UserStatus = $Enums.UserStatus
 
 export const UserStatus: typeof $Enums.UserStatus
+
+export type OtpPurpose = $Enums.OtpPurpose
+
+export const OtpPurpose: typeof $Enums.OtpPurpose
 
 /**
  * ##  Prisma Client ʲˢ
@@ -238,6 +260,16 @@ export class PrismaClient<
   get account(): Prisma.AccountDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.incomeCategory`: Exposes CRUD operations for the **IncomeCategory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IncomeCategories
+    * const incomeCategories = await prisma.incomeCategory.findMany()
+    * ```
+    */
+  get incomeCategory(): Prisma.IncomeCategoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.permission`: Exposes CRUD operations for the **Permission** model.
     * Example usage:
     * ```ts
@@ -296,6 +328,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.emailOtp`: Exposes CRUD operations for the **EmailOtp** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EmailOtps
+    * const emailOtps = await prisma.emailOtp.findMany()
+    * ```
+    */
+  get emailOtp(): Prisma.EmailOtpDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -744,12 +786,14 @@ export namespace Prisma {
 
   export const ModelName: {
     Account: 'Account',
+    IncomeCategory: 'IncomeCategory',
     Permission: 'Permission',
     RolePermission: 'RolePermission',
     Role: 'Role',
     UserRole: 'UserRole',
     Transaction: 'Transaction',
-    User: 'User'
+    User: 'User',
+    EmailOtp: 'EmailOtp'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -765,7 +809,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "account" | "permission" | "rolePermission" | "role" | "userRole" | "transaction" | "user"
+      modelProps: "account" | "incomeCategory" | "permission" | "rolePermission" | "role" | "userRole" | "transaction" | "user" | "emailOtp"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -840,6 +884,80 @@ export namespace Prisma {
           count: {
             args: Prisma.AccountCountArgs<ExtArgs>
             result: $Utils.Optional<AccountCountAggregateOutputType> | number
+          }
+        }
+      }
+      IncomeCategory: {
+        payload: Prisma.$IncomeCategoryPayload<ExtArgs>
+        fields: Prisma.IncomeCategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IncomeCategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IncomeCategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.IncomeCategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IncomeCategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>
+          }
+          findMany: {
+            args: Prisma.IncomeCategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>[]
+          }
+          create: {
+            args: Prisma.IncomeCategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>
+          }
+          createMany: {
+            args: Prisma.IncomeCategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IncomeCategoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>[]
+          }
+          delete: {
+            args: Prisma.IncomeCategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>
+          }
+          update: {
+            args: Prisma.IncomeCategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.IncomeCategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IncomeCategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IncomeCategoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.IncomeCategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncomeCategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.IncomeCategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIncomeCategory>
+          }
+          groupBy: {
+            args: Prisma.IncomeCategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IncomeCategoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IncomeCategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<IncomeCategoryCountAggregateOutputType> | number
           }
         }
       }
@@ -1287,6 +1405,80 @@ export namespace Prisma {
           }
         }
       }
+      EmailOtp: {
+        payload: Prisma.$EmailOtpPayload<ExtArgs>
+        fields: Prisma.EmailOtpFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EmailOtpFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EmailOtpFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>
+          }
+          findFirst: {
+            args: Prisma.EmailOtpFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EmailOtpFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>
+          }
+          findMany: {
+            args: Prisma.EmailOtpFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>[]
+          }
+          create: {
+            args: Prisma.EmailOtpCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>
+          }
+          createMany: {
+            args: Prisma.EmailOtpCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EmailOtpCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>[]
+          }
+          delete: {
+            args: Prisma.EmailOtpDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>
+          }
+          update: {
+            args: Prisma.EmailOtpUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>
+          }
+          deleteMany: {
+            args: Prisma.EmailOtpDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EmailOtpUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EmailOtpUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>[]
+          }
+          upsert: {
+            args: Prisma.EmailOtpUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailOtpPayload>
+          }
+          aggregate: {
+            args: Prisma.EmailOtpAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEmailOtp>
+          }
+          groupBy: {
+            args: Prisma.EmailOtpGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EmailOtpGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EmailOtpCountArgs<ExtArgs>
+            result: $Utils.Optional<EmailOtpCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1411,12 +1603,14 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     account?: AccountOmit
+    incomeCategory?: IncomeCategoryOmit
     permission?: PermissionOmit
     rolePermission?: RolePermissionOmit
     role?: RoleOmit
     userRole?: UserRoleOmit
     transaction?: TransactionOmit
     user?: UserOmit
+    emailOtp?: EmailOtpOmit
   }
 
   /* Types for Logging */
@@ -1524,6 +1718,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type IncomeCategoryCountOutputType
+   */
+
+  export type IncomeCategoryCountOutputType = {
+    transactions: number
+  }
+
+  export type IncomeCategoryCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | IncomeCategoryCountOutputTypeCountTransactionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * IncomeCategoryCountOutputType without action
+   */
+  export type IncomeCategoryCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategoryCountOutputType
+     */
+    select?: IncomeCategoryCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * IncomeCategoryCountOutputType without action
+   */
+  export type IncomeCategoryCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransactionWhereInput
+  }
+
+
+  /**
    * Count Type PermissionCountOutputType
    */
 
@@ -1601,11 +1826,15 @@ export namespace Prisma {
   export type UserCountOutputType = {
     roles: number
     accounts: number
+    incomeCategories: number
+    emailOtps: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | UserCountOutputTypeCountRolesArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+    incomeCategories?: boolean | UserCountOutputTypeCountIncomeCategoriesArgs
+    emailOtps?: boolean | UserCountOutputTypeCountEmailOtpsArgs
   }
 
   // Custom InputTypes
@@ -1631,6 +1860,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AccountWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountIncomeCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncomeCategoryWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEmailOtpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailOtpWhereInput
   }
 
 
@@ -2814,6 +3057,1131 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: AccountInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model IncomeCategory
+   */
+
+  export type AggregateIncomeCategory = {
+    _count: IncomeCategoryCountAggregateOutputType | null
+    _min: IncomeCategoryMinAggregateOutputType | null
+    _max: IncomeCategoryMaxAggregateOutputType | null
+  }
+
+  export type IncomeCategoryMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    name: string | null
+    isArchived: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IncomeCategoryMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    name: string | null
+    isArchived: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IncomeCategoryCountAggregateOutputType = {
+    id: number
+    userId: number
+    name: number
+    isArchived: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type IncomeCategoryMinAggregateInputType = {
+    id?: true
+    userId?: true
+    name?: true
+    isArchived?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IncomeCategoryMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    name?: true
+    isArchived?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IncomeCategoryCountAggregateInputType = {
+    id?: true
+    userId?: true
+    name?: true
+    isArchived?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type IncomeCategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IncomeCategory to aggregate.
+     */
+    where?: IncomeCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncomeCategories to fetch.
+     */
+    orderBy?: IncomeCategoryOrderByWithRelationInput | IncomeCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IncomeCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncomeCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncomeCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IncomeCategories
+    **/
+    _count?: true | IncomeCategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IncomeCategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IncomeCategoryMaxAggregateInputType
+  }
+
+  export type GetIncomeCategoryAggregateType<T extends IncomeCategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateIncomeCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIncomeCategory[P]>
+      : GetScalarType<T[P], AggregateIncomeCategory[P]>
+  }
+
+
+
+
+  export type IncomeCategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncomeCategoryWhereInput
+    orderBy?: IncomeCategoryOrderByWithAggregationInput | IncomeCategoryOrderByWithAggregationInput[]
+    by: IncomeCategoryScalarFieldEnum[] | IncomeCategoryScalarFieldEnum
+    having?: IncomeCategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IncomeCategoryCountAggregateInputType | true
+    _min?: IncomeCategoryMinAggregateInputType
+    _max?: IncomeCategoryMaxAggregateInputType
+  }
+
+  export type IncomeCategoryGroupByOutputType = {
+    id: string
+    userId: string | null
+    name: string
+    isArchived: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: IncomeCategoryCountAggregateOutputType | null
+    _min: IncomeCategoryMinAggregateOutputType | null
+    _max: IncomeCategoryMaxAggregateOutputType | null
+  }
+
+  type GetIncomeCategoryGroupByPayload<T extends IncomeCategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IncomeCategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IncomeCategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IncomeCategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], IncomeCategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IncomeCategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    isArchived?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | IncomeCategory$userArgs<ExtArgs>
+    transactions?: boolean | IncomeCategory$transactionsArgs<ExtArgs>
+    _count?: boolean | IncomeCategoryCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["incomeCategory"]>
+
+  export type IncomeCategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    isArchived?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | IncomeCategory$userArgs<ExtArgs>
+  }, ExtArgs["result"]["incomeCategory"]>
+
+  export type IncomeCategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    isArchived?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | IncomeCategory$userArgs<ExtArgs>
+  }, ExtArgs["result"]["incomeCategory"]>
+
+  export type IncomeCategorySelectScalar = {
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    isArchived?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type IncomeCategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "isArchived" | "createdAt" | "updatedAt", ExtArgs["result"]["incomeCategory"]>
+  export type IncomeCategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | IncomeCategory$userArgs<ExtArgs>
+    transactions?: boolean | IncomeCategory$transactionsArgs<ExtArgs>
+    _count?: boolean | IncomeCategoryCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type IncomeCategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | IncomeCategory$userArgs<ExtArgs>
+  }
+  export type IncomeCategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | IncomeCategory$userArgs<ExtArgs>
+  }
+
+  export type $IncomeCategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IncomeCategory"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+      transactions: Prisma.$TransactionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string | null
+      name: string
+      isArchived: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["incomeCategory"]>
+    composites: {}
+  }
+
+  type IncomeCategoryGetPayload<S extends boolean | null | undefined | IncomeCategoryDefaultArgs> = $Result.GetResult<Prisma.$IncomeCategoryPayload, S>
+
+  type IncomeCategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IncomeCategoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IncomeCategoryCountAggregateInputType | true
+    }
+
+  export interface IncomeCategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IncomeCategory'], meta: { name: 'IncomeCategory' } }
+    /**
+     * Find zero or one IncomeCategory that matches the filter.
+     * @param {IncomeCategoryFindUniqueArgs} args - Arguments to find a IncomeCategory
+     * @example
+     * // Get one IncomeCategory
+     * const incomeCategory = await prisma.incomeCategory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IncomeCategoryFindUniqueArgs>(args: SelectSubset<T, IncomeCategoryFindUniqueArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IncomeCategory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IncomeCategoryFindUniqueOrThrowArgs} args - Arguments to find a IncomeCategory
+     * @example
+     * // Get one IncomeCategory
+     * const incomeCategory = await prisma.incomeCategory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IncomeCategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, IncomeCategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IncomeCategory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncomeCategoryFindFirstArgs} args - Arguments to find a IncomeCategory
+     * @example
+     * // Get one IncomeCategory
+     * const incomeCategory = await prisma.incomeCategory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IncomeCategoryFindFirstArgs>(args?: SelectSubset<T, IncomeCategoryFindFirstArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IncomeCategory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncomeCategoryFindFirstOrThrowArgs} args - Arguments to find a IncomeCategory
+     * @example
+     * // Get one IncomeCategory
+     * const incomeCategory = await prisma.incomeCategory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IncomeCategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, IncomeCategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IncomeCategories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncomeCategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IncomeCategories
+     * const incomeCategories = await prisma.incomeCategory.findMany()
+     * 
+     * // Get first 10 IncomeCategories
+     * const incomeCategories = await prisma.incomeCategory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const incomeCategoryWithIdOnly = await prisma.incomeCategory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IncomeCategoryFindManyArgs>(args?: SelectSubset<T, IncomeCategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IncomeCategory.
+     * @param {IncomeCategoryCreateArgs} args - Arguments to create a IncomeCategory.
+     * @example
+     * // Create one IncomeCategory
+     * const IncomeCategory = await prisma.incomeCategory.create({
+     *   data: {
+     *     // ... data to create a IncomeCategory
+     *   }
+     * })
+     * 
+     */
+    create<T extends IncomeCategoryCreateArgs>(args: SelectSubset<T, IncomeCategoryCreateArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IncomeCategories.
+     * @param {IncomeCategoryCreateManyArgs} args - Arguments to create many IncomeCategories.
+     * @example
+     * // Create many IncomeCategories
+     * const incomeCategory = await prisma.incomeCategory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IncomeCategoryCreateManyArgs>(args?: SelectSubset<T, IncomeCategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IncomeCategories and returns the data saved in the database.
+     * @param {IncomeCategoryCreateManyAndReturnArgs} args - Arguments to create many IncomeCategories.
+     * @example
+     * // Create many IncomeCategories
+     * const incomeCategory = await prisma.incomeCategory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IncomeCategories and only return the `id`
+     * const incomeCategoryWithIdOnly = await prisma.incomeCategory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IncomeCategoryCreateManyAndReturnArgs>(args?: SelectSubset<T, IncomeCategoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IncomeCategory.
+     * @param {IncomeCategoryDeleteArgs} args - Arguments to delete one IncomeCategory.
+     * @example
+     * // Delete one IncomeCategory
+     * const IncomeCategory = await prisma.incomeCategory.delete({
+     *   where: {
+     *     // ... filter to delete one IncomeCategory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IncomeCategoryDeleteArgs>(args: SelectSubset<T, IncomeCategoryDeleteArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IncomeCategory.
+     * @param {IncomeCategoryUpdateArgs} args - Arguments to update one IncomeCategory.
+     * @example
+     * // Update one IncomeCategory
+     * const incomeCategory = await prisma.incomeCategory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IncomeCategoryUpdateArgs>(args: SelectSubset<T, IncomeCategoryUpdateArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IncomeCategories.
+     * @param {IncomeCategoryDeleteManyArgs} args - Arguments to filter IncomeCategories to delete.
+     * @example
+     * // Delete a few IncomeCategories
+     * const { count } = await prisma.incomeCategory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IncomeCategoryDeleteManyArgs>(args?: SelectSubset<T, IncomeCategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IncomeCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncomeCategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IncomeCategories
+     * const incomeCategory = await prisma.incomeCategory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IncomeCategoryUpdateManyArgs>(args: SelectSubset<T, IncomeCategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IncomeCategories and returns the data updated in the database.
+     * @param {IncomeCategoryUpdateManyAndReturnArgs} args - Arguments to update many IncomeCategories.
+     * @example
+     * // Update many IncomeCategories
+     * const incomeCategory = await prisma.incomeCategory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IncomeCategories and only return the `id`
+     * const incomeCategoryWithIdOnly = await prisma.incomeCategory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IncomeCategoryUpdateManyAndReturnArgs>(args: SelectSubset<T, IncomeCategoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IncomeCategory.
+     * @param {IncomeCategoryUpsertArgs} args - Arguments to update or create a IncomeCategory.
+     * @example
+     * // Update or create a IncomeCategory
+     * const incomeCategory = await prisma.incomeCategory.upsert({
+     *   create: {
+     *     // ... data to create a IncomeCategory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IncomeCategory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IncomeCategoryUpsertArgs>(args: SelectSubset<T, IncomeCategoryUpsertArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IncomeCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncomeCategoryCountArgs} args - Arguments to filter IncomeCategories to count.
+     * @example
+     * // Count the number of IncomeCategories
+     * const count = await prisma.incomeCategory.count({
+     *   where: {
+     *     // ... the filter for the IncomeCategories we want to count
+     *   }
+     * })
+    **/
+    count<T extends IncomeCategoryCountArgs>(
+      args?: Subset<T, IncomeCategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IncomeCategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IncomeCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncomeCategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IncomeCategoryAggregateArgs>(args: Subset<T, IncomeCategoryAggregateArgs>): Prisma.PrismaPromise<GetIncomeCategoryAggregateType<T>>
+
+    /**
+     * Group by IncomeCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncomeCategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IncomeCategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IncomeCategoryGroupByArgs['orderBy'] }
+        : { orderBy?: IncomeCategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IncomeCategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIncomeCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IncomeCategory model
+   */
+  readonly fields: IncomeCategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IncomeCategory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IncomeCategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends IncomeCategory$userArgs<ExtArgs> = {}>(args?: Subset<T, IncomeCategory$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    transactions<T extends IncomeCategory$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, IncomeCategory$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IncomeCategory model
+   */
+  interface IncomeCategoryFieldRefs {
+    readonly id: FieldRef<"IncomeCategory", 'String'>
+    readonly userId: FieldRef<"IncomeCategory", 'String'>
+    readonly name: FieldRef<"IncomeCategory", 'String'>
+    readonly isArchived: FieldRef<"IncomeCategory", 'Boolean'>
+    readonly createdAt: FieldRef<"IncomeCategory", 'DateTime'>
+    readonly updatedAt: FieldRef<"IncomeCategory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IncomeCategory findUnique
+   */
+  export type IncomeCategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which IncomeCategory to fetch.
+     */
+    where: IncomeCategoryWhereUniqueInput
+  }
+
+  /**
+   * IncomeCategory findUniqueOrThrow
+   */
+  export type IncomeCategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which IncomeCategory to fetch.
+     */
+    where: IncomeCategoryWhereUniqueInput
+  }
+
+  /**
+   * IncomeCategory findFirst
+   */
+  export type IncomeCategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which IncomeCategory to fetch.
+     */
+    where?: IncomeCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncomeCategories to fetch.
+     */
+    orderBy?: IncomeCategoryOrderByWithRelationInput | IncomeCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IncomeCategories.
+     */
+    cursor?: IncomeCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncomeCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncomeCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncomeCategories.
+     */
+    distinct?: IncomeCategoryScalarFieldEnum | IncomeCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * IncomeCategory findFirstOrThrow
+   */
+  export type IncomeCategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which IncomeCategory to fetch.
+     */
+    where?: IncomeCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncomeCategories to fetch.
+     */
+    orderBy?: IncomeCategoryOrderByWithRelationInput | IncomeCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IncomeCategories.
+     */
+    cursor?: IncomeCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncomeCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncomeCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncomeCategories.
+     */
+    distinct?: IncomeCategoryScalarFieldEnum | IncomeCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * IncomeCategory findMany
+   */
+  export type IncomeCategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which IncomeCategories to fetch.
+     */
+    where?: IncomeCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncomeCategories to fetch.
+     */
+    orderBy?: IncomeCategoryOrderByWithRelationInput | IncomeCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IncomeCategories.
+     */
+    cursor?: IncomeCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncomeCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncomeCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncomeCategories.
+     */
+    distinct?: IncomeCategoryScalarFieldEnum | IncomeCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * IncomeCategory create
+   */
+  export type IncomeCategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a IncomeCategory.
+     */
+    data: XOR<IncomeCategoryCreateInput, IncomeCategoryUncheckedCreateInput>
+  }
+
+  /**
+   * IncomeCategory createMany
+   */
+  export type IncomeCategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IncomeCategories.
+     */
+    data: IncomeCategoryCreateManyInput | IncomeCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IncomeCategory createManyAndReturn
+   */
+  export type IncomeCategoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many IncomeCategories.
+     */
+    data: IncomeCategoryCreateManyInput | IncomeCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IncomeCategory update
+   */
+  export type IncomeCategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a IncomeCategory.
+     */
+    data: XOR<IncomeCategoryUpdateInput, IncomeCategoryUncheckedUpdateInput>
+    /**
+     * Choose, which IncomeCategory to update.
+     */
+    where: IncomeCategoryWhereUniqueInput
+  }
+
+  /**
+   * IncomeCategory updateMany
+   */
+  export type IncomeCategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IncomeCategories.
+     */
+    data: XOR<IncomeCategoryUpdateManyMutationInput, IncomeCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which IncomeCategories to update
+     */
+    where?: IncomeCategoryWhereInput
+    /**
+     * Limit how many IncomeCategories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IncomeCategory updateManyAndReturn
+   */
+  export type IncomeCategoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to update IncomeCategories.
+     */
+    data: XOR<IncomeCategoryUpdateManyMutationInput, IncomeCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which IncomeCategories to update
+     */
+    where?: IncomeCategoryWhereInput
+    /**
+     * Limit how many IncomeCategories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IncomeCategory upsert
+   */
+  export type IncomeCategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the IncomeCategory to update in case it exists.
+     */
+    where: IncomeCategoryWhereUniqueInput
+    /**
+     * In case the IncomeCategory found by the `where` argument doesn't exist, create a new IncomeCategory with this data.
+     */
+    create: XOR<IncomeCategoryCreateInput, IncomeCategoryUncheckedCreateInput>
+    /**
+     * In case the IncomeCategory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IncomeCategoryUpdateInput, IncomeCategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * IncomeCategory delete
+   */
+  export type IncomeCategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    /**
+     * Filter which IncomeCategory to delete.
+     */
+    where: IncomeCategoryWhereUniqueInput
+  }
+
+  /**
+   * IncomeCategory deleteMany
+   */
+  export type IncomeCategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IncomeCategories to delete
+     */
+    where?: IncomeCategoryWhereInput
+    /**
+     * Limit how many IncomeCategories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IncomeCategory.user
+   */
+  export type IncomeCategory$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * IncomeCategory.transactions
+   */
+  export type IncomeCategory$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    cursor?: TransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * IncomeCategory without action
+   */
+  export type IncomeCategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
   }
 
 
@@ -7127,6 +8495,7 @@ export namespace Prisma {
     description: string | null
     transactionDate: Date | null
     reversalOfTransactionId: string | null
+    incomeCategoryId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7140,6 +8509,7 @@ export namespace Prisma {
     description: string | null
     transactionDate: Date | null
     reversalOfTransactionId: string | null
+    incomeCategoryId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7153,6 +8523,7 @@ export namespace Prisma {
     description: number
     transactionDate: number
     reversalOfTransactionId: number
+    incomeCategoryId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -7176,6 +8547,7 @@ export namespace Prisma {
     description?: true
     transactionDate?: true
     reversalOfTransactionId?: true
+    incomeCategoryId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7189,6 +8561,7 @@ export namespace Prisma {
     description?: true
     transactionDate?: true
     reversalOfTransactionId?: true
+    incomeCategoryId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7202,6 +8575,7 @@ export namespace Prisma {
     description?: true
     transactionDate?: true
     reversalOfTransactionId?: true
+    incomeCategoryId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -7302,6 +8676,7 @@ export namespace Prisma {
     description: string | null
     transactionDate: Date
     reversalOfTransactionId: string | null
+    incomeCategoryId: string | null
     createdAt: Date
     updatedAt: Date
     _count: TransactionCountAggregateOutputType | null
@@ -7334,11 +8709,13 @@ export namespace Prisma {
     description?: boolean
     transactionDate?: boolean
     reversalOfTransactionId?: boolean
+    incomeCategoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | AccountDefaultArgs<ExtArgs>
     reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
     reversal?: boolean | Transaction$reversalArgs<ExtArgs>
+    incomeCategory?: boolean | Transaction$incomeCategoryArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7350,10 +8727,12 @@ export namespace Prisma {
     description?: boolean
     transactionDate?: boolean
     reversalOfTransactionId?: boolean
+    incomeCategoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | AccountDefaultArgs<ExtArgs>
     reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
+    incomeCategory?: boolean | Transaction$incomeCategoryArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7365,10 +8744,12 @@ export namespace Prisma {
     description?: boolean
     transactionDate?: boolean
     reversalOfTransactionId?: boolean
+    incomeCategoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | AccountDefaultArgs<ExtArgs>
     reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
+    incomeCategory?: boolean | Transaction$incomeCategoryArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectScalar = {
@@ -7380,23 +8761,27 @@ export namespace Prisma {
     description?: boolean
     transactionDate?: boolean
     reversalOfTransactionId?: boolean
+    incomeCategoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accountId" | "type" | "amount" | "currency" | "description" | "transactionDate" | "reversalOfTransactionId" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accountId" | "type" | "amount" | "currency" | "description" | "transactionDate" | "reversalOfTransactionId" | "incomeCategoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | AccountDefaultArgs<ExtArgs>
     reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
     reversal?: boolean | Transaction$reversalArgs<ExtArgs>
+    incomeCategory?: boolean | Transaction$incomeCategoryArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | AccountDefaultArgs<ExtArgs>
     reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
+    incomeCategory?: boolean | Transaction$incomeCategoryArgs<ExtArgs>
   }
   export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | AccountDefaultArgs<ExtArgs>
     reversalOf?: boolean | Transaction$reversalOfArgs<ExtArgs>
+    incomeCategory?: boolean | Transaction$incomeCategoryArgs<ExtArgs>
   }
 
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7405,6 +8790,7 @@ export namespace Prisma {
       account: Prisma.$AccountPayload<ExtArgs>
       reversalOf: Prisma.$TransactionPayload<ExtArgs> | null
       reversal: Prisma.$TransactionPayload<ExtArgs> | null
+      incomeCategory: Prisma.$IncomeCategoryPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7415,6 +8801,7 @@ export namespace Prisma {
       description: string | null
       transactionDate: Date
       reversalOfTransactionId: string | null
+      incomeCategoryId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["transaction"]>
@@ -7814,6 +9201,7 @@ export namespace Prisma {
     account<T extends AccountDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AccountDefaultArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     reversalOf<T extends Transaction$reversalOfArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$reversalOfArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     reversal<T extends Transaction$reversalArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$reversalArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    incomeCategory<T extends Transaction$incomeCategoryArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$incomeCategoryArgs<ExtArgs>>): Prisma__IncomeCategoryClient<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7851,6 +9239,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Transaction", 'String'>
     readonly transactionDate: FieldRef<"Transaction", 'DateTime'>
     readonly reversalOfTransactionId: FieldRef<"Transaction", 'String'>
+    readonly incomeCategoryId: FieldRef<"Transaction", 'String'>
     readonly createdAt: FieldRef<"Transaction", 'DateTime'>
     readonly updatedAt: FieldRef<"Transaction", 'DateTime'>
   }
@@ -8292,6 +9681,25 @@ export namespace Prisma {
   }
 
   /**
+   * Transaction.incomeCategory
+   */
+  export type Transaction$incomeCategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    where?: IncomeCategoryWhereInput
+  }
+
+  /**
    * Transaction without action
    */
   export type TransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8327,6 +9735,7 @@ export namespace Prisma {
     firstName: string | null
     lastName: string | null
     status: $Enums.UserStatus | null
+    emailVerifiedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -8339,6 +9748,7 @@ export namespace Prisma {
     firstName: string | null
     lastName: string | null
     status: $Enums.UserStatus | null
+    emailVerifiedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -8351,6 +9761,7 @@ export namespace Prisma {
     firstName: number
     lastName: number
     status: number
+    emailVerifiedAt: number
     createdAt: number
     updatedAt: number
     deletedAt: number
@@ -8365,6 +9776,7 @@ export namespace Prisma {
     firstName?: true
     lastName?: true
     status?: true
+    emailVerifiedAt?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -8377,6 +9789,7 @@ export namespace Prisma {
     firstName?: true
     lastName?: true
     status?: true
+    emailVerifiedAt?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -8389,6 +9802,7 @@ export namespace Prisma {
     firstName?: true
     lastName?: true
     status?: true
+    emailVerifiedAt?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -8474,6 +9888,7 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status: $Enums.UserStatus
+    emailVerifiedAt: Date | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -8503,11 +9918,14 @@ export namespace Prisma {
     firstName?: boolean
     lastName?: boolean
     status?: boolean
+    emailVerifiedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
     roles?: boolean | User$rolesArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    incomeCategories?: boolean | User$incomeCategoriesArgs<ExtArgs>
+    emailOtps?: boolean | User$emailOtpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -8518,6 +9936,7 @@ export namespace Prisma {
     firstName?: boolean
     lastName?: boolean
     status?: boolean
+    emailVerifiedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -8530,6 +9949,7 @@ export namespace Prisma {
     firstName?: boolean
     lastName?: boolean
     status?: boolean
+    emailVerifiedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -8542,15 +9962,18 @@ export namespace Prisma {
     firstName?: boolean
     lastName?: boolean
     status?: boolean
+    emailVerifiedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "passwordHash" | "firstName" | "lastName" | "status" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "passwordHash" | "firstName" | "lastName" | "status" | "emailVerifiedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | User$rolesArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    incomeCategories?: boolean | User$incomeCategoriesArgs<ExtArgs>
+    emailOtps?: boolean | User$emailOtpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -8561,6 +9984,8 @@ export namespace Prisma {
     objects: {
       roles: Prisma.$UserRolePayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
+      incomeCategories: Prisma.$IncomeCategoryPayload<ExtArgs>[]
+      emailOtps: Prisma.$EmailOtpPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8569,6 +9994,7 @@ export namespace Prisma {
       firstName: string
       lastName: string
       status: $Enums.UserStatus
+      emailVerifiedAt: Date | null
       createdAt: Date
       updatedAt: Date
       deletedAt: Date | null
@@ -8968,6 +10394,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     roles<T extends User$rolesArgs<ExtArgs> = {}>(args?: Subset<T, User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    incomeCategories<T extends User$incomeCategoriesArgs<ExtArgs> = {}>(args?: Subset<T, User$incomeCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncomeCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    emailOtps<T extends User$emailOtpsArgs<ExtArgs> = {}>(args?: Subset<T, User$emailOtpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9003,6 +10431,7 @@ export namespace Prisma {
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
     readonly status: FieldRef<"User", 'UserStatus'>
+    readonly emailVerifiedAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly deletedAt: FieldRef<"User", 'DateTime'>
@@ -9447,6 +10876,54 @@ export namespace Prisma {
   }
 
   /**
+   * User.incomeCategories
+   */
+  export type User$incomeCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncomeCategory
+     */
+    select?: IncomeCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncomeCategory
+     */
+    omit?: IncomeCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncomeCategoryInclude<ExtArgs> | null
+    where?: IncomeCategoryWhereInput
+    orderBy?: IncomeCategoryOrderByWithRelationInput | IncomeCategoryOrderByWithRelationInput[]
+    cursor?: IncomeCategoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IncomeCategoryScalarFieldEnum | IncomeCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * User.emailOtps
+   */
+  export type User$emailOtpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    where?: EmailOtpWhereInput
+    orderBy?: EmailOtpOrderByWithRelationInput | EmailOtpOrderByWithRelationInput[]
+    cursor?: EmailOtpWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmailOtpScalarFieldEnum | EmailOtpScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9462,6 +10939,1155 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EmailOtp
+   */
+
+  export type AggregateEmailOtp = {
+    _count: EmailOtpCountAggregateOutputType | null
+    _avg: EmailOtpAvgAggregateOutputType | null
+    _sum: EmailOtpSumAggregateOutputType | null
+    _min: EmailOtpMinAggregateOutputType | null
+    _max: EmailOtpMaxAggregateOutputType | null
+  }
+
+  export type EmailOtpAvgAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type EmailOtpSumAggregateOutputType = {
+    attempts: number | null
+  }
+
+  export type EmailOtpMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    purpose: $Enums.OtpPurpose | null
+    codeSalt: string | null
+    codeHash: string | null
+    attempts: number | null
+    expiresAt: Date | null
+    consumedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type EmailOtpMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    purpose: $Enums.OtpPurpose | null
+    codeSalt: string | null
+    codeHash: string | null
+    attempts: number | null
+    expiresAt: Date | null
+    consumedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type EmailOtpCountAggregateOutputType = {
+    id: number
+    userId: number
+    purpose: number
+    codeSalt: number
+    codeHash: number
+    attempts: number
+    expiresAt: number
+    consumedAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type EmailOtpAvgAggregateInputType = {
+    attempts?: true
+  }
+
+  export type EmailOtpSumAggregateInputType = {
+    attempts?: true
+  }
+
+  export type EmailOtpMinAggregateInputType = {
+    id?: true
+    userId?: true
+    purpose?: true
+    codeSalt?: true
+    codeHash?: true
+    attempts?: true
+    expiresAt?: true
+    consumedAt?: true
+    createdAt?: true
+  }
+
+  export type EmailOtpMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    purpose?: true
+    codeSalt?: true
+    codeHash?: true
+    attempts?: true
+    expiresAt?: true
+    consumedAt?: true
+    createdAt?: true
+  }
+
+  export type EmailOtpCountAggregateInputType = {
+    id?: true
+    userId?: true
+    purpose?: true
+    codeSalt?: true
+    codeHash?: true
+    attempts?: true
+    expiresAt?: true
+    consumedAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type EmailOtpAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailOtp to aggregate.
+     */
+    where?: EmailOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailOtps to fetch.
+     */
+    orderBy?: EmailOtpOrderByWithRelationInput | EmailOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EmailOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailOtps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EmailOtps
+    **/
+    _count?: true | EmailOtpCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EmailOtpAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EmailOtpSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EmailOtpMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EmailOtpMaxAggregateInputType
+  }
+
+  export type GetEmailOtpAggregateType<T extends EmailOtpAggregateArgs> = {
+        [P in keyof T & keyof AggregateEmailOtp]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEmailOtp[P]>
+      : GetScalarType<T[P], AggregateEmailOtp[P]>
+  }
+
+
+
+
+  export type EmailOtpGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailOtpWhereInput
+    orderBy?: EmailOtpOrderByWithAggregationInput | EmailOtpOrderByWithAggregationInput[]
+    by: EmailOtpScalarFieldEnum[] | EmailOtpScalarFieldEnum
+    having?: EmailOtpScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EmailOtpCountAggregateInputType | true
+    _avg?: EmailOtpAvgAggregateInputType
+    _sum?: EmailOtpSumAggregateInputType
+    _min?: EmailOtpMinAggregateInputType
+    _max?: EmailOtpMaxAggregateInputType
+  }
+
+  export type EmailOtpGroupByOutputType = {
+    id: string
+    userId: string
+    purpose: $Enums.OtpPurpose
+    codeSalt: string
+    codeHash: string
+    attempts: number
+    expiresAt: Date
+    consumedAt: Date | null
+    createdAt: Date
+    _count: EmailOtpCountAggregateOutputType | null
+    _avg: EmailOtpAvgAggregateOutputType | null
+    _sum: EmailOtpSumAggregateOutputType | null
+    _min: EmailOtpMinAggregateOutputType | null
+    _max: EmailOtpMaxAggregateOutputType | null
+  }
+
+  type GetEmailOtpGroupByPayload<T extends EmailOtpGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EmailOtpGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EmailOtpGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EmailOtpGroupByOutputType[P]>
+            : GetScalarType<T[P], EmailOtpGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EmailOtpSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    purpose?: boolean
+    codeSalt?: boolean
+    codeHash?: boolean
+    attempts?: boolean
+    expiresAt?: boolean
+    consumedAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["emailOtp"]>
+
+  export type EmailOtpSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    purpose?: boolean
+    codeSalt?: boolean
+    codeHash?: boolean
+    attempts?: boolean
+    expiresAt?: boolean
+    consumedAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["emailOtp"]>
+
+  export type EmailOtpSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    purpose?: boolean
+    codeSalt?: boolean
+    codeHash?: boolean
+    attempts?: boolean
+    expiresAt?: boolean
+    consumedAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["emailOtp"]>
+
+  export type EmailOtpSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    purpose?: boolean
+    codeSalt?: boolean
+    codeHash?: boolean
+    attempts?: boolean
+    expiresAt?: boolean
+    consumedAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type EmailOtpOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "purpose" | "codeSalt" | "codeHash" | "attempts" | "expiresAt" | "consumedAt" | "createdAt", ExtArgs["result"]["emailOtp"]>
+  export type EmailOtpInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EmailOtpIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EmailOtpIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $EmailOtpPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EmailOtp"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      purpose: $Enums.OtpPurpose
+      codeSalt: string
+      codeHash: string
+      attempts: number
+      expiresAt: Date
+      consumedAt: Date | null
+      createdAt: Date
+    }, ExtArgs["result"]["emailOtp"]>
+    composites: {}
+  }
+
+  type EmailOtpGetPayload<S extends boolean | null | undefined | EmailOtpDefaultArgs> = $Result.GetResult<Prisma.$EmailOtpPayload, S>
+
+  type EmailOtpCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EmailOtpFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EmailOtpCountAggregateInputType | true
+    }
+
+  export interface EmailOtpDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EmailOtp'], meta: { name: 'EmailOtp' } }
+    /**
+     * Find zero or one EmailOtp that matches the filter.
+     * @param {EmailOtpFindUniqueArgs} args - Arguments to find a EmailOtp
+     * @example
+     * // Get one EmailOtp
+     * const emailOtp = await prisma.emailOtp.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EmailOtpFindUniqueArgs>(args: SelectSubset<T, EmailOtpFindUniqueArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EmailOtp that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EmailOtpFindUniqueOrThrowArgs} args - Arguments to find a EmailOtp
+     * @example
+     * // Get one EmailOtp
+     * const emailOtp = await prisma.emailOtp.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EmailOtpFindUniqueOrThrowArgs>(args: SelectSubset<T, EmailOtpFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailOtp that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailOtpFindFirstArgs} args - Arguments to find a EmailOtp
+     * @example
+     * // Get one EmailOtp
+     * const emailOtp = await prisma.emailOtp.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EmailOtpFindFirstArgs>(args?: SelectSubset<T, EmailOtpFindFirstArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailOtp that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailOtpFindFirstOrThrowArgs} args - Arguments to find a EmailOtp
+     * @example
+     * // Get one EmailOtp
+     * const emailOtp = await prisma.emailOtp.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EmailOtpFindFirstOrThrowArgs>(args?: SelectSubset<T, EmailOtpFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EmailOtps that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailOtpFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EmailOtps
+     * const emailOtps = await prisma.emailOtp.findMany()
+     * 
+     * // Get first 10 EmailOtps
+     * const emailOtps = await prisma.emailOtp.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const emailOtpWithIdOnly = await prisma.emailOtp.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EmailOtpFindManyArgs>(args?: SelectSubset<T, EmailOtpFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EmailOtp.
+     * @param {EmailOtpCreateArgs} args - Arguments to create a EmailOtp.
+     * @example
+     * // Create one EmailOtp
+     * const EmailOtp = await prisma.emailOtp.create({
+     *   data: {
+     *     // ... data to create a EmailOtp
+     *   }
+     * })
+     * 
+     */
+    create<T extends EmailOtpCreateArgs>(args: SelectSubset<T, EmailOtpCreateArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EmailOtps.
+     * @param {EmailOtpCreateManyArgs} args - Arguments to create many EmailOtps.
+     * @example
+     * // Create many EmailOtps
+     * const emailOtp = await prisma.emailOtp.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EmailOtpCreateManyArgs>(args?: SelectSubset<T, EmailOtpCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EmailOtps and returns the data saved in the database.
+     * @param {EmailOtpCreateManyAndReturnArgs} args - Arguments to create many EmailOtps.
+     * @example
+     * // Create many EmailOtps
+     * const emailOtp = await prisma.emailOtp.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EmailOtps and only return the `id`
+     * const emailOtpWithIdOnly = await prisma.emailOtp.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EmailOtpCreateManyAndReturnArgs>(args?: SelectSubset<T, EmailOtpCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EmailOtp.
+     * @param {EmailOtpDeleteArgs} args - Arguments to delete one EmailOtp.
+     * @example
+     * // Delete one EmailOtp
+     * const EmailOtp = await prisma.emailOtp.delete({
+     *   where: {
+     *     // ... filter to delete one EmailOtp
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EmailOtpDeleteArgs>(args: SelectSubset<T, EmailOtpDeleteArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EmailOtp.
+     * @param {EmailOtpUpdateArgs} args - Arguments to update one EmailOtp.
+     * @example
+     * // Update one EmailOtp
+     * const emailOtp = await prisma.emailOtp.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EmailOtpUpdateArgs>(args: SelectSubset<T, EmailOtpUpdateArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EmailOtps.
+     * @param {EmailOtpDeleteManyArgs} args - Arguments to filter EmailOtps to delete.
+     * @example
+     * // Delete a few EmailOtps
+     * const { count } = await prisma.emailOtp.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EmailOtpDeleteManyArgs>(args?: SelectSubset<T, EmailOtpDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailOtps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailOtpUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EmailOtps
+     * const emailOtp = await prisma.emailOtp.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EmailOtpUpdateManyArgs>(args: SelectSubset<T, EmailOtpUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailOtps and returns the data updated in the database.
+     * @param {EmailOtpUpdateManyAndReturnArgs} args - Arguments to update many EmailOtps.
+     * @example
+     * // Update many EmailOtps
+     * const emailOtp = await prisma.emailOtp.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EmailOtps and only return the `id`
+     * const emailOtpWithIdOnly = await prisma.emailOtp.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EmailOtpUpdateManyAndReturnArgs>(args: SelectSubset<T, EmailOtpUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EmailOtp.
+     * @param {EmailOtpUpsertArgs} args - Arguments to update or create a EmailOtp.
+     * @example
+     * // Update or create a EmailOtp
+     * const emailOtp = await prisma.emailOtp.upsert({
+     *   create: {
+     *     // ... data to create a EmailOtp
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EmailOtp we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EmailOtpUpsertArgs>(args: SelectSubset<T, EmailOtpUpsertArgs<ExtArgs>>): Prisma__EmailOtpClient<$Result.GetResult<Prisma.$EmailOtpPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EmailOtps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailOtpCountArgs} args - Arguments to filter EmailOtps to count.
+     * @example
+     * // Count the number of EmailOtps
+     * const count = await prisma.emailOtp.count({
+     *   where: {
+     *     // ... the filter for the EmailOtps we want to count
+     *   }
+     * })
+    **/
+    count<T extends EmailOtpCountArgs>(
+      args?: Subset<T, EmailOtpCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EmailOtpCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EmailOtp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailOtpAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EmailOtpAggregateArgs>(args: Subset<T, EmailOtpAggregateArgs>): Prisma.PrismaPromise<GetEmailOtpAggregateType<T>>
+
+    /**
+     * Group by EmailOtp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailOtpGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EmailOtpGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EmailOtpGroupByArgs['orderBy'] }
+        : { orderBy?: EmailOtpGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EmailOtpGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEmailOtpGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EmailOtp model
+   */
+  readonly fields: EmailOtpFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EmailOtp.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EmailOtpClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EmailOtp model
+   */
+  interface EmailOtpFieldRefs {
+    readonly id: FieldRef<"EmailOtp", 'String'>
+    readonly userId: FieldRef<"EmailOtp", 'String'>
+    readonly purpose: FieldRef<"EmailOtp", 'OtpPurpose'>
+    readonly codeSalt: FieldRef<"EmailOtp", 'String'>
+    readonly codeHash: FieldRef<"EmailOtp", 'String'>
+    readonly attempts: FieldRef<"EmailOtp", 'Int'>
+    readonly expiresAt: FieldRef<"EmailOtp", 'DateTime'>
+    readonly consumedAt: FieldRef<"EmailOtp", 'DateTime'>
+    readonly createdAt: FieldRef<"EmailOtp", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EmailOtp findUnique
+   */
+  export type EmailOtpFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailOtp to fetch.
+     */
+    where: EmailOtpWhereUniqueInput
+  }
+
+  /**
+   * EmailOtp findUniqueOrThrow
+   */
+  export type EmailOtpFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailOtp to fetch.
+     */
+    where: EmailOtpWhereUniqueInput
+  }
+
+  /**
+   * EmailOtp findFirst
+   */
+  export type EmailOtpFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailOtp to fetch.
+     */
+    where?: EmailOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailOtps to fetch.
+     */
+    orderBy?: EmailOtpOrderByWithRelationInput | EmailOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailOtps.
+     */
+    cursor?: EmailOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailOtps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailOtps.
+     */
+    distinct?: EmailOtpScalarFieldEnum | EmailOtpScalarFieldEnum[]
+  }
+
+  /**
+   * EmailOtp findFirstOrThrow
+   */
+  export type EmailOtpFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailOtp to fetch.
+     */
+    where?: EmailOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailOtps to fetch.
+     */
+    orderBy?: EmailOtpOrderByWithRelationInput | EmailOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailOtps.
+     */
+    cursor?: EmailOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailOtps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailOtps.
+     */
+    distinct?: EmailOtpScalarFieldEnum | EmailOtpScalarFieldEnum[]
+  }
+
+  /**
+   * EmailOtp findMany
+   */
+  export type EmailOtpFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailOtps to fetch.
+     */
+    where?: EmailOtpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailOtps to fetch.
+     */
+    orderBy?: EmailOtpOrderByWithRelationInput | EmailOtpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EmailOtps.
+     */
+    cursor?: EmailOtpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailOtps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailOtps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailOtps.
+     */
+    distinct?: EmailOtpScalarFieldEnum | EmailOtpScalarFieldEnum[]
+  }
+
+  /**
+   * EmailOtp create
+   */
+  export type EmailOtpCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EmailOtp.
+     */
+    data: XOR<EmailOtpCreateInput, EmailOtpUncheckedCreateInput>
+  }
+
+  /**
+   * EmailOtp createMany
+   */
+  export type EmailOtpCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EmailOtps.
+     */
+    data: EmailOtpCreateManyInput | EmailOtpCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EmailOtp createManyAndReturn
+   */
+  export type EmailOtpCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * The data used to create many EmailOtps.
+     */
+    data: EmailOtpCreateManyInput | EmailOtpCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmailOtp update
+   */
+  export type EmailOtpUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EmailOtp.
+     */
+    data: XOR<EmailOtpUpdateInput, EmailOtpUncheckedUpdateInput>
+    /**
+     * Choose, which EmailOtp to update.
+     */
+    where: EmailOtpWhereUniqueInput
+  }
+
+  /**
+   * EmailOtp updateMany
+   */
+  export type EmailOtpUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EmailOtps.
+     */
+    data: XOR<EmailOtpUpdateManyMutationInput, EmailOtpUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailOtps to update
+     */
+    where?: EmailOtpWhereInput
+    /**
+     * Limit how many EmailOtps to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailOtp updateManyAndReturn
+   */
+  export type EmailOtpUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * The data used to update EmailOtps.
+     */
+    data: XOR<EmailOtpUpdateManyMutationInput, EmailOtpUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailOtps to update
+     */
+    where?: EmailOtpWhereInput
+    /**
+     * Limit how many EmailOtps to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmailOtp upsert
+   */
+  export type EmailOtpUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EmailOtp to update in case it exists.
+     */
+    where: EmailOtpWhereUniqueInput
+    /**
+     * In case the EmailOtp found by the `where` argument doesn't exist, create a new EmailOtp with this data.
+     */
+    create: XOR<EmailOtpCreateInput, EmailOtpUncheckedCreateInput>
+    /**
+     * In case the EmailOtp was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EmailOtpUpdateInput, EmailOtpUncheckedUpdateInput>
+  }
+
+  /**
+   * EmailOtp delete
+   */
+  export type EmailOtpDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
+    /**
+     * Filter which EmailOtp to delete.
+     */
+    where: EmailOtpWhereUniqueInput
+  }
+
+  /**
+   * EmailOtp deleteMany
+   */
+  export type EmailOtpDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailOtps to delete
+     */
+    where?: EmailOtpWhereInput
+    /**
+     * Limit how many EmailOtps to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailOtp without action
+   */
+  export type EmailOtpDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailOtp
+     */
+    select?: EmailOtpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailOtp
+     */
+    omit?: EmailOtpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailOtpInclude<ExtArgs> | null
   }
 
 
@@ -9492,6 +12118,18 @@ export namespace Prisma {
   };
 
   export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
+
+
+  export const IncomeCategoryScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    name: 'name',
+    isArchived: 'isArchived',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type IncomeCategoryScalarFieldEnum = (typeof IncomeCategoryScalarFieldEnum)[keyof typeof IncomeCategoryScalarFieldEnum]
 
 
   export const PermissionScalarFieldEnum: {
@@ -9544,6 +12182,7 @@ export namespace Prisma {
     description: 'description',
     transactionDate: 'transactionDate',
     reversalOfTransactionId: 'reversalOfTransactionId',
+    incomeCategoryId: 'incomeCategoryId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -9558,12 +12197,28 @@ export namespace Prisma {
     firstName: 'firstName',
     lastName: 'lastName',
     status: 'status',
+    emailVerifiedAt: 'emailVerifiedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     deletedAt: 'deletedAt'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const EmailOtpScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    purpose: 'purpose',
+    codeSalt: 'codeSalt',
+    codeHash: 'codeHash',
+    attempts: 'attempts',
+    expiresAt: 'expiresAt',
+    consumedAt: 'consumedAt',
+    createdAt: 'createdAt'
+  };
+
+  export type EmailOtpScalarFieldEnum = (typeof EmailOtpScalarFieldEnum)[keyof typeof EmailOtpScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9666,6 +12321,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'TransactionType'
    */
   export type EnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType'>
@@ -9694,6 +12356,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'OtpPurpose'
+   */
+  export type EnumOtpPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OtpPurpose'>
+    
+
+
+  /**
+   * Reference to a field of type 'OtpPurpose[]'
+   */
+  export type ListEnumOtpPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OtpPurpose[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -9704,6 +12380,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -9788,6 +12478,69 @@ export namespace Prisma {
     status?: EnumAccountStatusWithAggregatesFilter<"Account"> | $Enums.AccountStatus
     createdAt?: DateTimeWithAggregatesFilter<"Account"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Account"> | Date | string
+  }
+
+  export type IncomeCategoryWhereInput = {
+    AND?: IncomeCategoryWhereInput | IncomeCategoryWhereInput[]
+    OR?: IncomeCategoryWhereInput[]
+    NOT?: IncomeCategoryWhereInput | IncomeCategoryWhereInput[]
+    id?: UuidFilter<"IncomeCategory"> | string
+    userId?: UuidNullableFilter<"IncomeCategory"> | string | null
+    name?: StringFilter<"IncomeCategory"> | string
+    isArchived?: BoolFilter<"IncomeCategory"> | boolean
+    createdAt?: DateTimeFilter<"IncomeCategory"> | Date | string
+    updatedAt?: DateTimeFilter<"IncomeCategory"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    transactions?: TransactionListRelationFilter
+  }
+
+  export type IncomeCategoryOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    name?: SortOrder
+    isArchived?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    transactions?: TransactionOrderByRelationAggregateInput
+  }
+
+  export type IncomeCategoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: IncomeCategoryWhereInput | IncomeCategoryWhereInput[]
+    OR?: IncomeCategoryWhereInput[]
+    NOT?: IncomeCategoryWhereInput | IncomeCategoryWhereInput[]
+    userId?: UuidNullableFilter<"IncomeCategory"> | string | null
+    name?: StringFilter<"IncomeCategory"> | string
+    isArchived?: BoolFilter<"IncomeCategory"> | boolean
+    createdAt?: DateTimeFilter<"IncomeCategory"> | Date | string
+    updatedAt?: DateTimeFilter<"IncomeCategory"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    transactions?: TransactionListRelationFilter
+  }, "id">
+
+  export type IncomeCategoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    name?: SortOrder
+    isArchived?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: IncomeCategoryCountOrderByAggregateInput
+    _max?: IncomeCategoryMaxOrderByAggregateInput
+    _min?: IncomeCategoryMinOrderByAggregateInput
+  }
+
+  export type IncomeCategoryScalarWhereWithAggregatesInput = {
+    AND?: IncomeCategoryScalarWhereWithAggregatesInput | IncomeCategoryScalarWhereWithAggregatesInput[]
+    OR?: IncomeCategoryScalarWhereWithAggregatesInput[]
+    NOT?: IncomeCategoryScalarWhereWithAggregatesInput | IncomeCategoryScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"IncomeCategory"> | string
+    userId?: UuidNullableWithAggregatesFilter<"IncomeCategory"> | string | null
+    name?: StringWithAggregatesFilter<"IncomeCategory"> | string
+    isArchived?: BoolWithAggregatesFilter<"IncomeCategory"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"IncomeCategory"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"IncomeCategory"> | Date | string
   }
 
   export type PermissionWhereInput = {
@@ -10019,11 +12772,13 @@ export namespace Prisma {
     description?: StringNullableFilter<"Transaction"> | string | null
     transactionDate?: DateTimeFilter<"Transaction"> | Date | string
     reversalOfTransactionId?: UuidNullableFilter<"Transaction"> | string | null
+    incomeCategoryId?: UuidNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     account?: XOR<AccountScalarRelationFilter, AccountWhereInput>
     reversalOf?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
     reversal?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    incomeCategory?: XOR<IncomeCategoryNullableScalarRelationFilter, IncomeCategoryWhereInput> | null
   }
 
   export type TransactionOrderByWithRelationInput = {
@@ -10035,11 +12790,13 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     transactionDate?: SortOrder
     reversalOfTransactionId?: SortOrderInput | SortOrder
+    incomeCategoryId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     account?: AccountOrderByWithRelationInput
     reversalOf?: TransactionOrderByWithRelationInput
     reversal?: TransactionOrderByWithRelationInput
+    incomeCategory?: IncomeCategoryOrderByWithRelationInput
   }
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
@@ -10054,11 +12811,13 @@ export namespace Prisma {
     currency?: StringFilter<"Transaction"> | string
     description?: StringNullableFilter<"Transaction"> | string | null
     transactionDate?: DateTimeFilter<"Transaction"> | Date | string
+    incomeCategoryId?: UuidNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     account?: XOR<AccountScalarRelationFilter, AccountWhereInput>
     reversalOf?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
     reversal?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    incomeCategory?: XOR<IncomeCategoryNullableScalarRelationFilter, IncomeCategoryWhereInput> | null
   }, "id" | "reversalOfTransactionId">
 
   export type TransactionOrderByWithAggregationInput = {
@@ -10070,6 +12829,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     transactionDate?: SortOrder
     reversalOfTransactionId?: SortOrderInput | SortOrder
+    incomeCategoryId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TransactionCountOrderByAggregateInput
@@ -10091,6 +12851,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     transactionDate?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     reversalOfTransactionId?: UuidNullableWithAggregatesFilter<"Transaction"> | string | null
+    incomeCategoryId?: UuidNullableWithAggregatesFilter<"Transaction"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
   }
@@ -10105,11 +12866,14 @@ export namespace Prisma {
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     roles?: UserRoleListRelationFilter
     accounts?: AccountListRelationFilter
+    incomeCategories?: IncomeCategoryListRelationFilter
+    emailOtps?: EmailOtpListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10119,11 +12883,14 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     status?: SortOrder
+    emailVerifiedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     roles?: UserRoleOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
+    incomeCategories?: IncomeCategoryOrderByRelationAggregateInput
+    emailOtps?: EmailOtpOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -10136,11 +12903,14 @@ export namespace Prisma {
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     roles?: UserRoleListRelationFilter
     accounts?: AccountListRelationFilter
+    incomeCategories?: IncomeCategoryListRelationFilter
+    emailOtps?: EmailOtpListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -10150,6 +12920,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     status?: SortOrder
+    emailVerifiedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
@@ -10168,9 +12939,87 @@ export namespace Prisma {
     firstName?: StringWithAggregatesFilter<"User"> | string
     lastName?: StringWithAggregatesFilter<"User"> | string
     status?: EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+    emailVerifiedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  }
+
+  export type EmailOtpWhereInput = {
+    AND?: EmailOtpWhereInput | EmailOtpWhereInput[]
+    OR?: EmailOtpWhereInput[]
+    NOT?: EmailOtpWhereInput | EmailOtpWhereInput[]
+    id?: UuidFilter<"EmailOtp"> | string
+    userId?: UuidFilter<"EmailOtp"> | string
+    purpose?: EnumOtpPurposeFilter<"EmailOtp"> | $Enums.OtpPurpose
+    codeSalt?: StringFilter<"EmailOtp"> | string
+    codeHash?: StringFilter<"EmailOtp"> | string
+    attempts?: IntFilter<"EmailOtp"> | number
+    expiresAt?: DateTimeFilter<"EmailOtp"> | Date | string
+    consumedAt?: DateTimeNullableFilter<"EmailOtp"> | Date | string | null
+    createdAt?: DateTimeFilter<"EmailOtp"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type EmailOtpOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    purpose?: SortOrder
+    codeSalt?: SortOrder
+    codeHash?: SortOrder
+    attempts?: SortOrder
+    expiresAt?: SortOrder
+    consumedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type EmailOtpWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EmailOtpWhereInput | EmailOtpWhereInput[]
+    OR?: EmailOtpWhereInput[]
+    NOT?: EmailOtpWhereInput | EmailOtpWhereInput[]
+    userId?: UuidFilter<"EmailOtp"> | string
+    purpose?: EnumOtpPurposeFilter<"EmailOtp"> | $Enums.OtpPurpose
+    codeSalt?: StringFilter<"EmailOtp"> | string
+    codeHash?: StringFilter<"EmailOtp"> | string
+    attempts?: IntFilter<"EmailOtp"> | number
+    expiresAt?: DateTimeFilter<"EmailOtp"> | Date | string
+    consumedAt?: DateTimeNullableFilter<"EmailOtp"> | Date | string | null
+    createdAt?: DateTimeFilter<"EmailOtp"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type EmailOtpOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    purpose?: SortOrder
+    codeSalt?: SortOrder
+    codeHash?: SortOrder
+    attempts?: SortOrder
+    expiresAt?: SortOrder
+    consumedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: EmailOtpCountOrderByAggregateInput
+    _avg?: EmailOtpAvgOrderByAggregateInput
+    _max?: EmailOtpMaxOrderByAggregateInput
+    _min?: EmailOtpMinOrderByAggregateInput
+    _sum?: EmailOtpSumOrderByAggregateInput
+  }
+
+  export type EmailOtpScalarWhereWithAggregatesInput = {
+    AND?: EmailOtpScalarWhereWithAggregatesInput | EmailOtpScalarWhereWithAggregatesInput[]
+    OR?: EmailOtpScalarWhereWithAggregatesInput[]
+    NOT?: EmailOtpScalarWhereWithAggregatesInput | EmailOtpScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"EmailOtp"> | string
+    userId?: UuidWithAggregatesFilter<"EmailOtp"> | string
+    purpose?: EnumOtpPurposeWithAggregatesFilter<"EmailOtp"> | $Enums.OtpPurpose
+    codeSalt?: StringWithAggregatesFilter<"EmailOtp"> | string
+    codeHash?: StringWithAggregatesFilter<"EmailOtp"> | string
+    attempts?: IntWithAggregatesFilter<"EmailOtp"> | number
+    expiresAt?: DateTimeWithAggregatesFilter<"EmailOtp"> | Date | string
+    consumedAt?: DateTimeNullableWithAggregatesFilter<"EmailOtp"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"EmailOtp"> | Date | string
   }
 
   export type AccountCreateInput = {
@@ -10256,6 +13105,72 @@ export namespace Prisma {
     currency?: StringFieldUpdateOperationsInput | string
     openingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncomeCategoryCreateInput = {
+    id?: string
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutIncomeCategoriesInput
+    transactions?: TransactionCreateNestedManyWithoutIncomeCategoryInput
+  }
+
+  export type IncomeCategoryUncheckedCreateInput = {
+    id?: string
+    userId?: string | null
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutIncomeCategoryInput
+  }
+
+  export type IncomeCategoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutIncomeCategoriesNestedInput
+    transactions?: TransactionUpdateManyWithoutIncomeCategoryNestedInput
+  }
+
+  export type IncomeCategoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUncheckedUpdateManyWithoutIncomeCategoryNestedInput
+  }
+
+  export type IncomeCategoryCreateManyInput = {
+    id?: string
+    userId?: string | null
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IncomeCategoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncomeCategoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10483,6 +13398,7 @@ export namespace Prisma {
     account: AccountCreateNestedOneWithoutTransactionsInput
     reversalOf?: TransactionCreateNestedOneWithoutReversalInput
     reversal?: TransactionCreateNestedOneWithoutReversalOfInput
+    incomeCategory?: IncomeCategoryCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateInput = {
@@ -10494,6 +13410,7 @@ export namespace Prisma {
     description?: string | null
     transactionDate: Date | string
     reversalOfTransactionId?: string | null
+    incomeCategoryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reversal?: TransactionUncheckedCreateNestedOneWithoutReversalOfInput
@@ -10511,6 +13428,7 @@ export namespace Prisma {
     account?: AccountUpdateOneRequiredWithoutTransactionsNestedInput
     reversalOf?: TransactionUpdateOneWithoutReversalNestedInput
     reversal?: TransactionUpdateOneWithoutReversalOfNestedInput
+    incomeCategory?: IncomeCategoryUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
@@ -10522,6 +13440,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
     reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    incomeCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: TransactionUncheckedUpdateOneWithoutReversalOfNestedInput
@@ -10536,6 +13455,7 @@ export namespace Prisma {
     description?: string | null
     transactionDate: Date | string
     reversalOfTransactionId?: string | null
+    incomeCategoryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10560,6 +13480,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
     reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    incomeCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10571,11 +13492,14 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     roles?: UserRoleCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10585,11 +13509,14 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryUncheckedCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -10599,11 +13526,14 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10613,11 +13543,14 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUncheckedUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -10627,6 +13560,7 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -10639,6 +13573,7 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10651,9 +13586,93 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailOtpCreateInput = {
+    id?: string
+    purpose: $Enums.OtpPurpose
+    codeSalt: string
+    codeHash: string
+    attempts?: number
+    expiresAt: Date | string
+    consumedAt?: Date | string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutEmailOtpsInput
+  }
+
+  export type EmailOtpUncheckedCreateInput = {
+    id?: string
+    userId: string
+    purpose: $Enums.OtpPurpose
+    codeSalt: string
+    codeHash: string
+    attempts?: number
+    expiresAt: Date | string
+    consumedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type EmailOtpUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: EnumOtpPurposeFieldUpdateOperationsInput | $Enums.OtpPurpose
+    codeSalt?: StringFieldUpdateOperationsInput | string
+    codeHash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutEmailOtpsNestedInput
+  }
+
+  export type EmailOtpUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    purpose?: EnumOtpPurposeFieldUpdateOperationsInput | $Enums.OtpPurpose
+    codeSalt?: StringFieldUpdateOperationsInput | string
+    codeHash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailOtpCreateManyInput = {
+    id?: string
+    userId: string
+    purpose: $Enums.OtpPurpose
+    codeSalt: string
+    codeHash: string
+    attempts?: number
+    expiresAt: Date | string
+    consumedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type EmailOtpUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: EnumOtpPurposeFieldUpdateOperationsInput | $Enums.OtpPurpose
+    codeSalt?: StringFieldUpdateOperationsInput | string
+    codeHash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailOtpUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    purpose?: EnumOtpPurposeFieldUpdateOperationsInput | $Enums.OtpPurpose
+    codeSalt?: StringFieldUpdateOperationsInput | string
+    codeHash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -10861,6 +13880,83 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type UuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type IncomeCategoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    isArchived?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IncomeCategoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    isArchived?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IncomeCategoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    isArchived?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -10880,11 +13976,6 @@ export namespace Prisma {
     every?: RolePermissionWhereInput
     some?: RolePermissionWhereInput
     none?: RolePermissionWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type RolePermissionOrderByRelationAggregateInput = {
@@ -11038,18 +14129,6 @@ export namespace Prisma {
     not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
   }
 
-  export type UuidNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
-  }
-
   export type AccountScalarRelationFilter = {
     is?: AccountWhereInput
     isNot?: AccountWhereInput
@@ -11058,6 +14137,11 @@ export namespace Prisma {
   export type TransactionNullableScalarRelationFilter = {
     is?: TransactionWhereInput | null
     isNot?: TransactionWhereInput | null
+  }
+
+  export type IncomeCategoryNullableScalarRelationFilter = {
+    is?: IncomeCategoryWhereInput | null
+    isNot?: IncomeCategoryWhereInput | null
   }
 
   export type TransactionCountOrderByAggregateInput = {
@@ -11069,6 +14153,7 @@ export namespace Prisma {
     description?: SortOrder
     transactionDate?: SortOrder
     reversalOfTransactionId?: SortOrder
+    incomeCategoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11086,6 +14171,7 @@ export namespace Prisma {
     description?: SortOrder
     transactionDate?: SortOrder
     reversalOfTransactionId?: SortOrder
+    incomeCategoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11099,6 +14185,7 @@ export namespace Prisma {
     description?: SortOrder
     transactionDate?: SortOrder
     reversalOfTransactionId?: SortOrder
+    incomeCategoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11115,21 +14202,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
     _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
-  }
-
-  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumUserStatusFilter<$PrismaModel = never> = {
@@ -11156,7 +14228,27 @@ export namespace Prisma {
     none?: AccountWhereInput
   }
 
+  export type IncomeCategoryListRelationFilter = {
+    every?: IncomeCategoryWhereInput
+    some?: IncomeCategoryWhereInput
+    none?: IncomeCategoryWhereInput
+  }
+
+  export type EmailOtpListRelationFilter = {
+    every?: EmailOtpWhereInput
+    some?: EmailOtpWhereInput
+    none?: EmailOtpWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type IncomeCategoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EmailOtpOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11167,6 +14259,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     status?: SortOrder
+    emailVerifiedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -11179,6 +14272,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     status?: SortOrder
+    emailVerifiedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -11191,6 +14285,7 @@ export namespace Prisma {
     firstName?: SortOrder
     lastName?: SortOrder
     status?: SortOrder
+    emailVerifiedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -11218,6 +14313,94 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumOtpPurposeFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpPurpose | EnumOtpPurposeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpPurposeFilter<$PrismaModel> | $Enums.OtpPurpose
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type EmailOtpCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    purpose?: SortOrder
+    codeSalt?: SortOrder
+    codeHash?: SortOrder
+    attempts?: SortOrder
+    expiresAt?: SortOrder
+    consumedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EmailOtpAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type EmailOtpMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    purpose?: SortOrder
+    codeSalt?: SortOrder
+    codeHash?: SortOrder
+    attempts?: SortOrder
+    expiresAt?: SortOrder
+    consumedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EmailOtpMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    purpose?: SortOrder
+    codeSalt?: SortOrder
+    codeHash?: SortOrder
+    attempts?: SortOrder
+    expiresAt?: SortOrder
+    consumedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EmailOtpSumOrderByAggregateInput = {
+    attempts?: SortOrder
+  }
+
+  export type EnumOtpPurposeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpPurpose | EnumOtpPurposeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpPurposeWithAggregatesFilter<$PrismaModel> | $Enums.OtpPurpose
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOtpPurposeFilter<$PrismaModel>
+    _max?: NestedEnumOtpPurposeFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -11300,6 +14483,72 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutIncomeCategoriesInput = {
+    create?: XOR<UserCreateWithoutIncomeCategoriesInput, UserUncheckedCreateWithoutIncomeCategoriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutIncomeCategoriesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TransactionCreateNestedManyWithoutIncomeCategoryInput = {
+    create?: XOR<TransactionCreateWithoutIncomeCategoryInput, TransactionUncheckedCreateWithoutIncomeCategoryInput> | TransactionCreateWithoutIncomeCategoryInput[] | TransactionUncheckedCreateWithoutIncomeCategoryInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutIncomeCategoryInput | TransactionCreateOrConnectWithoutIncomeCategoryInput[]
+    createMany?: TransactionCreateManyIncomeCategoryInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type TransactionUncheckedCreateNestedManyWithoutIncomeCategoryInput = {
+    create?: XOR<TransactionCreateWithoutIncomeCategoryInput, TransactionUncheckedCreateWithoutIncomeCategoryInput> | TransactionCreateWithoutIncomeCategoryInput[] | TransactionUncheckedCreateWithoutIncomeCategoryInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutIncomeCategoryInput | TransactionCreateOrConnectWithoutIncomeCategoryInput[]
+    createMany?: TransactionCreateManyIncomeCategoryInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type UserUpdateOneWithoutIncomeCategoriesNestedInput = {
+    create?: XOR<UserCreateWithoutIncomeCategoriesInput, UserUncheckedCreateWithoutIncomeCategoriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutIncomeCategoriesInput
+    upsert?: UserUpsertWithoutIncomeCategoriesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutIncomeCategoriesInput, UserUpdateWithoutIncomeCategoriesInput>, UserUncheckedUpdateWithoutIncomeCategoriesInput>
+  }
+
+  export type TransactionUpdateManyWithoutIncomeCategoryNestedInput = {
+    create?: XOR<TransactionCreateWithoutIncomeCategoryInput, TransactionUncheckedCreateWithoutIncomeCategoryInput> | TransactionCreateWithoutIncomeCategoryInput[] | TransactionUncheckedCreateWithoutIncomeCategoryInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutIncomeCategoryInput | TransactionCreateOrConnectWithoutIncomeCategoryInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutIncomeCategoryInput | TransactionUpsertWithWhereUniqueWithoutIncomeCategoryInput[]
+    createMany?: TransactionCreateManyIncomeCategoryInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutIncomeCategoryInput | TransactionUpdateWithWhereUniqueWithoutIncomeCategoryInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutIncomeCategoryInput | TransactionUpdateManyWithWhereWithoutIncomeCategoryInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutIncomeCategoryNestedInput = {
+    create?: XOR<TransactionCreateWithoutIncomeCategoryInput, TransactionUncheckedCreateWithoutIncomeCategoryInput> | TransactionCreateWithoutIncomeCategoryInput[] | TransactionUncheckedCreateWithoutIncomeCategoryInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutIncomeCategoryInput | TransactionCreateOrConnectWithoutIncomeCategoryInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutIncomeCategoryInput | TransactionUpsertWithWhereUniqueWithoutIncomeCategoryInput[]
+    createMany?: TransactionCreateManyIncomeCategoryInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutIncomeCategoryInput | TransactionUpdateWithWhereUniqueWithoutIncomeCategoryInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutIncomeCategoryInput | TransactionUpdateManyWithWhereWithoutIncomeCategoryInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
   export type RolePermissionCreateNestedManyWithoutPermissionInput = {
     create?: XOR<RolePermissionCreateWithoutPermissionInput, RolePermissionUncheckedCreateWithoutPermissionInput> | RolePermissionCreateWithoutPermissionInput[] | RolePermissionUncheckedCreateWithoutPermissionInput[]
     connectOrCreate?: RolePermissionCreateOrConnectWithoutPermissionInput | RolePermissionCreateOrConnectWithoutPermissionInput[]
@@ -11312,10 +14561,6 @@ export namespace Prisma {
     connectOrCreate?: RolePermissionCreateOrConnectWithoutPermissionInput | RolePermissionCreateOrConnectWithoutPermissionInput[]
     createMany?: RolePermissionCreateManyPermissionInputEnvelope
     connect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type RolePermissionUpdateManyWithoutPermissionNestedInput = {
@@ -11504,6 +14749,12 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput
   }
 
+  export type IncomeCategoryCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<IncomeCategoryCreateWithoutTransactionsInput, IncomeCategoryUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: IncomeCategoryCreateOrConnectWithoutTransactionsInput
+    connect?: IncomeCategoryWhereUniqueInput
+  }
+
   export type TransactionUncheckedCreateNestedOneWithoutReversalOfInput = {
     create?: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutReversalOfInput
@@ -11542,6 +14793,16 @@ export namespace Prisma {
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutReversalOfInput, TransactionUpdateWithoutReversalOfInput>, TransactionUncheckedUpdateWithoutReversalOfInput>
   }
 
+  export type IncomeCategoryUpdateOneWithoutTransactionsNestedInput = {
+    create?: XOR<IncomeCategoryCreateWithoutTransactionsInput, IncomeCategoryUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: IncomeCategoryCreateOrConnectWithoutTransactionsInput
+    upsert?: IncomeCategoryUpsertWithoutTransactionsInput
+    disconnect?: IncomeCategoryWhereInput | boolean
+    delete?: IncomeCategoryWhereInput | boolean
+    connect?: IncomeCategoryWhereUniqueInput
+    update?: XOR<XOR<IncomeCategoryUpdateToOneWithWhereWithoutTransactionsInput, IncomeCategoryUpdateWithoutTransactionsInput>, IncomeCategoryUncheckedUpdateWithoutTransactionsInput>
+  }
+
   export type TransactionUncheckedUpdateOneWithoutReversalOfNestedInput = {
     create?: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
     connectOrCreate?: TransactionCreateOrConnectWithoutReversalOfInput
@@ -11566,6 +14827,20 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
+  export type IncomeCategoryCreateNestedManyWithoutUserInput = {
+    create?: XOR<IncomeCategoryCreateWithoutUserInput, IncomeCategoryUncheckedCreateWithoutUserInput> | IncomeCategoryCreateWithoutUserInput[] | IncomeCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: IncomeCategoryCreateOrConnectWithoutUserInput | IncomeCategoryCreateOrConnectWithoutUserInput[]
+    createMany?: IncomeCategoryCreateManyUserInputEnvelope
+    connect?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+  }
+
+  export type EmailOtpCreateNestedManyWithoutUserInput = {
+    create?: XOR<EmailOtpCreateWithoutUserInput, EmailOtpUncheckedCreateWithoutUserInput> | EmailOtpCreateWithoutUserInput[] | EmailOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailOtpCreateOrConnectWithoutUserInput | EmailOtpCreateOrConnectWithoutUserInput[]
+    createMany?: EmailOtpCreateManyUserInputEnvelope
+    connect?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+  }
+
   export type UserRoleUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -11578,6 +14853,20 @@ export namespace Prisma {
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
     createMany?: AccountCreateManyUserInputEnvelope
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+  }
+
+  export type IncomeCategoryUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<IncomeCategoryCreateWithoutUserInput, IncomeCategoryUncheckedCreateWithoutUserInput> | IncomeCategoryCreateWithoutUserInput[] | IncomeCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: IncomeCategoryCreateOrConnectWithoutUserInput | IncomeCategoryCreateOrConnectWithoutUserInput[]
+    createMany?: IncomeCategoryCreateManyUserInputEnvelope
+    connect?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+  }
+
+  export type EmailOtpUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<EmailOtpCreateWithoutUserInput, EmailOtpUncheckedCreateWithoutUserInput> | EmailOtpCreateWithoutUserInput[] | EmailOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailOtpCreateOrConnectWithoutUserInput | EmailOtpCreateOrConnectWithoutUserInput[]
+    createMany?: EmailOtpCreateManyUserInputEnvelope
+    connect?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
   }
 
   export type EnumUserStatusFieldUpdateOperationsInput = {
@@ -11616,6 +14905,34 @@ export namespace Prisma {
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
+  export type IncomeCategoryUpdateManyWithoutUserNestedInput = {
+    create?: XOR<IncomeCategoryCreateWithoutUserInput, IncomeCategoryUncheckedCreateWithoutUserInput> | IncomeCategoryCreateWithoutUserInput[] | IncomeCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: IncomeCategoryCreateOrConnectWithoutUserInput | IncomeCategoryCreateOrConnectWithoutUserInput[]
+    upsert?: IncomeCategoryUpsertWithWhereUniqueWithoutUserInput | IncomeCategoryUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: IncomeCategoryCreateManyUserInputEnvelope
+    set?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    disconnect?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    delete?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    connect?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    update?: IncomeCategoryUpdateWithWhereUniqueWithoutUserInput | IncomeCategoryUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: IncomeCategoryUpdateManyWithWhereWithoutUserInput | IncomeCategoryUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: IncomeCategoryScalarWhereInput | IncomeCategoryScalarWhereInput[]
+  }
+
+  export type EmailOtpUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EmailOtpCreateWithoutUserInput, EmailOtpUncheckedCreateWithoutUserInput> | EmailOtpCreateWithoutUserInput[] | EmailOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailOtpCreateOrConnectWithoutUserInput | EmailOtpCreateOrConnectWithoutUserInput[]
+    upsert?: EmailOtpUpsertWithWhereUniqueWithoutUserInput | EmailOtpUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EmailOtpCreateManyUserInputEnvelope
+    set?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    disconnect?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    delete?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    connect?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    update?: EmailOtpUpdateWithWhereUniqueWithoutUserInput | EmailOtpUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EmailOtpUpdateManyWithWhereWithoutUserInput | EmailOtpUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EmailOtpScalarWhereInput | EmailOtpScalarWhereInput[]
+  }
+
   export type UserRoleUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -11642,6 +14959,60 @@ export namespace Prisma {
     update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  }
+
+  export type IncomeCategoryUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<IncomeCategoryCreateWithoutUserInput, IncomeCategoryUncheckedCreateWithoutUserInput> | IncomeCategoryCreateWithoutUserInput[] | IncomeCategoryUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: IncomeCategoryCreateOrConnectWithoutUserInput | IncomeCategoryCreateOrConnectWithoutUserInput[]
+    upsert?: IncomeCategoryUpsertWithWhereUniqueWithoutUserInput | IncomeCategoryUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: IncomeCategoryCreateManyUserInputEnvelope
+    set?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    disconnect?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    delete?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    connect?: IncomeCategoryWhereUniqueInput | IncomeCategoryWhereUniqueInput[]
+    update?: IncomeCategoryUpdateWithWhereUniqueWithoutUserInput | IncomeCategoryUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: IncomeCategoryUpdateManyWithWhereWithoutUserInput | IncomeCategoryUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: IncomeCategoryScalarWhereInput | IncomeCategoryScalarWhereInput[]
+  }
+
+  export type EmailOtpUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EmailOtpCreateWithoutUserInput, EmailOtpUncheckedCreateWithoutUserInput> | EmailOtpCreateWithoutUserInput[] | EmailOtpUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailOtpCreateOrConnectWithoutUserInput | EmailOtpCreateOrConnectWithoutUserInput[]
+    upsert?: EmailOtpUpsertWithWhereUniqueWithoutUserInput | EmailOtpUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EmailOtpCreateManyUserInputEnvelope
+    set?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    disconnect?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    delete?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    connect?: EmailOtpWhereUniqueInput | EmailOtpWhereUniqueInput[]
+    update?: EmailOtpUpdateWithWhereUniqueWithoutUserInput | EmailOtpUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EmailOtpUpdateManyWithWhereWithoutUserInput | EmailOtpUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EmailOtpScalarWhereInput | EmailOtpScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutEmailOtpsInput = {
+    create?: XOR<UserCreateWithoutEmailOtpsInput, UserUncheckedCreateWithoutEmailOtpsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEmailOtpsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumOtpPurposeFieldUpdateOperationsInput = {
+    set?: $Enums.OtpPurpose
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutEmailOtpsNestedInput = {
+    create?: XOR<UserCreateWithoutEmailOtpsInput, UserUncheckedCreateWithoutEmailOtpsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEmailOtpsInput
+    upsert?: UserUpsertWithoutEmailOtpsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEmailOtpsInput, UserUpdateWithoutEmailOtpsInput>, UserUncheckedUpdateWithoutEmailOtpsInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -11797,6 +15168,47 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedUuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -11809,6 +15221,14 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -11828,33 +15248,11 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumTransactionTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
     in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
     notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
     not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
-  }
-
-  export type NestedUuidNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -11865,20 +15263,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
     _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
-  }
-
-  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumUserStatusFilter<$PrismaModel = never> = {
@@ -11923,6 +15307,50 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumOtpPurposeFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpPurpose | EnumOtpPurposeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpPurposeFilter<$PrismaModel> | $Enums.OtpPurpose
+  }
+
+  export type NestedEnumOtpPurposeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OtpPurpose | EnumOtpPurposeFieldRefInput<$PrismaModel>
+    in?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OtpPurpose[] | ListEnumOtpPurposeFieldRefInput<$PrismaModel>
+    not?: NestedEnumOtpPurposeWithAggregatesFilter<$PrismaModel> | $Enums.OtpPurpose
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOtpPurposeFilter<$PrismaModel>
+    _max?: NestedEnumOtpPurposeFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     email: string
@@ -11930,10 +15358,13 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     roles?: UserRoleCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -11943,10 +15374,13 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryUncheckedCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -11965,6 +15399,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     reversalOf?: TransactionCreateNestedOneWithoutReversalInput
     reversal?: TransactionCreateNestedOneWithoutReversalOfInput
+    incomeCategory?: IncomeCategoryCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateWithoutAccountInput = {
@@ -11975,6 +15410,7 @@ export namespace Prisma {
     description?: string | null
     transactionDate: Date | string
     reversalOfTransactionId?: string | null
+    incomeCategoryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reversal?: TransactionUncheckedCreateNestedOneWithoutReversalOfInput
@@ -12008,10 +15444,13 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -12021,10 +15460,13 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUncheckedUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TransactionUpsertWithWhereUniqueWithoutAccountInput = {
@@ -12055,8 +15497,143 @@ export namespace Prisma {
     description?: StringNullableFilter<"Transaction"> | string | null
     transactionDate?: DateTimeFilter<"Transaction"> | Date | string
     reversalOfTransactionId?: UuidNullableFilter<"Transaction"> | string | null
+    incomeCategoryId?: UuidNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
+  }
+
+  export type UserCreateWithoutIncomeCategoriesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    firstName: string
+    lastName: string
+    status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    roles?: UserRoleCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutIncomeCategoriesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    firstName: string
+    lastName: string
+    status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutIncomeCategoriesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutIncomeCategoriesInput, UserUncheckedCreateWithoutIncomeCategoriesInput>
+  }
+
+  export type TransactionCreateWithoutIncomeCategoryInput = {
+    id?: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    description?: string | null
+    transactionDate: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    account: AccountCreateNestedOneWithoutTransactionsInput
+    reversalOf?: TransactionCreateNestedOneWithoutReversalInput
+    reversal?: TransactionCreateNestedOneWithoutReversalOfInput
+  }
+
+  export type TransactionUncheckedCreateWithoutIncomeCategoryInput = {
+    id?: string
+    accountId: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    description?: string | null
+    transactionDate: Date | string
+    reversalOfTransactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reversal?: TransactionUncheckedCreateNestedOneWithoutReversalOfInput
+  }
+
+  export type TransactionCreateOrConnectWithoutIncomeCategoryInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutIncomeCategoryInput, TransactionUncheckedCreateWithoutIncomeCategoryInput>
+  }
+
+  export type TransactionCreateManyIncomeCategoryInputEnvelope = {
+    data: TransactionCreateManyIncomeCategoryInput | TransactionCreateManyIncomeCategoryInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutIncomeCategoriesInput = {
+    update: XOR<UserUpdateWithoutIncomeCategoriesInput, UserUncheckedUpdateWithoutIncomeCategoriesInput>
+    create: XOR<UserCreateWithoutIncomeCategoriesInput, UserUncheckedCreateWithoutIncomeCategoriesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutIncomeCategoriesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutIncomeCategoriesInput, UserUncheckedUpdateWithoutIncomeCategoriesInput>
+  }
+
+  export type UserUpdateWithoutIncomeCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    roles?: UserRoleUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutIncomeCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TransactionUpsertWithWhereUniqueWithoutIncomeCategoryInput = {
+    where: TransactionWhereUniqueInput
+    update: XOR<TransactionUpdateWithoutIncomeCategoryInput, TransactionUncheckedUpdateWithoutIncomeCategoryInput>
+    create: XOR<TransactionCreateWithoutIncomeCategoryInput, TransactionUncheckedCreateWithoutIncomeCategoryInput>
+  }
+
+  export type TransactionUpdateWithWhereUniqueWithoutIncomeCategoryInput = {
+    where: TransactionWhereUniqueInput
+    data: XOR<TransactionUpdateWithoutIncomeCategoryInput, TransactionUncheckedUpdateWithoutIncomeCategoryInput>
+  }
+
+  export type TransactionUpdateManyWithWhereWithoutIncomeCategoryInput = {
+    where: TransactionScalarWhereInput
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutIncomeCategoryInput>
   }
 
   export type RolePermissionCreateWithoutPermissionInput = {
@@ -12296,10 +15873,13 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRolesInput = {
@@ -12309,10 +15889,13 @@ export namespace Prisma {
     firstName: string
     lastName: string
     status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryUncheckedCreateNestedManyWithoutUserInput
+    emailOtps?: EmailOtpUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRolesInput = {
@@ -12361,10 +15944,13 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRolesInput = {
@@ -12374,10 +15960,13 @@ export namespace Prisma {
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUncheckedUpdateManyWithoutUserNestedInput
+    emailOtps?: EmailOtpUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutUsersInput = {
@@ -12449,6 +16038,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     account: AccountCreateNestedOneWithoutTransactionsInput
     reversalOf?: TransactionCreateNestedOneWithoutReversalInput
+    incomeCategory?: IncomeCategoryCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateWithoutReversalInput = {
@@ -12460,6 +16050,7 @@ export namespace Prisma {
     description?: string | null
     transactionDate: Date | string
     reversalOfTransactionId?: string | null
+    incomeCategoryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12480,6 +16071,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     account: AccountCreateNestedOneWithoutTransactionsInput
     reversal?: TransactionCreateNestedOneWithoutReversalOfInput
+    incomeCategory?: IncomeCategoryCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateWithoutReversalOfInput = {
@@ -12490,6 +16082,7 @@ export namespace Prisma {
     currency: string
     description?: string | null
     transactionDate: Date | string
+    incomeCategoryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reversal?: TransactionUncheckedCreateNestedOneWithoutReversalOfInput
@@ -12498,6 +16091,29 @@ export namespace Prisma {
   export type TransactionCreateOrConnectWithoutReversalOfInput = {
     where: TransactionWhereUniqueInput
     create: XOR<TransactionCreateWithoutReversalOfInput, TransactionUncheckedCreateWithoutReversalOfInput>
+  }
+
+  export type IncomeCategoryCreateWithoutTransactionsInput = {
+    id?: string
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutIncomeCategoriesInput
+  }
+
+  export type IncomeCategoryUncheckedCreateWithoutTransactionsInput = {
+    id?: string
+    userId?: string | null
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IncomeCategoryCreateOrConnectWithoutTransactionsInput = {
+    where: IncomeCategoryWhereUniqueInput
+    create: XOR<IncomeCategoryCreateWithoutTransactionsInput, IncomeCategoryUncheckedCreateWithoutTransactionsInput>
   }
 
   export type AccountUpsertWithoutTransactionsInput = {
@@ -12557,6 +16173,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     account?: AccountUpdateOneRequiredWithoutTransactionsNestedInput
     reversalOf?: TransactionUpdateOneWithoutReversalNestedInput
+    incomeCategory?: IncomeCategoryUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutReversalInput = {
@@ -12568,6 +16185,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
     reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    incomeCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12594,6 +16212,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     account?: AccountUpdateOneRequiredWithoutTransactionsNestedInput
     reversal?: TransactionUpdateOneWithoutReversalOfNestedInput
+    incomeCategory?: IncomeCategoryUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutReversalOfInput = {
@@ -12604,9 +16223,39 @@ export namespace Prisma {
     currency?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    incomeCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversal?: TransactionUncheckedUpdateOneWithoutReversalOfNestedInput
+  }
+
+  export type IncomeCategoryUpsertWithoutTransactionsInput = {
+    update: XOR<IncomeCategoryUpdateWithoutTransactionsInput, IncomeCategoryUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<IncomeCategoryCreateWithoutTransactionsInput, IncomeCategoryUncheckedCreateWithoutTransactionsInput>
+    where?: IncomeCategoryWhereInput
+  }
+
+  export type IncomeCategoryUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: IncomeCategoryWhereInput
+    data: XOR<IncomeCategoryUpdateWithoutTransactionsInput, IncomeCategoryUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type IncomeCategoryUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutIncomeCategoriesNestedInput
+  }
+
+  export type IncomeCategoryUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserRoleCreateWithoutUserInput = {
@@ -12663,6 +16312,66 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type IncomeCategoryCreateWithoutUserInput = {
+    id?: string
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: TransactionCreateNestedManyWithoutIncomeCategoryInput
+  }
+
+  export type IncomeCategoryUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutIncomeCategoryInput
+  }
+
+  export type IncomeCategoryCreateOrConnectWithoutUserInput = {
+    where: IncomeCategoryWhereUniqueInput
+    create: XOR<IncomeCategoryCreateWithoutUserInput, IncomeCategoryUncheckedCreateWithoutUserInput>
+  }
+
+  export type IncomeCategoryCreateManyUserInputEnvelope = {
+    data: IncomeCategoryCreateManyUserInput | IncomeCategoryCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EmailOtpCreateWithoutUserInput = {
+    id?: string
+    purpose: $Enums.OtpPurpose
+    codeSalt: string
+    codeHash: string
+    attempts?: number
+    expiresAt: Date | string
+    consumedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type EmailOtpUncheckedCreateWithoutUserInput = {
+    id?: string
+    purpose: $Enums.OtpPurpose
+    codeSalt: string
+    codeHash: string
+    attempts?: number
+    expiresAt: Date | string
+    consumedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type EmailOtpCreateOrConnectWithoutUserInput = {
+    where: EmailOtpWhereUniqueInput
+    create: XOR<EmailOtpCreateWithoutUserInput, EmailOtpUncheckedCreateWithoutUserInput>
+  }
+
+  export type EmailOtpCreateManyUserInputEnvelope = {
+    data: EmailOtpCreateManyUserInput | EmailOtpCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserRoleUpsertWithWhereUniqueWithoutUserInput = {
     where: UserRoleWhereUniqueInput
     update: XOR<UserRoleUpdateWithoutUserInput, UserRoleUncheckedUpdateWithoutUserInput>
@@ -12710,6 +16419,145 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Account"> | Date | string
   }
 
+  export type IncomeCategoryUpsertWithWhereUniqueWithoutUserInput = {
+    where: IncomeCategoryWhereUniqueInput
+    update: XOR<IncomeCategoryUpdateWithoutUserInput, IncomeCategoryUncheckedUpdateWithoutUserInput>
+    create: XOR<IncomeCategoryCreateWithoutUserInput, IncomeCategoryUncheckedCreateWithoutUserInput>
+  }
+
+  export type IncomeCategoryUpdateWithWhereUniqueWithoutUserInput = {
+    where: IncomeCategoryWhereUniqueInput
+    data: XOR<IncomeCategoryUpdateWithoutUserInput, IncomeCategoryUncheckedUpdateWithoutUserInput>
+  }
+
+  export type IncomeCategoryUpdateManyWithWhereWithoutUserInput = {
+    where: IncomeCategoryScalarWhereInput
+    data: XOR<IncomeCategoryUpdateManyMutationInput, IncomeCategoryUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type IncomeCategoryScalarWhereInput = {
+    AND?: IncomeCategoryScalarWhereInput | IncomeCategoryScalarWhereInput[]
+    OR?: IncomeCategoryScalarWhereInput[]
+    NOT?: IncomeCategoryScalarWhereInput | IncomeCategoryScalarWhereInput[]
+    id?: UuidFilter<"IncomeCategory"> | string
+    userId?: UuidNullableFilter<"IncomeCategory"> | string | null
+    name?: StringFilter<"IncomeCategory"> | string
+    isArchived?: BoolFilter<"IncomeCategory"> | boolean
+    createdAt?: DateTimeFilter<"IncomeCategory"> | Date | string
+    updatedAt?: DateTimeFilter<"IncomeCategory"> | Date | string
+  }
+
+  export type EmailOtpUpsertWithWhereUniqueWithoutUserInput = {
+    where: EmailOtpWhereUniqueInput
+    update: XOR<EmailOtpUpdateWithoutUserInput, EmailOtpUncheckedUpdateWithoutUserInput>
+    create: XOR<EmailOtpCreateWithoutUserInput, EmailOtpUncheckedCreateWithoutUserInput>
+  }
+
+  export type EmailOtpUpdateWithWhereUniqueWithoutUserInput = {
+    where: EmailOtpWhereUniqueInput
+    data: XOR<EmailOtpUpdateWithoutUserInput, EmailOtpUncheckedUpdateWithoutUserInput>
+  }
+
+  export type EmailOtpUpdateManyWithWhereWithoutUserInput = {
+    where: EmailOtpScalarWhereInput
+    data: XOR<EmailOtpUpdateManyMutationInput, EmailOtpUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type EmailOtpScalarWhereInput = {
+    AND?: EmailOtpScalarWhereInput | EmailOtpScalarWhereInput[]
+    OR?: EmailOtpScalarWhereInput[]
+    NOT?: EmailOtpScalarWhereInput | EmailOtpScalarWhereInput[]
+    id?: UuidFilter<"EmailOtp"> | string
+    userId?: UuidFilter<"EmailOtp"> | string
+    purpose?: EnumOtpPurposeFilter<"EmailOtp"> | $Enums.OtpPurpose
+    codeSalt?: StringFilter<"EmailOtp"> | string
+    codeHash?: StringFilter<"EmailOtp"> | string
+    attempts?: IntFilter<"EmailOtp"> | number
+    expiresAt?: DateTimeFilter<"EmailOtp"> | Date | string
+    consumedAt?: DateTimeNullableFilter<"EmailOtp"> | Date | string | null
+    createdAt?: DateTimeFilter<"EmailOtp"> | Date | string
+  }
+
+  export type UserCreateWithoutEmailOtpsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    firstName: string
+    lastName: string
+    status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    roles?: UserRoleCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutEmailOtpsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    firstName: string
+    lastName: string
+    status?: $Enums.UserStatus
+    emailVerifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    incomeCategories?: IncomeCategoryUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutEmailOtpsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutEmailOtpsInput, UserUncheckedCreateWithoutEmailOtpsInput>
+  }
+
+  export type UserUpsertWithoutEmailOtpsInput = {
+    update: XOR<UserUpdateWithoutEmailOtpsInput, UserUncheckedUpdateWithoutEmailOtpsInput>
+    create: XOR<UserCreateWithoutEmailOtpsInput, UserUncheckedCreateWithoutEmailOtpsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutEmailOtpsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutEmailOtpsInput, UserUncheckedUpdateWithoutEmailOtpsInput>
+  }
+
+  export type UserUpdateWithoutEmailOtpsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    roles?: UserRoleUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutEmailOtpsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    incomeCategories?: IncomeCategoryUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type TransactionCreateManyAccountInput = {
     id?: string
     type: $Enums.TransactionType
@@ -12718,6 +16566,7 @@ export namespace Prisma {
     description?: string | null
     transactionDate: Date | string
     reversalOfTransactionId?: string | null
+    incomeCategoryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12733,10 +16582,66 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reversalOf?: TransactionUpdateOneWithoutReversalNestedInput
     reversal?: TransactionUpdateOneWithoutReversalOfNestedInput
+    incomeCategory?: IncomeCategoryUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutAccountInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    incomeCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversal?: TransactionUncheckedUpdateOneWithoutReversalOfNestedInput
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reversalOfTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    incomeCategoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionCreateManyIncomeCategoryInput = {
+    id?: string
+    accountId: string
+    type: $Enums.TransactionType
+    amount: Decimal | DecimalJsLike | number | string
+    currency: string
+    description?: string | null
+    transactionDate: Date | string
+    reversalOfTransactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionUpdateWithoutIncomeCategoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    account?: AccountUpdateOneRequiredWithoutTransactionsNestedInput
+    reversalOf?: TransactionUpdateOneWithoutReversalNestedInput
+    reversal?: TransactionUpdateOneWithoutReversalOfNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutIncomeCategoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountId?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
@@ -12748,8 +16653,9 @@ export namespace Prisma {
     reversal?: TransactionUncheckedUpdateOneWithoutReversalOfNestedInput
   }
 
-  export type TransactionUncheckedUpdateManyWithoutAccountInput = {
+  export type TransactionUncheckedUpdateManyWithoutIncomeCategoryInput = {
     id?: StringFieldUpdateOperationsInput | string
+    accountId?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
@@ -12836,6 +16742,25 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type IncomeCategoryCreateManyUserInput = {
+    id?: string
+    name: string
+    isArchived?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EmailOtpCreateManyUserInput = {
+    id?: string
+    purpose: $Enums.OtpPurpose
+    codeSalt: string
+    codeHash: string
+    attempts?: number
+    expiresAt: Date | string
+    consumedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
   export type UserRoleUpdateWithoutUserInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: RoleUpdateOneRequiredWithoutUsersNestedInput
@@ -12884,6 +16809,65 @@ export namespace Prisma {
     status?: EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncomeCategoryUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUpdateManyWithoutIncomeCategoryNestedInput
+  }
+
+  export type IncomeCategoryUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUncheckedUpdateManyWithoutIncomeCategoryNestedInput
+  }
+
+  export type IncomeCategoryUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailOtpUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: EnumOtpPurposeFieldUpdateOperationsInput | $Enums.OtpPurpose
+    codeSalt?: StringFieldUpdateOperationsInput | string
+    codeHash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailOtpUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: EnumOtpPurposeFieldUpdateOperationsInput | $Enums.OtpPurpose
+    codeSalt?: StringFieldUpdateOperationsInput | string
+    codeHash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailOtpUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: EnumOtpPurposeFieldUpdateOperationsInput | $Enums.OtpPurpose
+    codeSalt?: StringFieldUpdateOperationsInput | string
+    codeHash?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

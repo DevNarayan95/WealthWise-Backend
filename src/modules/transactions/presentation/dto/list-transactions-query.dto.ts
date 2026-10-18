@@ -2,6 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 
+import { PAGINATION } from '../../../../common/pagination/pagination-config';
+
 export class ListTransactionsQueryDto {
   @ApiProperty({
     example: 'b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f',
@@ -23,15 +25,15 @@ export class ListTransactionsQueryDto {
   page = 1;
 
   @ApiPropertyOptional({
-    example: 20,
-    default: 20,
+    example: PAGINATION.defaultPageSize,
+    default: PAGINATION.defaultPageSize,
     minimum: 1,
-    maximum: 100,
+    maximum: PAGINATION.maxPageSize,
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @Max(100)
-  limit = 20;
+  @Max(PAGINATION.maxPageSize)
+  limit = PAGINATION.defaultPageSize;
 }

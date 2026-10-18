@@ -23,8 +23,8 @@ import { TransactionRepository } from '../../domain/repositories/transaction.rep
 
 import { CreateTransactionInput } from '../inputs/create-transaction.input';
 
-import { InvalidTransactionException } from '../../exceptions/invalid-transaction.exception';
-import { TransactionNotFoundException } from '../../exceptions/transaction-not-found.exception';
+import { InvalidTransactionException } from '../../presentation/exceptions/invalid-transaction.exception';
+import { TransactionNotFoundException } from '../../presentation/exceptions/transaction-not-found.exception';
 import { ListTransactionsInput } from '../inputs/list-transactions.input';
 import { ReverseTransactionInput } from '../inputs/reverse-transaction.input';
 

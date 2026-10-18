@@ -27,6 +27,7 @@ export class UsersService {
       passwordHash,
       firstName: input.firstName,
       lastName: input.lastName,
+      emailVerifiedAt: input.emailVerified ? new Date() : null,
     });
   }
 

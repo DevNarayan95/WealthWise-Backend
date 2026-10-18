@@ -5,6 +5,15 @@ import {
 import { AccountsService } from '../../application/services/accounts.service';
 import { AccountsController } from './accounts.controller';
 import { AuthenticatedRequest } from 'src/modules/auth/infrastructure/interfaces/authenticated-request.interface';
+import { request as expressRequest } from 'express';
+
+const createAuthenticatedRequest = (): AuthenticatedRequest =>
+  Object.assign(expressRequest, {
+    user: {
+      userId: 'user-id',
+      email: 'user@example.com',
+    },
+  });
 
 describe('AccountsController', () => {
   const accountsService = {
@@ -99,12 +108,7 @@ describe('AccountsController', () => {
         totalPages: 1,
       });
 
-      const request = {
-        user: {
-          userId: 'user-id',
-          email: 'user@example.com',
-        },
-      };
+      const request = createAuthenticatedRequest();
 
       const result = await controller.findAll(request, {
         page: 1,
@@ -178,12 +182,7 @@ describe('AccountsController', () => {
 
       accountsService.archive.mockResolvedValue(account);
 
-      const request = {
-        user: {
-          userId: 'user-id',
-          email: 'user@example.com',
-        },
-      } as AuthenticatedRequest;
+      const request = createAuthenticatedRequest();
 
       const result = await controller.archive('account-id', request);
 
@@ -206,12 +205,7 @@ describe('AccountsController', () => {
         balance: '1300.0000',
       });
 
-      const request = {
-        user: {
-          userId: 'user-id',
-          email: 'user@example.com',
-        },
-      } as AuthenticatedRequest;
+      const request = createAuthenticatedRequest();
 
       const result = await controller.getBalance(request, 'account-id');
 

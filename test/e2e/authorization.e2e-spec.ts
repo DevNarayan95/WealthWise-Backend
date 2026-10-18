@@ -6,10 +6,10 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
-import request from 'supertest';
+import request from './support/api-request';
 
+import type { Prisma } from '../../prisma/generated/prisma/client';
 import { AppModule } from '../../src/app.module';
-import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
 import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
 
 describe('Authorization (E2E)', () => {
@@ -22,6 +22,25 @@ describe('Authorization (E2E)', () => {
 
   let normalUserId: string;
   let normalUserEmail: string;
+
+  const testAccountNamePrefix = 'Authz test ';
+
+  const removeAccounts = async (
+    where: Prisma.AccountWhereInput,
+  ): Promise<void> => {
+    const accounts = await prisma.account.findMany({
+      where,
+      select: { id: true },
+    });
+    const accountIds = accounts.map((account) => account.id);
+
+    await prisma.transaction.deleteMany({
+      where: { accountId: { in: accountIds } },
+    });
+    await prisma.account.deleteMany({
+      where: { id: { in: accountIds } },
+    });
+  };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -45,8 +64,6 @@ describe('Authorization (E2E)', () => {
       }),
     );
 
-    app.useGlobalFilters(new HttpExceptionFilter());
-
     await app.init();
 
     prisma = app.get(PrismaService);
@@ -63,6 +80,7 @@ describe('Authorization (E2E)', () => {
         firstName: 'Authorization',
         lastName: 'Test',
         status: 'ACTIVE',
+        emailVerifiedAt: new Date(),
       },
     });
 
@@ -70,6 +88,8 @@ describe('Authorization (E2E)', () => {
   });
 
   afterAll(async () => {
+    await removeAccounts({ name: { startsWith: testAccountNamePrefix } });
+
     if (normalUserId) {
       await prisma.user.delete({
         where: {
@@ -81,8 +101,8 @@ describe('Authorization (E2E)', () => {
     await app.close();
   });
 
-  describe('POST /api/v1/users', () => {
-    it('should allow the super admin to create a user', async () => {
+  describe('POST /api/v1/accounts (accounts:create permission)', () => {
+    it('should allow the super admin to create an account', async () => {
       const loginResponse = await request(app.getHttpServer())
         .post('/api/v1/auth/login')
         .send({
@@ -94,13 +114,13 @@ describe('Authorization (E2E)', () => {
       const accessToken = loginResponse.body.data.accessToken;
 
       const response = await request(app.getHttpServer())
-        .post('/api/v1/users')
+        .post('/api/v1/accounts')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          email: `created-by-admin-${Date.now()}@example.com`,
-          password: 'TestPassword123!',
-          firstName: 'Created',
-          lastName: 'User',
+          name: `${testAccountNamePrefix}admin ${Date.now()}`,
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
         })
         .expect(201);
 
@@ -109,17 +129,12 @@ describe('Authorization (E2E)', () => {
       expect(response.body.data).toEqual(
         expect.objectContaining({
           id: expect.any(String),
-          email: expect.any(String),
-          firstName: 'Created',
-          lastName: 'User',
+          name: expect.stringMatching(/^Authz test admin /),
         }),
       );
-
-      expect(response.body.data.password).toBeUndefined();
-      expect(response.body.data.passwordHash).toBeUndefined();
     });
 
-    it('should reject an authenticated user without users:create permission', async () => {
+    it('should reject an authenticated user without accounts:create permission', async () => {
       const loginResponse = await request(app.getHttpServer())
         .post('/api/v1/auth/login')
         .send({
@@ -131,13 +146,13 @@ describe('Authorization (E2E)', () => {
       const accessToken = loginResponse.body.data.accessToken;
 
       const response = await request(app.getHttpServer())
-        .post('/api/v1/users')
+        .post('/api/v1/accounts')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          email: `unauthorized-${Date.now()}@example.com`,
-          password: 'TestPassword123!',
-          firstName: 'Unauthorized',
-          lastName: 'User',
+          name: `${testAccountNamePrefix}unauthorized ${Date.now()}`,
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
         })
         .expect(403);
 
@@ -174,13 +189,13 @@ describe('Authorization (E2E)', () => {
       });
 
       const response = await request(app.getHttpServer())
-        .post('/api/v1/users')
+        .post('/api/v1/accounts')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          email: `jwt-unauthorized-${Date.now()}@example.com`,
-          password: 'TestPassword123!',
-          firstName: 'JWT',
-          lastName: 'Unauthorized',
+          name: `${testAccountNamePrefix}jwt ${Date.now()}`,
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
         })
         .expect(403);
 
@@ -189,84 +204,101 @@ describe('Authorization (E2E)', () => {
   });
 
   it('should reject a previously authorized JWT after the required permission is revoked', async () => {
-    const loginResponse = await request(app.getHttpServer())
-      .post('/api/v1/auth/login')
-      .send({
-        email: adminEmail,
-        password: adminPassword,
-      })
-      .expect(200);
-
-    const accessToken = loginResponse.body.data.accessToken;
-
-    const adminUser = await prisma.user.findUniqueOrThrow({
-      where: {
-        email: adminEmail,
-      },
-    });
-
-    const permission = await prisma.permission.findUnique({
+    const permission = await prisma.permission.findUniqueOrThrow({
       where: {
         resource_action: {
-          resource: 'users',
+          resource: 'accounts',
           action: 'create',
         },
       },
     });
 
-    expect(permission).not.toBeNull();
-
-    const userRole = await prisma.userRole.findFirst({
-      where: {
-        userId: adminUser.id,
+    // A dedicated role and user keep the revocation isolated from the shared seeded admin role.
+    const revocationRole = await prisma.role.create({
+      data: {
+        name: `revocation-role-${Date.now()}`,
+        description: 'Throwaway role for the permission revocation test',
       },
     });
 
-    expect(userRole).not.toBeNull();
-
-    const rolePermission = await prisma.rolePermission.findUnique({
-      where: {
-        roleId_permissionId: {
-          roleId: userRole!.roleId,
-          permissionId: permission!.id,
-        },
+    const revocableUser = await prisma.user.create({
+      data: {
+        email: `revocable-${Date.now()}@example.com`,
+        passwordHash: await bcrypt.hash('TestPassword123!', 12),
+        firstName: 'Revocable',
+        lastName: 'User',
+        status: 'ACTIVE',
+        emailVerifiedAt: new Date(),
       },
     });
-
-    expect(rolePermission).not.toBeNull();
 
     try {
+      await prisma.userRole.create({
+        data: {
+          userId: revocableUser.id,
+          roleId: revocationRole.id,
+        },
+      });
+
+      await prisma.rolePermission.create({
+        data: {
+          roleId: revocationRole.id,
+          permissionId: permission.id,
+        },
+      });
+
+      const loginResponse = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          email: revocableUser.email,
+          password: 'TestPassword123!',
+        })
+        .expect(200);
+
+      const accessToken = loginResponse.body.data.accessToken;
+
+      await request(app.getHttpServer())
+        .post('/api/v1/accounts')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          name: `${testAccountNamePrefix}authorized ${Date.now()}`,
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
+        })
+        .expect(201);
+
       await prisma.rolePermission.delete({
         where: {
           roleId_permissionId: {
-            roleId: userRole!.roleId,
-            permissionId: permission!.id,
+            roleId: revocationRole.id,
+            permissionId: permission.id,
           },
         },
       });
 
       await request(app.getHttpServer())
-        .post('/api/v1/users')
+        .post('/api/v1/accounts')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          email: `revoked-${Date.now()}@example.com`,
-          password: 'TestPassword123!',
-          firstName: 'Revoked',
-          lastName: 'Permission',
+          name: `${testAccountNamePrefix}revoked ${Date.now()}`,
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
         })
         .expect(403);
     } finally {
-      await prisma.rolePermission.upsert({
+      await removeAccounts({ userId: revocableUser.id });
+
+      await prisma.user.deleteMany({
         where: {
-          roleId_permissionId: {
-            roleId: userRole!.roleId,
-            permissionId: permission!.id,
-          },
+          id: revocableUser.id,
         },
-        update: {},
-        create: {
-          roleId: userRole!.roleId,
-          permissionId: permission!.id,
+      });
+
+      await prisma.role.deleteMany({
+        where: {
+          id: revocationRole.id,
         },
       });
     }

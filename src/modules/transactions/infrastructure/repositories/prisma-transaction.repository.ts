@@ -114,6 +114,7 @@ export class PrismaTransactionRepository extends TransactionRepository {
     description: string | null;
     transactionDate: Date;
     reversalOfTransactionId: string | null;
+    incomeCategoryId: string | null;
     createdAt: Date;
     updatedAt: Date;
   }): Transaction {
@@ -126,6 +127,7 @@ export class PrismaTransactionRepository extends TransactionRepository {
       description: transaction.description,
       transactionDate: transaction.transactionDate,
       reversalOfTransactionId: transaction.reversalOfTransactionId,
+      incomeCategoryId: transaction.incomeCategoryId,
       createdAt: transaction.createdAt,
       updatedAt: transaction.updatedAt,
     });

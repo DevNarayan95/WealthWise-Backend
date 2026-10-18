@@ -3,9 +3,9 @@ import {
   AccountStatus,
   AccountType,
 } from '../../domain/entities/account.entity';
-import { AccountAlreadyArchivedApplicationException } from '../../exceptions/account-already-archived.exception';
-import { AccountNotFoundException } from '../../exceptions/account-not-found.exception';
-import { InvalidAccountException } from '../../exceptions/invalid-account.exception';
+import { AccountAlreadyArchivedApplicationException } from '../../presentation/exceptions/account-already-archived.exception';
+import { AccountNotFoundException } from '../../presentation/exceptions/account-not-found.exception';
+import { InvalidAccountException } from '../../presentation/exceptions/invalid-account.exception';
 import { AccountsService } from './accounts.service';
 
 describe('AccountsService', () => {

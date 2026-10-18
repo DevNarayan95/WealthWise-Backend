@@ -21,6 +21,8 @@ describe('PermissionsGuard', () => {
       findByEmail: jest.fn(),
       findById: jest.fn(),
       findPermissionsByUserId: jest.fn(),
+      markEmailVerified: jest.fn(),
+      updatePasswordHash: jest.fn(),
     };
 
     guard = new PermissionsGuard(reflector, userRepository);

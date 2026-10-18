@@ -4,33 +4,25 @@ import { ConfigService } from '@nestjs/config';
 
 import { JwtStrategy } from './jwt.strategy';
 import { UserRepository } from '../../../users/domain/repositories/user.repository';
+import { User, UserProps } from '../../../users/domain/entities/user.entity';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
   let userRepository: jest.Mocked<UserRepository>;
 
-  const createUser = (
-    overrides: Partial<{
-      id: string;
-      email: string;
-      passwordHash: string;
-      firstName: string;
-      lastName: string;
-      status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
-      createdAt: Date;
-      updatedAt: Date;
-    }> = {},
-  ) => ({
-    id: 'user-id',
-    email: 'test@example.com',
-    passwordHash: 'hashed-password',
-    firstName: 'John',
-    lastName: 'Doe',
-    status: 'ACTIVE' as const,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ...overrides,
-  });
+  const createUser = (overrides: Partial<UserProps> = {}): User =>
+    User.create({
+      id: 'user-id',
+      email: 'test@example.com',
+      passwordHash: 'hashed-password',
+      firstName: 'John',
+      lastName: 'Doe',
+      status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...overrides,
+    });
 
   beforeEach(async () => {
     userRepository = {
@@ -38,6 +30,8 @@ describe('JwtStrategy', () => {
       findByEmail: jest.fn(),
       findById: jest.fn(),
       findPermissionsByUserId: jest.fn(),
+      markEmailVerified: jest.fn(),
+      updatePasswordHash: jest.fn(),
     };
 
     const configService = {

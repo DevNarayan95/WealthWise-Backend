@@ -132,6 +132,15 @@ exports.Prisma.AccountScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.IncomeCategoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PermissionScalarFieldEnum = {
   id: 'id',
   resource: 'resource',
@@ -170,6 +179,7 @@ exports.Prisma.TransactionScalarFieldEnum = {
   description: 'description',
   transactionDate: 'transactionDate',
   reversalOfTransactionId: 'reversalOfTransactionId',
+  incomeCategoryId: 'incomeCategoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -181,9 +191,22 @@ exports.Prisma.UserScalarFieldEnum = {
   firstName: 'firstName',
   lastName: 'lastName',
   status: 'status',
+  emailVerifiedAt: 'emailVerifiedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
+};
+
+exports.Prisma.EmailOtpScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  purpose: 'purpose',
+  codeSalt: 'codeSalt',
+  codeHash: 'codeHash',
+  attempts: 'attempts',
+  expiresAt: 'expiresAt',
+  consumedAt: 'consumedAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -224,14 +247,21 @@ exports.UserStatus = exports.$Enums.UserStatus = {
   SUSPENDED: 'SUSPENDED'
 };
 
+exports.OtpPurpose = exports.$Enums.OtpPurpose = {
+  EMAIL_VERIFICATION: 'EMAIL_VERIFICATION',
+  PASSWORD_RESET: 'PASSWORD_RESET'
+};
+
 exports.Prisma.ModelName = {
   Account: 'Account',
+  IncomeCategory: 'IncomeCategory',
   Permission: 'Permission',
   RolePermission: 'RolePermission',
   Role: 'Role',
   UserRole: 'UserRole',
   Transaction: 'Transaction',
-  User: 'User'
+  User: 'User',
+  EmailOtp: 'EmailOtp'
 };
 
 /**

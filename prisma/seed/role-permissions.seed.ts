@@ -4,7 +4,6 @@ const rolePermissions: Record<string, string[]> = {
   SUPER_ADMIN: ['*'],
 
   ADMIN: [
-    'users:create',
     'users:read',
     'users:update',
     'users:delete',

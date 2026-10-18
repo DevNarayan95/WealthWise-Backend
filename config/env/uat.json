@@ -1,0 +1,49 @@
+{
+  "app": {
+    "baseUrl": "https://uat-api.wealthwise.example.com",
+    "trustProxy": true
+  },
+  "server": {
+    "port": 3000,
+    "ssl": {
+      "enabled": false,
+      "keyPath": "",
+      "certPath": "",
+      "caPath": ""
+    }
+  },
+  "security": {
+    "cors": {
+      "allowedOrigins": ["https://uat.wealthwise.example.com"],
+      "allowCredentials": false,
+      "maxAgeSeconds": 600
+    }
+  },
+  "logging": {
+    "level": "info",
+    "pretty": false,
+    "logsPath": "logs/uat"
+  },
+  "database": {
+    "poolMax": 10,
+    "ssl": {
+      "enabled": true,
+      "rejectUnauthorized": true
+    }
+  },
+  "mail": {
+    "smtp": {
+      "host": "CHANGE_ME_SMTP_HOST",
+      "port": 587,
+      "secure": false
+    }
+  },
+  "swagger": {
+    "enabled": true
+  },
+  "pm2": {
+    "instances": 2,
+    "execMode": "cluster",
+    "maxMemoryRestart": "768M"
+  }
+}

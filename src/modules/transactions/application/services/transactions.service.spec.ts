@@ -8,10 +8,10 @@ import {
 
 import { TransactionRepository } from '../../domain/repositories/transaction.repository';
 
-import { InvalidTransactionException } from '../../exceptions/invalid-transaction.exception';
+import { InvalidTransactionException } from '../../presentation/exceptions/invalid-transaction.exception';
 
 import { TransactionsService } from './transactions.service';
-import { TransactionNotFoundException } from '../../exceptions/transaction-not-found.exception';
+import { TransactionNotFoundException } from '../../presentation/exceptions/transaction-not-found.exception';
 import { ListTransactionsInput } from '../inputs/list-transactions.input';
 
 describe('TransactionsService', () => {
@@ -60,6 +60,7 @@ describe('TransactionsService', () => {
     description: 'Lunch',
     transactionDate,
     reversalOfTransactionId: null,
+    incomeCategoryId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
@@ -234,6 +235,7 @@ describe('TransactionsService', () => {
         description: 'Salary',
         transactionDate: new Date('2026-09-20T00:00:00.000Z'),
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -247,6 +249,7 @@ describe('TransactionsService', () => {
         description: 'Salary reversal',
         transactionDate: new Date('2026-09-21T00:00:00.000Z'),
         reversalOfTransactionId: 'transaction-1',
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -300,6 +303,7 @@ describe('TransactionsService', () => {
         description: 'Groceries',
         transactionDate: new Date('2026-09-20T00:00:00.000Z'),
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -313,6 +317,7 @@ describe('TransactionsService', () => {
         description: 'Groceries reversal',
         transactionDate: new Date('2026-09-21T00:00:00.000Z'),
         reversalOfTransactionId: 'transaction-1',
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -379,6 +384,7 @@ describe('TransactionsService', () => {
         description: 'Reversal',
         transactionDate: new Date('2026-09-21T00:00:00.000Z'),
         reversalOfTransactionId: 'transaction-1',
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -413,6 +419,7 @@ describe('TransactionsService', () => {
         description: 'Groceries',
         transactionDate: new Date('2026-09-20T00:00:00.000Z'),
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -426,6 +433,7 @@ describe('TransactionsService', () => {
         description: 'Existing reversal',
         transactionDate: new Date('2026-09-21T00:00:00.000Z'),
         reversalOfTransactionId: 'transaction-1',
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -494,6 +502,7 @@ describe('TransactionsService', () => {
         description: 'Lunch',
         transactionDate: new Date('2026-09-20T00:00:00.000Z'),
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -533,6 +542,7 @@ describe('TransactionsService', () => {
         description: 'Lunch',
         transactionDate: new Date('2026-09-01T00:00:00.000Z'),
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
         createdAt: new Date('2026-09-01T10:00:00.000Z'),
         updatedAt: new Date('2026-09-01T10:00:00.000Z'),
       });

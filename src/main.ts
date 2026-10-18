@@ -1,85 +1,38 @@
+import { Logger as NestLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
-import helmet from 'helmet';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { Logger } from 'nestjs-pino';
-import { setupSwagger } from './config/swagger.config';
+import { configureApp } from './bootstrap/configure-app';
+import { readAppConfigFile } from './config/app-config';
+import { buildHttpsOptions } from './config/https-options';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+async function bootstrap(): Promise<void> {
+  const { server } = readAppConfigFile();
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
+    httpsOptions: buildHttpsOptions(server.ssl),
   });
 
   app.useLogger(app.get(Logger));
 
-  const configService = app.get(ConfigService);
-
-  const apiPrefix = configService.get<string>('app.apiPrefix', 'api');
-  const port = configService.get<number>('app.port', 3000);
+  configureApp(app);
 
   /**
-   * Security
-   */
-  app.use(helmet());
-
-  /**
-   * Global API prefix
-   *
-   * Example:
-   * /api/users
-   * /api/transactions
-   */
-  app.setGlobalPrefix(apiPrefix, {
-    exclude: ['health'],
-  });
-
-  /**
-   * API versioning
-   *
-   * Example:
-   * /api/v1/users
-   * /api/v1/transactions
-   */
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1',
-  });
-
-  /**
-   * Global request validation
-   */
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
-
-  /**
-   * CORS
-   */
-  app.enableCors();
-
-  /**
-   * Graceful shutdown
+   * Graceful shutdown: PM2 and orchestrators send SIGINT/SIGTERM and Nest
+   * closes DB connections and in-flight requests before exiting.
    */
   app.enableShutdownHooks();
 
-  /**
-   * Global exception handling
-   */
-  app.useGlobalFilters(new HttpExceptionFilter());
-
-  /**
-   * Swagger / OpenAPI
-   */
-  setupSwagger(app);
-
-  await app.listen(port);
+  await app.listen(server.port, server.host);
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  new NestLogger('Bootstrap').error(
+    'Failed to start application',
+    error instanceof Error ? error.stack : String(error),
+  );
+  process.exit(1);
+});

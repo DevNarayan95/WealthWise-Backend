@@ -40,6 +40,21 @@ datasource db {
   provider = "postgresql"
 }
 
+model IncomeCategory {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  name       String   @db.VarChar(100)
+  isArchived Boolean  @default(false) @map("is_archived")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  transactions Transaction[]
+
+  @@index([userId, isArchived])
+  @@map("income_categories")
+}
+
 model Permission {
   id          String  @id @default(uuid()) @db.Uuid
   resource    String  @db.VarChar(100)
@@ -112,15 +127,15 @@ model Transaction {
   description             String?         @db.VarChar(255)
   transactionDate         DateTime        @map("transaction_date")
   reversalOfTransactionId String?         @map("reversal_of_transaction_id") @db.Uuid
+  incomeCategoryId        String?         @map("income_category_id") @db.Uuid
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  account Account @relation(fields: [accountId], references: [id])
-
-  reversalOf Transaction? @relation("TransactionReversal", fields: [reversalOfTransactionId], references: [id], onDelete: Restrict)
-
-  reversal Transaction? @relation("TransactionReversal")
+  account        Account         @relation(fields: [accountId], references: [id])
+  reversalOf     Transaction?    @relation("TransactionReversal", fields: [reversalOfTransactionId], references: [id], onDelete: Restrict)
+  reversal       Transaction?    @relation("TransactionReversal")
+  incomeCategory IncomeCategory? @relation(fields: [incomeCategoryId], references: [id], onDelete: Restrict)
 
   @@unique([reversalOfTransactionId])
   @@index([accountId])
@@ -134,21 +149,47 @@ enum UserStatus {
   SUSPENDED
 }
 
-model User {
-  id           String     @id @default(uuid()) @db.Uuid
-  email        String     @unique @db.VarChar(255)
-  passwordHash String     @map("password_hash") @db.VarChar(255)
-  firstName    String     @map("first_name") @db.VarChar(100)
-  lastName     String     @map("last_name") @db.VarChar(100)
-  status       UserStatus @default(ACTIVE)
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
-  deletedAt    DateTime?  @map("deleted_at")
+enum OtpPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
 
-  roles    UserRole[]
-  accounts Account[]
+model User {
+  id              String     @id @default(uuid()) @db.Uuid
+  email           String     @unique @db.VarChar(255)
+  passwordHash    String     @map("password_hash") @db.VarChar(255)
+  firstName       String     @map("first_name") @db.VarChar(100)
+  lastName        String     @map("last_name") @db.VarChar(100)
+  status          UserStatus @default(ACTIVE)
+  emailVerifiedAt DateTime?  @map("email_verified_at")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  deletedAt       DateTime?  @map("deleted_at")
+
+  roles            UserRole[]
+  accounts         Account[]
+  incomeCategories IncomeCategory[]
+  emailOtps        EmailOtp[]
 
   @@index([status])
   @@index([createdAt])
   @@map("users")
+}
+
+model EmailOtp {
+  id         String     @id @default(uuid()) @db.Uuid
+  userId     String     @map("user_id") @db.Uuid
+  purpose    OtpPurpose
+  codeSalt   String     @map("code_salt") @db.VarChar(64)
+  codeHash   String     @map("code_hash") @db.VarChar(128)
+  attempts   Int        @default(0)
+  expiresAt  DateTime   @map("expires_at")
+  consumedAt DateTime?  @map("consumed_at")
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+  @@index([expiresAt])
+  @@map("email_otps")
 }

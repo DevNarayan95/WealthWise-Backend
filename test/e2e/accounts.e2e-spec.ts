@@ -5,10 +5,9 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import request from 'supertest';
+import request from './support/api-request';
 
 import { AppModule } from '../../src/app.module';
-import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
 import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
 import { UserStatus } from '../../prisma/generated/prisma/client';
 
@@ -69,8 +68,6 @@ describe('Accounts (E2E)', () => {
         transform: true,
       }),
     );
-
-    app.useGlobalFilters(new HttpExceptionFilter());
 
     await app.init();
 
@@ -157,6 +154,7 @@ describe('Accounts (E2E)', () => {
         firstName: 'Accounts',
         lastName: 'Authorized',
         status: UserStatus.ACTIVE,
+        emailVerifiedAt: new Date(),
       },
     });
 
@@ -197,6 +195,7 @@ describe('Accounts (E2E)', () => {
         firstName: 'Accounts',
         lastName: 'SecondAuthorized',
         status: UserStatus.ACTIVE,
+        emailVerifiedAt: new Date(),
       },
     });
 
@@ -226,6 +225,7 @@ describe('Accounts (E2E)', () => {
         firstName: 'Accounts',
         lastName: 'Unauthorized',
         status: UserStatus.ACTIVE,
+        emailVerifiedAt: new Date(),
       },
     });
 
@@ -324,12 +324,14 @@ describe('Accounts (E2E)', () => {
    */
   const createAccount = (
     token: string,
-    overrides: Partial<{
-      name: string;
-      type: string;
-      currency: string;
-      openingBalance: string;
-    }> = {},
+    overrides:
+      | Partial<{
+          name: string;
+          type: string;
+          currency: string;
+          openingBalance: string;
+        }>
+      | Record<string, unknown> = {},
   ) => {
     return request(app.getHttpServer())
       .post('/api/v1/accounts')
@@ -529,9 +531,12 @@ describe('Accounts (E2E)', () => {
     });
 
     it('should reject unexpected fields', async () => {
-      const response = await createAccount(authorizedUserToken, {
+      const payload: Record<string, unknown> = {
         unexpectedField: 'not-allowed',
-      }).expect(400);
+      };
+      const response = await createAccount(authorizedUserToken, payload).expect(
+        400,
+      );
 
       expect(response.body.success).toBe(false);
     });

@@ -21,7 +21,7 @@ export class PrismaUserRepository extends UserRepository {
 
   async create(input: CreateUserRepositoryInput): Promise<User> {
     const user = await this.prisma.user.create({
-      data: input,
+      data: { ...input, emailVerifiedAt: input.emailVerifiedAt ?? null },
     });
 
     return this.toDomain(user);
@@ -41,6 +41,23 @@ export class PrismaUserRepository extends UserRepository {
     });
 
     return user ? this.toDomain(user) : null;
+  }
+
+  async markEmailVerified(userId: string, verifiedAt: Date): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { emailVerifiedAt: verifiedAt },
+    });
+  }
+
+  async updatePasswordHash(
+    userId: string,
+    passwordHash: string,
+  ): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
   }
 
   async findPermissionsByUserId(userId: string): Promise<string[]> {
@@ -71,6 +88,7 @@ export class PrismaUserRepository extends UserRepository {
     firstName: string;
     lastName: string;
     status: UserStatus;
+    emailVerifiedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
   }): User {
@@ -81,6 +99,7 @@ export class PrismaUserRepository extends UserRepository {
       firstName: user.firstName,
       lastName: user.lastName,
       status: user.status,
+      emailVerifiedAt: user.emailVerifiedAt,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });

@@ -1,0 +1,21 @@
+{
+  "app": {
+    "baseUrl": "http://localhost:3000"
+  },
+  "server": {
+    "port": 3000
+  },
+  "logging": {
+    "level": "debug",
+    "pretty": true
+  },
+  "database": {
+    "poolMax": 5
+  },
+  "monitoring": {
+    "queryLogging": {
+      "enabled": true,
+      "slowQueryMs": 250
+    }
+  }
+}

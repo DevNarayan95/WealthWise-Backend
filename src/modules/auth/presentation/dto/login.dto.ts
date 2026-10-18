@@ -8,7 +8,7 @@ export class LoginDto {
     description: 'User email address',
     format: 'email',
   })
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   @IsEmail()

@@ -1,0 +1,30 @@
+{
+  "app": {
+    "baseUrl": "http://localhost:3001"
+  },
+  "server": {
+    "port": 3001
+  },
+  "logging": {
+    "level": "warn",
+    "pretty": false,
+    "logsPath": "logs/test"
+  },
+  "database": {
+    "poolMax": 5
+  },
+  "swagger": {
+    "enabled": false
+  },
+  "monitoring": {
+    "apiBenchmark": {
+      "enabled": true,
+      "slowRequestMs": 2000,
+      "criticalRequestMs": 5000
+    },
+    "queryLogging": {
+      "enabled": false,
+      "slowQueryMs": 500
+    }
+  }
+}

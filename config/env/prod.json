@@ -1,0 +1,49 @@
+{
+  "app": {
+    "baseUrl": "https://api.wealthwise.example.com",
+    "trustProxy": true
+  },
+  "server": {
+    "port": 3000,
+    "ssl": {
+      "enabled": true,
+      "keyPath": "/etc/ssl/private/wealthwise-prod.key",
+      "certPath": "/etc/ssl/certs/wealthwise-prod.crt",
+      "caPath": "/etc/ssl/certs/wealthwise-prod-ca.crt"
+    }
+  },
+  "security": {
+    "cors": {
+      "allowedOrigins": ["https://wealthwise.example.com"],
+      "allowCredentials": false,
+      "maxAgeSeconds": 600
+    }
+  },
+  "logging": {
+    "level": "info",
+    "pretty": false,
+    "logsPath": "logs/prod"
+  },
+  "database": {
+    "poolMax": 20,
+    "ssl": {
+      "enabled": true,
+      "rejectUnauthorized": true
+    }
+  },
+  "mail": {
+    "smtp": {
+      "host": "CHANGE_ME_SMTP_HOST",
+      "port": 465,
+      "secure": true
+    }
+  },
+  "swagger": {
+    "enabled": false
+  },
+  "pm2": {
+    "instances": 4,
+    "execMode": "cluster",
+    "maxMemoryRestart": "1G"
+  }
+}

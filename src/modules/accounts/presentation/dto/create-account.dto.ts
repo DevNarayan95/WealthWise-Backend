@@ -14,7 +14,9 @@ export class CreateAccountDto {
   @IsString()
   @MinLength(1)
   @MaxLength(150)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   name!: string;
 
   @IsEnum(AccountType)
@@ -23,13 +25,15 @@ export class CreateAccountDto {
   @IsString()
   @Length(3, 3)
   @Matches(/^[A-Za-z]{3}$/)
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toUpperCase() : value,
   )
   currency!: string;
 
   @IsString()
   @Matches(/^-?\d{1,15}(?:\.\d{1,4})?$/)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   openingBalance!: string;
 }

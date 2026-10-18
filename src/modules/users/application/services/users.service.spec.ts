@@ -20,6 +20,8 @@ describe('UsersService', () => {
       findByEmail: jest.fn(),
       findById: jest.fn(),
       findPermissionsByUserId: jest.fn(),
+      markEmailVerified: jest.fn(),
+      updatePasswordHash: jest.fn(),
     };
 
     passwordHasher = {
@@ -84,6 +86,7 @@ describe('UsersService', () => {
         passwordHash: 'hashed-password',
         firstName: input.firstName,
         lastName: input.lastName,
+        emailVerifiedAt: null,
       });
 
       expect(result).toEqual(createdUser);
@@ -142,6 +145,7 @@ describe('UsersService', () => {
         passwordHash: 'hashed-password',
         firstName: input.firstName,
         lastName: input.lastName,
+        emailVerifiedAt: null,
       });
 
       const createCall = repository.create.mock.calls[0][0];

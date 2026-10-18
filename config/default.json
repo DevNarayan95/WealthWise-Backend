@@ -1,0 +1,141 @@
+{
+  "app": {
+    "name": "WealthWise Backend",
+    "baseUrl": "http://localhost:3000",
+    "apiPrefix": "api",
+    "trustProxy": false
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 3000,
+    "ssl": {
+      "enabled": false,
+      "keyPath": "",
+      "certPath": "",
+      "caPath": ""
+    }
+  },
+  "errors": {
+    "statusCodePrefix": "WS",
+    "statusCodeSeparator": ""
+  },
+  "security": {
+    "apiKeyHeader": "x-api-key",
+    "publicRouteMetadataKey": "isPublic",
+    "apiClients": [
+      {
+        "name": "web-frontend",
+        "keyEnv": "API_KEY_WEB_FRONTEND",
+        "platform": "web"
+      },
+      {
+        "name": "mobile-app",
+        "keyEnv": "API_KEY_MOBILE_APP",
+        "platform": "mobile"
+      }
+    ],
+    "cors": {
+      "allowedOrigins": ["http://localhost:5173", "http://localhost:3001"],
+      "allowCredentials": false,
+      "maxAgeSeconds": 600
+    },
+    "throttle": {
+      "ttlMs": 60000,
+      "defaultLimit": 100,
+      "loginLimit": 5,
+      "sensitiveLimit": 10
+    }
+  },
+  "auth": {
+    "jwtExpiresIn": "15m",
+    "passwordSaltRounds": 12
+  },
+  "registration": {
+    "emailVerificationRequired": true
+  },
+  "otp": {
+    "length": 6,
+    "expiresInSeconds": 600,
+    "maxAttempts": 3,
+    "resendCooldownSeconds": 60
+  },
+  "mail": {
+    "fromAddress": "WealthWise <no-reply@wealthwise.local>",
+    "smtp": {
+      "host": "localhost",
+      "port": 1025,
+      "secure": false,
+      "connectionTimeoutMs": 10000
+    }
+  },
+  "database": {
+    "poolMax": 10,
+    "idleTimeoutMs": 30000,
+    "connectionTimeoutMs": 5000,
+    "ssl": {
+      "enabled": false,
+      "rejectUnauthorized": true
+    }
+  },
+  "health": {
+    "databaseTimeoutMs": 2000
+  },
+  "pagination": {
+    "defaultPageSize": 20,
+    "maxPageSize": 100
+  },
+  "logging": {
+    "level": "info",
+    "pretty": false,
+    "logsPath": "logs",
+    "retentionDays": 30,
+    "redactPaths": [
+      "req.headers.authorization",
+      "req.headers.cookie",
+      "req.headers[\"x-api-key\"]",
+      "req.body.password",
+      "req.body.passwordHash"
+    ]
+  },
+  "monitoring": {
+    "apiBenchmark": {
+      "enabled": true,
+      "slowRequestMs": 1000,
+      "criticalRequestMs": 3000
+    },
+    "queryLogging": {
+      "enabled": true,
+      "slowQueryMs": 500
+    }
+  },
+  "cache": {
+    "enabled": false,
+    "ttlSeconds": 300
+  },
+  "thirdParty": {
+    "notification": {
+      "enabled": false,
+      "baseUrl": "",
+      "timeoutMs": 5000
+    }
+  },
+  "swagger": {
+    "enabled": true,
+    "path": "docs",
+    "title": "WealthWise API",
+    "description": "Production-ready REST API for managing personal finances.",
+    "version": "1.0"
+  },
+  "pm2": {
+    "appName": "wealthwise-backend",
+    "script": "dist/main.js",
+    "instances": 1,
+    "execMode": "fork",
+    "maxMemoryRestart": "512M",
+    "autorestart": true,
+    "maxRestarts": 10,
+    "minUptimeMs": 5000,
+    "killTimeoutMs": 5000,
+    "listenTimeoutMs": 10000
+  }
+}

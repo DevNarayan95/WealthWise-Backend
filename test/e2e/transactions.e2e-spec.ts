@@ -5,10 +5,9 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import request from 'supertest';
+import request from './support/api-request';
 
 import { AppModule } from '../../src/app.module';
-import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
 import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
 
 describe('Transactions E2E', () => {
@@ -54,8 +53,6 @@ describe('Transactions E2E', () => {
         transform: true,
       }),
     );
-
-    app.useGlobalFilters(new HttpExceptionFilter());
 
     await app.init();
 
@@ -171,6 +168,7 @@ describe('Transactions E2E', () => {
         passwordHash: superAdmin.passwordHash,
         firstName: 'Transaction',
         lastName: 'Test User',
+        emailVerifiedAt: new Date(),
       },
     });
 

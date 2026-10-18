@@ -18,6 +18,7 @@ class FakeTransactionRepository extends TransactionRepository {
       description: null,
       transactionDate: new Date('2026-09-20T00:00:00.000Z'),
       reversalOfTransactionId: null,
+      incomeCategoryId: null,
       createdAt: new Date('2026-09-20T00:00:00.000Z'),
       updatedAt: new Date('2026-09-20T00:00:00.000Z'),
     });

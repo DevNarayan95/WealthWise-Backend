@@ -1,12 +1,17 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-export const setupSwagger = (app: INestApplication): void => {
-  const config = new DocumentBuilder()
-    .setTitle('WealthWise API')
-    .setDescription('Production-ready REST API for managing personal finances.')
-    .setVersion('1.0')
-    .setContact('WealthWise Engineering', '', '')
+import type { AppConfig } from './app-config';
+
+export const createSwaggerDocumentConfig = (
+  swagger: AppConfig['swagger'],
+  baseUrl: string,
+) =>
+  new DocumentBuilder()
+    .setTitle(swagger.title)
+    .setDescription(swagger.description)
+    .setVersion(swagger.version)
+    .addServer(baseUrl)
     .addBearerAuth(
       {
         type: 'http',
@@ -18,9 +23,21 @@ export const setupSwagger = (app: INestApplication): void => {
     )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+export const setupSwagger = (
+  app: INestApplication,
+  swagger: AppConfig['swagger'],
+  baseUrl: string,
+): void => {
+  if (!swagger.enabled) {
+    return;
+  }
 
-  SwaggerModule.setup('docs', app, document, {
+  const document = SwaggerModule.createDocument(
+    app,
+    createSwaggerDocumentConfig(swagger, baseUrl),
+  );
+
+  SwaggerModule.setup(swagger.path, app, document, {
     useGlobalPrefix: false,
     swaggerOptions: {
       persistAuthorization: true,

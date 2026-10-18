@@ -38,6 +38,7 @@ export const seedUsers = async (
       firstName: 'System',
       lastName: 'Administrator',
       status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
     },
     create: {
       email,
@@ -45,6 +46,7 @@ export const seedUsers = async (
       firstName: 'System',
       lastName: 'Administrator',
       status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
     },
   });
 
