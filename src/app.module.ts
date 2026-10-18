@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -8,6 +8,7 @@ import { loggingModule } from './config/logging.config';
 import { ApiClientGuard } from './infrastructure/security/api-client.guard';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ApiBenchmarkInterceptor } from './common/interceptors/api-benchmark.interceptor';
+import { RequestStartLogMiddleware } from './common/middleware/request-start-log.middleware';
 import { HealthModule } from './modules/health/health.module';
 import { PrismaModule } from './infrastructure/database/prisma/prisma.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
@@ -69,4 +70,8 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(RequestStartLogMiddleware).forRoutes('*');
+  }
+}

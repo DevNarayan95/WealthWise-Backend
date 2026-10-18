@@ -1285,13 +1285,13 @@ nestjs-pino
 
 and Pino logging.
 
-File logging (`src/config/logging.config.ts`, `pino-roll`):
+File logging (`src/config/logging.config.ts`, `src/config/daily-log-file.ts`):
 
 - Logs are JSON lines written to `logging.logsPath` (default `logs`, resolved from the project root).
-- Daily files: `app.YYYY-MM-DD.1.log` (all levels from trace) and `error.YYYY-MM-DD.1.log` (level error and above).
-- Retention: `logging.retentionDays` (default 30). Cleanup runs at each daily roll and keeps the newest `retentionDays` previous files plus the active file.
+- Daily files: `app-YYYY-MM-DD.log` (all levels from trace) and `error-YYYY-MM-DD.log` (level error and above). The file switches at local midnight.
+- Retention: `logging.retentionDays` (default 30). Files older than that many days are deleted at each daily switch. Today counts as one day.
 - stdout keeps running alongside the files; `logging.pretty` switches stdout to pretty output.
-- Search with `grep` or `jq`, for example `jq . logs/error.*.log`.
+- Search with `grep` or `jq`, for example `jq . logs/error-*.log`.
 
 Do not use random `console.log` statements in production application code.
 

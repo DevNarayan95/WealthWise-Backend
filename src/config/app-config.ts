@@ -122,11 +122,8 @@ export interface AppConfigFile {
     queryLogging: {
       enabled: boolean;
       slowQueryMs: number;
+      traceAllQueries: boolean;
     };
-  };
-  cache: {
-    enabled: boolean;
-    ttlSeconds: number;
   };
   thirdParty: {
     notification: {
@@ -362,14 +359,9 @@ const appConfigFileSchema = joi
           .object({
             enabled: joi.boolean().required(),
             slowQueryMs: joi.number().integer().min(1).required(),
+            traceAllQueries: joi.boolean().required(),
           })
           .required(),
-      })
-      .required(),
-    cache: joi
-      .object({
-        enabled: joi.boolean().required(),
-        ttlSeconds: joi.number().integer().min(1).required(),
       })
       .required(),
     thirdParty: joi

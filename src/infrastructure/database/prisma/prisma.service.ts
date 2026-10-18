@@ -8,7 +8,7 @@ import {
   PrismaClient,
 } from '../../../../prisma/generated/prisma/client';
 import type { AppConfig } from '../../../config/app-config';
-import { createSlowQueryHandler } from './query-logging';
+import { createQueryLogHandler } from './query-logging';
 
 type PrismaServiceClientOptions = Prisma.PrismaClientOptions & {
   log: Prisma.LogDefinition[];
@@ -50,7 +50,10 @@ export class PrismaService
       logger.setContext(PrismaService.name);
       this.$on(
         'query',
-        createSlowQueryHandler(logger, queryLogging.slowQueryMs),
+        createQueryLogHandler(logger, {
+          slowQueryMs: queryLogging.slowQueryMs,
+          traceAllQueries: queryLogging.traceAllQueries,
+        }),
       );
     }
   }

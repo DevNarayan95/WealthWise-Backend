@@ -71,7 +71,6 @@
     "passport-jwt": "^4.0.1",
     "pg": "^8.22.0",
     "pino-http": "^11.0.0",
-    "pino-roll": "^4.0.0",
     "pm2": "^7.0.4",
     "prisma": "^7.9.1",
     "reflect-metadata": "^0.2.2",

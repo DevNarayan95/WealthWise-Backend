@@ -163,22 +163,28 @@ Never edit an existing migration that has been applied or pushed. Add a new migr
 
 ## 9. Logs and troubleshooting the app
 
-Log files are in `logs/` by default (`logging.logsPath`). A new pair of files is started each day: one application log and one error log. Old files are deleted based on `logging.retentionDays`.
+Log files are in `logs/` by default (`logging.logsPath`). A new pair of files is started each day: `app-YYYY-MM-DD.log` and `error-YYYY-MM-DD.log`. Old files are deleted based on `logging.retentionDays`.
 
 Search by request ID to follow one request:
 
 ```bash
-grep '<requestId>' logs/app.*.log
+grep '<requestId>' logs/app-*.log
+```
+
+Each request logs `Request started` at debug level, then any database queries, then `request completed`. All of these lines carry the same `requestId`, so one search shows the full flow:
+
+```bash
+grep '<requestId>' logs/app-*.log | grep -E '"msg":"(Request started|Database query|Slow database query|request completed)"'
 ```
 
 Find slow requests and slow database queries (each line is JSON, so search on the `msg` field):
 
 ```bash
-grep -E '"msg":"(Slow API request|Critical API request)"' logs/app.*.log
-grep '"msg":"Slow database query"' logs/app.*.log
+grep -E '"msg":"(Slow API request|Critical API request)"' logs/app-*.log
+grep '"msg":"Slow database query"' logs/app-*.log
 ```
 
-Slow database query lines do not carry a request ID yet. Use the timestamp to match them with request lines.
+To see every database query, not just slow ones, set `monitoring.queryLogging.traceAllQueries` to `true` for the environment. Those lines are logged at debug level, so the app log level must also be `debug`. Keep this off in UAT, SIT, staging, and prod unless you are investigating a problem.
 
 Common problems:
 

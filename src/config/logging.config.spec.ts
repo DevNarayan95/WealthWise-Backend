@@ -7,7 +7,6 @@ import pino from 'pino';
 import type { AppConfig } from './app-config';
 import {
   buildPinoHttpOptions,
-  buildRollLimit,
   createLogDestinations,
   resolveLogsPath,
   resolveRequestId,
@@ -64,15 +63,6 @@ describe('logging config helpers', () => {
     });
   });
 
-  describe('buildRollLimit', () => {
-    it('maps retentionDays to the pino-roll count and removes other files', () => {
-      expect(buildRollLimit(30)).toEqual({
-        count: 30,
-        removeOtherLogFiles: true,
-      });
-    });
-  });
-
   describe('resolveRequestId', () => {
     it('keeps a valid x-request-id', () => {
       expect(resolveRequestId('req-abc.123_X')).toBe('req-abc.123_X');
@@ -117,8 +107,8 @@ describe('logging config helpers', () => {
   });
 
   describe('createLogDestinations', () => {
-    it('writes app and error files named by today date under the resolved logs folder', async () => {
-      const destinations = await createLogDestinations(
+    it('writes app and error files named by today date under the resolved logs folder', () => {
+      const destinations = createLogDestinations(
         { ...baseLoggingConfig, logsPath: 'custom-logs' },
         tempDir,
       );
@@ -133,13 +123,13 @@ describe('logging config helpers', () => {
       const stamp = todayStamp();
 
       expect(fs.readdirSync(logsDir).sort()).toEqual([
-        `app.${stamp}.1.log`,
-        `error.${stamp}.1.log`,
+        `app-${stamp}.log`,
+        `error-${stamp}.log`,
       ]);
     });
 
-    it('sends info and above to the app file and only error-level entries to the error file', async () => {
-      const destinations = await createLogDestinations(
+    it('sends info and above to the app file and only error-level entries to the error file', () => {
+      const destinations = createLogDestinations(
         { ...baseLoggingConfig, logsPath: 'logs' },
         tempDir,
       );
@@ -154,9 +144,9 @@ describe('logging config helpers', () => {
 
       const logsDir = path.join(tempDir, 'logs');
       const stamp = todayStamp();
-      const appLines = readJsonLines(path.join(logsDir, `app.${stamp}.1.log`));
+      const appLines = readJsonLines(path.join(logsDir, `app-${stamp}.log`));
       const errorLines = readJsonLines(
-        path.join(logsDir, `error.${stamp}.1.log`),
+        path.join(logsDir, `error-${stamp}.log`),
       );
 
       expect(appLines.map((line) => line.msg)).toEqual([

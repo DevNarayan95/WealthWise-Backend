@@ -15,7 +15,8 @@
   "monitoring": {
     "queryLogging": {
       "enabled": true,
-      "slowQueryMs": 250
+      "slowQueryMs": 250,
+      "traceAllQueries": true
     }
   }
 }

@@ -105,12 +105,9 @@
     },
     "queryLogging": {
       "enabled": true,
-      "slowQueryMs": 500
+      "slowQueryMs": 500,
+      "traceAllQueries": false
     }
-  },
-  "cache": {
-    "enabled": false,
-    "ttlSeconds": 300
   },
   "thirdParty": {
     "notification": {

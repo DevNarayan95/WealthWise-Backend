@@ -205,15 +205,15 @@ Logs are written to two rolling files: an application log and an error log. A ne
 | `apiBenchmark.criticalRequestMs` | `3000`  | Requests at or above this duration log `Critical API request` (error). Must be greater than or equal to `slowRequestMs`. |
 | `queryLogging.enabled`           | `true`  | Turns on slow database query logging.                                                                                    |
 | `queryLogging.slowQueryMs`       | `500`   | Queries at or above this duration log `Slow database query` (warn).                                                      |
+| `queryLogging.traceAllQueries`   | `false` | Logs every database query at debug level (`Database query`). Keep off in shared environments; it is verbose.             |
 
 Thresholds are per environment, so UAT can use stricter values than local development. Query parameters are never logged.
 
-### `cache` and `thirdParty`
+### `thirdParty`
 
-| Key                                 | Default        | Status                                        |
-| ----------------------------------- | -------------- | --------------------------------------------- |
-| `cache.enabled`, `cache.ttlSeconds` | `false`, `300` | Validated. Reserved for future use.           |
-| `thirdParty.notification.*`         | disabled       | Validated. Reserved for the notification API. |
+| Key                         | Default  | Status                                        |
+| --------------------------- | -------- | --------------------------------------------- |
+| `thirdParty.notification.*` | disabled | Validated. Reserved for the notification API. |
 
 ### `swagger`
 

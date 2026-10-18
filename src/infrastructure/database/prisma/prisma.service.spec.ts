@@ -45,7 +45,11 @@ describe('PrismaService query logging', () => {
       .mockImplementation(() => PrismaService.prototype);
 
     new PrismaService(
-      buildConfigService({ enabled: true, slowQueryMs: 500 }),
+      buildConfigService({
+        enabled: true,
+        slowQueryMs: 500,
+        traceAllQueries: false,
+      }),
       logger,
     );
 
@@ -56,7 +60,11 @@ describe('PrismaService query logging', () => {
     const on = jest.spyOn(PrismaService.prototype, '$on');
 
     new PrismaService(
-      buildConfigService({ enabled: false, slowQueryMs: 500 }),
+      buildConfigService({
+        enabled: false,
+        slowQueryMs: 500,
+        traceAllQueries: false,
+      }),
       logger,
     );
 
