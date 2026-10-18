@@ -59,6 +59,19 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Code quality
+
+| Tool     | Config file                      | Scripts                                  |
+| -------- | -------------------------------- | ---------------------------------------- |
+| Prettier | `.prettierrc`, `.prettierignore` | `npm run format`, `npm run format:check` |
+| ESLint   | `eslint.config.mjs`              | `npm run lint`, `npm run lint:check`     |
+| cspell   | `cspell.json`                    | `npm run spellcheck`                     |
+
+- Prettier sets the formatting rules: 2-space indent, single quotes, trailing commas, 80-column lines, LF line endings. Generated output (`dist/`, `prisma/generated/`, `logs/`, `coverage/`) is excluded in `.prettierignore`.
+- ESLint uses typed rules (`recommendedTypeChecked`) and reports Prettier differences as errors. `npm run lint` auto-fixes what it can; `npm run lint:check` only reports.
+- cspell checks spelling in source, config, and docs. Add project words to `cspell.json` rather than disabling the check.
+- The VS Code settings in `.vscode/settings.json` format on save and remove unused imports.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.

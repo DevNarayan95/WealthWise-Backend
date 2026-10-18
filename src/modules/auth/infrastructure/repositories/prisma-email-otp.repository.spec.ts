@@ -102,10 +102,7 @@ describe('PrismaEmailOtpRepository', () => {
     it('returns the most recently created code for the user and purpose', async () => {
       prisma.emailOtp.findFirst.mockResolvedValue(row);
 
-      const result = await repository.findLatest(
-        'user-id',
-        'PASSWORD_RESET',
-      );
+      const result = await repository.findLatest('user-id', 'PASSWORD_RESET');
 
       expect(prisma.emailOtp.findFirst).toHaveBeenCalledWith({
         where: { userId: 'user-id', purpose: 'PASSWORD_RESET' },
@@ -151,9 +148,9 @@ describe('PrismaEmailOtpRepository', () => {
     it('reports false when the code was already consumed', async () => {
       prisma.emailOtp.updateMany.mockResolvedValue({ count: 0 });
 
-      await expect(
-        repository.markConsumed('otp-id', new Date()),
-      ).resolves.toBe(false);
+      await expect(repository.markConsumed('otp-id', new Date())).resolves.toBe(
+        false,
+      );
     });
   });
 });
