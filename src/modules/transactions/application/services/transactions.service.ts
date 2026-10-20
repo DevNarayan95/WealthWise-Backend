@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AccountStatus } from '../../../accounts/domain/entities/account.entity';
 import { AccountsService } from '../../../accounts/application/services/accounts.service';
+import { IncomeCategoriesService } from '../../../income/application/services/income-categories.service';
 
 import {
   Transaction,
@@ -33,12 +34,14 @@ export class TransactionsService {
   constructor(
     private readonly transactionsRepository: TransactionRepository,
     private readonly accountsService: AccountsService,
+    private readonly incomeCategoriesService: IncomeCategoriesService,
   ) {}
 
   async create(input: CreateTransactionInput): Promise<Transaction> {
     const currency = input.currency.trim().toUpperCase();
     const amount = input.amount.trim();
     const description = input.description?.trim() || null;
+    const incomeCategoryId = input.incomeCategoryId ?? null;
 
     if (!isTransactionType(input.type)) {
       throw new InvalidTransactionException('Invalid transaction type');
@@ -69,6 +72,12 @@ export class TransactionsService {
       throw new InvalidTransactionException('Transaction date must be valid');
     }
 
+    if (incomeCategoryId !== null && input.type !== TransactionType.INCOME) {
+      throw new InvalidTransactionException(
+        'Income category can only be set on income transactions',
+      );
+    }
+
     const account = await this.accountsService.findById(
       input.accountId,
       input.userId,
@@ -86,6 +95,13 @@ export class TransactionsService {
       );
     }
 
+    if (incomeCategoryId !== null) {
+      await this.incomeCategoriesService.findById(
+        incomeCategoryId,
+        input.userId,
+      );
+    }
+
     return this.transactionsRepository.create({
       accountId: account.id,
       type: input.type,
@@ -94,6 +110,7 @@ export class TransactionsService {
       description,
       transactionDate: input.transactionDate,
       reversalOfTransactionId: null,
+      incomeCategoryId,
     });
   }
 
@@ -150,6 +167,7 @@ export class TransactionsService {
       description,
       transactionDate: input.transactionDate,
       reversalOfTransactionId: transaction.id,
+      incomeCategoryId: null,
     });
   }
 

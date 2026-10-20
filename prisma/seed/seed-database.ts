@@ -1,5 +1,6 @@
 import type { PrismaClient } from '../generated/prisma/client';
 
+import { seedIncomeCategories } from './income-categories.seed';
 import { seedPermissions } from './permissions.seed';
 import { seedRoles } from './roles.seed';
 import { seedRolePermissions } from './role-permissions.seed';
@@ -11,4 +12,5 @@ export const seedDatabase = async (prisma: PrismaClient): Promise<void> => {
 
   await seedRolePermissions(prisma, roleMap, permissionMap);
   await seedUsers(prisma, roleMap);
+  await seedIncomeCategories(prisma);
 };

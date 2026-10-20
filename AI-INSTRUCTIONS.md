@@ -103,7 +103,7 @@ The architecture should allow future extraction of modules into microservices if
 - Non-secret settings live in `config/default.json` (required base) and `config/env/<APP_ENV>.json` (per-environment overrides, deep-merged over the base).
 - Secrets (`JWT_SECRET`, `DATABASE_URL`, API keys, seed admin credentials) come only from environment variables and are never placed in config files.
 - `src/config/app-config.ts` is the single loader and Joi validator. Read config through it, not through ad-hoc `process.env` access.
-- Shared runtime limits belong in config. Pagination uses `pagination.defaultPageSize` and `pagination.maxPageSize`, read through `src/common/pagination/pagination-config.ts`. Do not hard-code page sizes in DTOs or Swagger docs.
+- Shared runtime limits belong in config. Pagination uses `pagination.defaultPageSize` and `pagination.maxPageSize`, read through `src/common/pagination/pagination-config.ts`. Income category name length uses `income.categoryNameMaxLength`. Do not hard-code these values in DTOs, validators, or Swagger docs.
 - Decorators and DTO class bodies read config at module load time, so they use the cached `readAppConfigFile()` helpers instead of the Nest container.
 - Any new config key requires: the `AppConfigFile` type, a Joi rule, a value in `config/default.json`, and a spec in `src/config/app-config.spec.ts`.
 
@@ -1753,7 +1753,7 @@ The Transactions milestone has already been committed after the implementation a
 
 # 38. Current Project Progress
 
-The WealthWise backend foundation, authentication/authorization, financial foundation, Accounts module, and Transactions module have been implemented.
+The WealthWise backend foundation, authentication/authorization, financial foundation, Accounts module, Transactions module, and Income categories have been implemented.
 
 The actual source tree and current implementation remain the source of truth.
 
@@ -2098,6 +2098,45 @@ Prisma remains an infrastructure concern.
 The Transactions module is **COMPLETE**.
 
 Transactions are the second completed financial business module.
+
+## Income Categories
+
+Income categories let a user label INCOME transactions (for example Salary or Freelance).
+
+- Routes: `POST /api/v1/income/categories` (201), `GET /api/v1/income/categories` (paginated), `GET /api/v1/income/categories/:id`, `PATCH /api/v1/income/categories/:id` (rename), `PATCH /api/v1/income/categories/:id/archive`.
+- System categories are seeded with `userId = null`. They are visible to all users and are read-only. Renaming or archiving one returns 403 `SYSTEM_INCOME_CATEGORY_READ_ONLY`.
+- Another user's category returns 404 `INCOME_CATEGORY_NOT_FOUND`.
+- Permissions: `income:create`, `income:read`, `income:update`. There is no `income:delete`; archive uses `income:update`. CUSTOMER receives all three.
+- A transaction may set `incomeCategoryId` only when `type` is INCOME. Setting it on EXPENSE returns `INVALID_TRANSACTION`. Reversing a transaction clears `incomeCategoryId`.
+- Names are unique per user, compared case-insensitively after trimming. The database enforces this with `@@unique([userId, normalizedName])`, where `normalizedName = lower(btrim(name))`. The service pre-checks it, and a Prisma `P2002` race is mapped to `INCOME_CATEGORY_ALREADY_EXISTS` (409, `WS409`) in the repository.
+- Archived categories still reserve their name, because the unique index includes archived rows.
+- A user cannot create a category with the same name as a system category (for example "Salary").
+- The maximum name length comes from `income.categoryNameMaxLength` in `config/default.json`. Do not hard-code it.
+- Transactions routes use `JwtAuthGuard` and `PermissionsGuard`. Permissions are `transactions:create`, `transactions:read`, and `transactions:update` (reversal). CUSTOMER receives all three.
+
+## Paginated Responses
+
+Every list endpoint returns the same `data` shape, and Swagger documents it the same way:
+
+```json
+{
+  "success": true,
+  "data": {
+    "items": [],
+    "meta": {
+      "page": 1,
+      "limit": 20,
+      "total": 0,
+      "totalPages": 0,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    }
+  }
+}
+```
+
+- Use `PaginatedResponse<T>` and `PaginationMetaDto` from `src/common/pagination/`. Do not define a new list shape per module.
+- Accounts, transactions, and income categories already follow this shape.
 
 ## Transaction Scope
 
@@ -2685,11 +2724,11 @@ Financial Domain
 │
 ├── Transactions                       ✅ COMPLETE
 │
-├── Account Balance                    ⏳ NEXT
+├── Account Balance                    ✅ COMPLETE
 │
-├── Income                             ⏳
+├── Income                             ✅ COMPLETE
 │
-├── Expenses                           ⏳
+├── Expenses                           ⏳ NEXT
 │
 ├── Transfers                          ⏳
 │
@@ -2771,11 +2810,11 @@ Accounts                           ✅ COMPLETE
 
 Transactions                       ✅ COMPLETE
 
-Account Balance                    ⏳ NEXT
+Account Balance                    ✅ COMPLETE
 
-Income                             ⏳
+Income                             ✅ COMPLETE
 
-Expenses                           ⏳
+Expenses                           ⏳ NEXT
 
 Transfers                          ⏳
 

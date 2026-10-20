@@ -28,6 +28,7 @@ describe('TransactionsController', () => {
     description: 'Lunch',
     transactionDate,
     reversalOfTransactionId: null,
+    incomeCategoryId: null,
     createdAt: new Date('2026-09-01T10:00:00.000Z'),
     updatedAt: new Date('2026-09-01T10:00:00.000Z'),
   };
@@ -96,6 +97,7 @@ describe('TransactionsController', () => {
         currency: 'MYR',
         description: 'Lunch',
         transactionDate,
+        incomeCategoryId: null,
       });
 
       expect(result).toEqual({
@@ -108,6 +110,7 @@ describe('TransactionsController', () => {
           currency: transaction.currency,
           description: transaction.description,
           transactionDate: transaction.transactionDate,
+          incomeCategoryId: null,
           reversalOfTransactionId: null,
           createdAt: transaction.createdAt,
           updatedAt: transaction.updatedAt,
@@ -144,6 +147,7 @@ describe('TransactionsController', () => {
         currency: 'MYR',
         description: null,
         transactionDate,
+        incomeCategoryId: null,
       });
     });
   });
@@ -167,6 +171,7 @@ describe('TransactionsController', () => {
           currency: 'MYR',
           description: 'Lunch',
           transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+          incomeCategoryId: null,
           reversalOfTransactionId: null,
           createdAt: new Date('2026-09-01T10:00:00.000Z'),
           updatedAt: new Date('2026-09-01T10:00:00.000Z'),
@@ -255,20 +260,23 @@ describe('TransactionsController', () => {
 
       expect(result).toEqual({
         success: true,
-        data: [
-          {
-            id: 'transaction-id',
-            accountId: 'account-id',
-            type: TransactionType.EXPENSE,
-            amount: '50.0000',
-            currency: 'MYR',
-            description: 'Lunch',
-            transactionDate: new Date('2026-09-01T00:00:00.000Z'),
-            reversalOfTransactionId: null,
-            createdAt: transaction.createdAt,
-            updatedAt: transaction.updatedAt,
-          },
-        ],
+        data: {
+          items: [
+            {
+              id: 'transaction-id',
+              accountId: 'account-id',
+              type: TransactionType.EXPENSE,
+              amount: '50.0000',
+              currency: 'MYR',
+              description: 'Lunch',
+              transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+              incomeCategoryId: null,
+              reversalOfTransactionId: null,
+              createdAt: transaction.createdAt,
+              updatedAt: transaction.updatedAt,
+            },
+          ],
+        },
         meta: {
           page: 2,
           limit: 10,
@@ -309,7 +317,7 @@ describe('TransactionsController', () => {
 
       expect(result).toEqual({
         success: true,
-        data: [],
+        data: { items: [] },
         meta: {
           page: 1,
           limit: 20,
@@ -457,6 +465,7 @@ describe('TransactionsController', () => {
           currency: 'MYR',
           description: 'Lunch reversal',
           transactionDate: reversalDate,
+          incomeCategoryId: null,
           reversalOfTransactionId: 'transaction-id',
           createdAt: new Date('2026-09-02T10:00:00.000Z'),
           updatedAt: new Date('2026-09-02T10:00:00.000Z'),

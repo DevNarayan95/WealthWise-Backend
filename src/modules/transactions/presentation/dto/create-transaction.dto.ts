@@ -58,4 +58,15 @@ export class CreateTransactionDto {
   })
   @IsDateString()
   transactionDate!: string;
+
+  @ApiPropertyOptional({
+    example: '8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12',
+    format: 'uuid',
+    nullable: true,
+    description:
+      'Income category for an INCOME transaction. Must be omitted or null for EXPENSE transactions.',
+  })
+  @IsOptional()
+  @IsUUID()
+  incomeCategoryId?: string | null;
 }

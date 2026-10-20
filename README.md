@@ -13,14 +13,15 @@ The API is consumed by the React web app and, later, by mobile apps. Every reque
 | Auth         | Register, verify email with a one-time code (OTP), resend OTP, login, forgot password, reset password |
 | Users        | Current user profile (`GET /users/me`)                                                                |
 | Accounts     | Create, list, get, archive, and read the balance of an account                                        |
-| Transactions | Create, list, get, and reverse transactions                                                           |
+| Transactions | Create, list, get, and reverse transactions. INCOME transactions can link to an income category       |
+| Income       | Create, list, get, rename, and archive custom income categories. Eight system categories are seeded   |
 | Health       | Liveness, readiness, and combined health checks                                                       |
 
 Login is blocked until the email address is verified (`EMAIL_NOT_VERIFIED`).
 
 ### Planned
 
-Budgets, categories, income, investments, loans, savings goals, notifications, reports, dashboard, and financial insights. These modules have folders in `src/modules/` but no endpoints yet. Income has the income category entity and repository only.
+Expenses, budgets, categories, investments, loans, savings goals, notifications, reports, dashboard, and financial insights. These modules have folders in `src/modules/` but no endpoints yet.
 
 ## Technology stack
 
@@ -188,10 +189,10 @@ $ npm run pm2:delete
 
 Every request must send the client API key. Public routes (such as health) are the only exception.
 
-| Header          | Required         | Value                                            |
-| --------------- | ---------------- | ------------------------------------------------ |
-| `x-api-key`     | Yes              | Key for the calling client (web or mobile).      |
-| `Authorization` | Protected routes | `Bearer <access token>` from `POST /auth/login`. |
+| Header          | Required         | Value                                           |
+| --------------- | ---------------- | ----------------------------------------------- |
+| `x-api-key`     | Yes              | Key for the calling client (web or mobile).     |
+| `Authorization` | Protected routes | `Bearer {accessToken}` from `POST /auth/login`. |
 
 Missing or invalid keys return `API_KEY_MISSING` or `API_KEY_INVALID` (401).
 

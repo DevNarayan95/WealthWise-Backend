@@ -84,6 +84,9 @@
     "defaultPageSize": 20,
     "maxPageSize": 100
   },
+  "income": {
+    "categoryNameMaxLength": 100
+  },
   "logging": {
     "level": "info",
     "pretty": false,

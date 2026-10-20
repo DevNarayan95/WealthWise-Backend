@@ -106,6 +106,9 @@ export interface AppConfigFile {
     defaultPageSize: number;
     maxPageSize: number;
   };
+  income: {
+    categoryNameMaxLength: number;
+  };
   logging: {
     level: LogLevel;
     pretty: boolean;
@@ -330,6 +333,11 @@ const appConfigFileSchema = joi
               })
             : value,
       ),
+    income: joi
+      .object({
+        categoryNameMaxLength: joi.number().integer().min(1).required(),
+      })
+      .required(),
     logging: joi
       .object({
         level: joi

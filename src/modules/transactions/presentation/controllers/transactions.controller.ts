@@ -13,15 +13,21 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RequiresApiKeyAndJwt } from '../../../../common/decorators/api-security.decorator';
 
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
+import { buildPaginatedResponse } from '../../../../common/pagination/paginated-response';
 import { TransactionsService } from '../../application/services/transactions.service';
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../../../auth/infrastructure/guards/permissions.guard';
+import { Permissions } from '../../../auth/infrastructure/decorators/permissions.decorator';
 import { TransactionResponseMapper } from '../mappers/transaction-response.mapper';
 import { CreateTransactionDto } from '../dto/create-transaction.dto';
 import type { AuthenticatedRequest } from '../../../auth/infrastructure/interfaces/authenticated-request.interface';
 import { TransactionResponseDto } from '../dto/transaction-response.dto';
 import { successResponse } from '../../../../common/utils/api-response.util';
 import { TransactionResponseEnvelopeDto } from '../dto/transaction-response-envelope.dto';
-import { TransactionListResponseEnvelopeDto } from '../dto/transaction-list-response-envelope.dto';
+import {
+  TransactionListDataDto,
+  TransactionListResponseEnvelopeDto,
+} from '../dto/transaction-list-response-envelope.dto';
 import { ListTransactionsQueryDto } from '../dto/list-transactions-query.dto';
 import { ReverseTransactionDto } from '../dto/reverse-transaction.dto';
 
@@ -35,7 +41,8 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('transactions:create')
   @ApiOperation({
     summary: 'Create a transaction',
     description:
@@ -70,13 +77,15 @@ export class TransactionsController {
       currency: dto.currency,
       description: dto.description ?? null,
       transactionDate: new Date(dto.transactionDate),
+      incomeCategoryId: dto.incomeCategoryId ?? null,
     });
 
     return successResponse(TransactionResponseMapper.toDto(transaction));
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('transactions:read')
   @ApiOperation({
     summary: 'Get a transaction',
     description: 'Retrieves a transaction owned by the authenticated user.',
@@ -107,7 +116,8 @@ export class TransactionsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('transactions:read')
   @ApiOperation({
     summary: 'List transactions',
     description:
@@ -129,7 +139,7 @@ export class TransactionsController {
   async findAll(
     @Query() query: ListTransactionsQueryDto,
     @Req() request: AuthenticatedRequest,
-  ): Promise<ApiSuccessResponse<TransactionResponseDto[]>> {
+  ): Promise<ApiSuccessResponse<TransactionListDataDto>> {
     const offset = (query.page - 1) * query.limit;
 
     const result = await this.transactionsService.findAll({
@@ -139,27 +149,19 @@ export class TransactionsController {
       limit: query.limit,
     });
 
-    const totalPages =
-      result.total === 0 ? 0 : Math.ceil(result.total / query.limit);
-
-    return {
-      success: true,
-      data: result.transactions.map((transaction) =>
+    return buildPaginatedResponse({
+      items: result.transactions.map((transaction) =>
         TransactionResponseMapper.toDto(transaction),
       ),
-      meta: {
-        page: query.page,
-        limit: query.limit,
-        total: result.total,
-        totalPages,
-        hasNextPage: query.page < totalPages,
-        hasPreviousPage: query.page > 1,
-      },
-    };
+      page: query.page,
+      limit: query.limit,
+      total: result.total,
+    });
   }
 
   @Post(':id/reversal')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('transactions:update')
   @ApiOperation({
     summary: 'Reverse a transaction',
     description:

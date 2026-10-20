@@ -1,5 +1,7 @@
 import { AccountStatus } from '../../../accounts/domain/entities/account.entity';
 import { AccountsService } from '../../../accounts/application/services/accounts.service';
+import { IncomeCategoriesService } from '../../../income/application/services/income-categories.service';
+import { IncomeCategoryNotFoundException } from '../../../income/presentation/exceptions/income-category-not-found.exception';
 
 import {
   Transaction,
@@ -23,6 +25,10 @@ describe('TransactionsService', () => {
   };
 
   let accountsService: {
+    findById: jest.Mock;
+  };
+
+  let incomeCategoriesService: {
     findById: jest.Mock;
   };
 
@@ -75,9 +81,14 @@ describe('TransactionsService', () => {
       findById: jest.fn(),
     };
 
+    incomeCategoriesService = {
+      findById: jest.fn(),
+    };
+
     service = new TransactionsService(
       transactionsRepository,
       accountsService as unknown as AccountsService,
+      incomeCategoriesService as unknown as IncomeCategoriesService,
     );
   });
 
@@ -108,6 +119,7 @@ describe('TransactionsService', () => {
         description: 'Salary',
         transactionDate,
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
       });
 
       expect(result).toBe(createdTransaction);
@@ -129,7 +141,63 @@ describe('TransactionsService', () => {
         description: 'Lunch',
         transactionDate,
         reversalOfTransactionId: null,
+        incomeCategoryId: null,
       });
+    });
+
+    it('should link an income transaction to an income category available to the user', async () => {
+      const input = {
+        ...createTransactionInput,
+        type: TransactionType.INCOME,
+        incomeCategoryId: 'category-1',
+      };
+
+      accountsService.findById.mockResolvedValue(activeAccount);
+      incomeCategoriesService.findById.mockResolvedValue({ id: 'category-1' });
+      transactionsRepository.create.mockResolvedValue(createdTransaction);
+
+      await service.create(input);
+
+      expect(incomeCategoriesService.findById).toHaveBeenCalledWith(
+        'category-1',
+        input.userId,
+      );
+      expect(transactionsRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: TransactionType.INCOME,
+          incomeCategoryId: 'category-1',
+        }),
+      );
+    });
+
+    it('should reject an income category on an expense transaction', async () => {
+      await expect(
+        service.create({
+          ...createTransactionInput,
+          type: TransactionType.EXPENSE,
+          incomeCategoryId: 'category-1',
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+
+      expect(incomeCategoriesService.findById).not.toHaveBeenCalled();
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should not create an income transaction when the income category is not available to the user', async () => {
+      accountsService.findById.mockResolvedValue(activeAccount);
+      incomeCategoriesService.findById.mockRejectedValue(
+        new IncomeCategoryNotFoundException(),
+      );
+
+      await expect(
+        service.create({
+          ...createTransactionInput,
+          type: TransactionType.INCOME,
+          incomeCategoryId: 'category-from-another-user',
+        }),
+      ).rejects.toBeInstanceOf(IncomeCategoryNotFoundException);
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
     });
 
     it('should reject transactions for archived accounts', async () => {
@@ -288,6 +356,7 @@ describe('TransactionsService', () => {
         description: 'Salary reversal',
         transactionDate: reversalDate,
         reversalOfTransactionId: 'transaction-1',
+        incomeCategoryId: null,
       });
     });
 
@@ -345,6 +414,7 @@ describe('TransactionsService', () => {
         description: 'Groceries reversal',
         transactionDate: new Date('2026-09-21T00:00:00.000Z'),
         reversalOfTransactionId: 'transaction-1',
+        incomeCategoryId: null,
       });
     });
 

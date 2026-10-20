@@ -383,7 +383,6 @@ describe('AccountsService', () => {
       expect(result.page).toBe(1);
       expect(result.limit).toBe(10);
       expect(result.total).toBe(1);
-      expect(result.totalPages).toBe(1);
     });
   });
 

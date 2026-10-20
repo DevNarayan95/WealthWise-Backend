@@ -8,4 +8,5 @@ export interface CreateTransactionInput {
   currency: string;
   description: string | null;
   transactionDate: Date;
+  incomeCategoryId?: string | null;
 }

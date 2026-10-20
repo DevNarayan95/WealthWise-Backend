@@ -20,7 +20,17 @@ const rolePermissions: Record<string, string[]> = {
     'accounts:update',
   ],
 
-  CUSTOMER: ['profile:read', 'profile:update', 'accounts:read'],
+  CUSTOMER: [
+    'profile:read',
+    'profile:update',
+    'accounts:read',
+    'income:create',
+    'income:read',
+    'income:update',
+    'transactions:create',
+    'transactions:read',
+    'transactions:update',
+  ],
 };
 
 export const seedRolePermissions = async (

@@ -78,6 +78,15 @@ describe('app-config', () => {
         'pagination.maxPageSize',
       );
     });
+    it('rejects an income category name max length below 1', () => {
+      const raw = loadRawDefaults();
+      raw.income = { categoryNameMaxLength: 0 };
+
+      expect(() => validateAppConfigFile(raw)).toThrow(
+        'income.categoryNameMaxLength',
+      );
+    });
+
     it('rejects an OTP length below 4', () => {
       const raw = loadRawDefaults();
       (raw.otp as Record<string, unknown>).length = 3;

@@ -30,6 +30,7 @@ export class PrismaTransactionRepository extends TransactionRepository {
         description: input.description,
         transactionDate: input.transactionDate,
         reversalOfTransactionId: input.reversalOfTransactionId,
+        incomeCategoryId: input.incomeCategoryId,
       },
     });
 

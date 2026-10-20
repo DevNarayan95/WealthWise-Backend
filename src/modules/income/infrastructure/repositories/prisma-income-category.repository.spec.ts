@@ -1,4 +1,5 @@
 import { PrismaIncomeCategoryRepository } from './prisma-income-category.repository';
+import { IncomeCategoryAlreadyExistsException } from '../../presentation/exceptions/income-category-already-exists.exception';
 
 describe('PrismaIncomeCategoryRepository', () => {
   const prisma = {
@@ -50,12 +51,14 @@ describe('PrismaIncomeCategoryRepository', () => {
       const result = await repository.create({
         userId: 'user-1',
         name: 'Salary',
+        normalizedName: 'salary',
       });
 
       expect(prisma.incomeCategory.create).toHaveBeenCalledWith({
         data: {
           userId: 'user-1',
           name: 'Salary',
+          normalizedName: 'salary',
         },
       });
 
@@ -66,6 +69,31 @@ describe('PrismaIncomeCategoryRepository', () => {
       expect(result.isArchived).toBe(false);
       expect(result.createdAt).toEqual(createdAt);
       expect(result.updatedAt).toEqual(updatedAt);
+    });
+
+    it('should map a unique constraint race to IncomeCategoryAlreadyExistsException', async () => {
+      prisma.incomeCategory.create.mockRejectedValue({ code: 'P2002' });
+
+      await expect(
+        repository.create({
+          userId: 'user-1',
+          name: 'Salary',
+          normalizedName: 'salary',
+        }),
+      ).rejects.toBeInstanceOf(IncomeCategoryAlreadyExistsException);
+    });
+
+    it('should rethrow unrelated database errors unchanged', async () => {
+      const dbError = new Error('connection lost');
+      prisma.incomeCategory.create.mockRejectedValue(dbError);
+
+      await expect(
+        repository.create({
+          userId: 'user-1',
+          name: 'Salary',
+          normalizedName: 'salary',
+        }),
+      ).rejects.toBe(dbError);
     });
   });
 
@@ -211,6 +239,47 @@ describe('PrismaIncomeCategoryRepository', () => {
     });
   });
 
+  describe('findAvailableByNormalizedName', () => {
+    it('should find a name owned by the user or a system category, excluding the given category', async () => {
+      prisma.incomeCategory.findFirst.mockResolvedValue(
+        createPrismaIncomeCategory({ userId: null, name: 'Salary' }),
+      );
+
+      const result = await repository.findAvailableByNormalizedName({
+        normalizedName: 'salary',
+        userId: 'user-1',
+        excludeCategoryId: 'category-2',
+      });
+
+      expect(prisma.incomeCategory.findFirst).toHaveBeenCalledWith({
+        where: {
+          normalizedName: 'salary',
+          id: { not: 'category-2' },
+          OR: [{ userId: null }, { userId: 'user-1' }],
+        },
+      });
+      expect(result?.name).toBe('Salary');
+    });
+
+    it('should not exclude any category when no exclusion is given', async () => {
+      prisma.incomeCategory.findFirst.mockResolvedValue(null);
+
+      const result = await repository.findAvailableByNormalizedName({
+        normalizedName: 'bonus',
+        userId: 'user-1',
+      });
+
+      expect(prisma.incomeCategory.findFirst).toHaveBeenCalledWith({
+        where: {
+          normalizedName: 'bonus',
+          id: undefined,
+          OR: [{ userId: null }, { userId: 'user-1' }],
+        },
+      });
+      expect(result).toBeNull();
+    });
+  });
+
   describe('updateCustomCategory', () => {
     it('should update a custom category owned by the user', async () => {
       prisma.incomeCategory.updateMany.mockResolvedValue({ count: 1 });
@@ -224,6 +293,7 @@ describe('PrismaIncomeCategoryRepository', () => {
         categoryId: 'category-1',
         userId: 'user-1',
         name: 'Bonus',
+        normalizedName: 'bonus',
       });
 
       expect(prisma.incomeCategory.updateMany).toHaveBeenCalledWith({
@@ -234,6 +304,7 @@ describe('PrismaIncomeCategoryRepository', () => {
         },
         data: {
           name: 'Bonus',
+          normalizedName: 'bonus',
         },
       });
 
@@ -248,6 +319,7 @@ describe('PrismaIncomeCategoryRepository', () => {
         categoryId: 'category-1',
         userId: 'user-2',
         name: 'Bonus',
+        normalizedName: 'bonus',
       });
 
       expect(result).toBeNull();

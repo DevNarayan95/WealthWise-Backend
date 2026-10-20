@@ -27,6 +27,7 @@ import { RequiresApiKeyAndJwt } from '../../../../common/decorators/api-security
 
 import { PAGINATION } from '../../../../common/pagination/pagination-config';
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
+import { buildPaginatedResponse } from '../../../../common/pagination/paginated-response';
 import { successResponse } from '../../../../common/utils/api-response.util';
 import { Permissions } from '../../../auth/infrastructure/decorators/permissions.decorator';
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
@@ -37,7 +38,10 @@ import { AccountResponseDto } from '../dto/account-response.dto';
 import { CreateAccountDto } from '../dto/create-account.dto';
 import { AccountResponseMapper } from '../mappers/account-response.mapper';
 import { ListAccountsQueryDto } from '../dto/list-accounts-query.dto';
-import { PaginatedAccountsResponseDto } from '../dto/paginated-accounts-response.dto';
+import {
+  PaginatedAccountsDataDto,
+  PaginatedAccountsResponseDto,
+} from '../dto/paginated-accounts-response.dto';
 import { AccountBalanceResponseDto } from '../dto/account-balance-response.dto';
 
 @ApiTags('Accounts')
@@ -134,24 +138,19 @@ export class AccountsController {
   async findAll(
     @Req() request: AuthenticatedRequest,
     @Query() query: ListAccountsQueryDto,
-  ): Promise<ApiSuccessResponse<PaginatedAccountsResponseDto>> {
+  ): Promise<ApiSuccessResponse<PaginatedAccountsDataDto>> {
     const result = await this.accountsService.findAll(
       request.user.userId,
       query.page,
       query.limit,
     );
 
-    return successResponse(
-      {
-        items: AccountResponseMapper.toDtoList(result.items),
-      },
-      {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalPages: result.totalPages,
-      },
-    );
+    return buildPaginatedResponse({
+      items: AccountResponseMapper.toDtoList(result.items),
+      page: result.page,
+      limit: result.limit,
+      total: result.total,
+    });
   }
 
   @Get(':id')

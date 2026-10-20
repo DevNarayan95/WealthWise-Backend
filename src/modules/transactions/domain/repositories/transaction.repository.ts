@@ -8,6 +8,7 @@ export interface CreateTransactionRepositoryInput {
   description: string | null;
   transactionDate: Date;
   reversalOfTransactionId: string | null;
+  incomeCategoryId: string | null;
 }
 
 export interface FindTransactionsRepositoryInput {

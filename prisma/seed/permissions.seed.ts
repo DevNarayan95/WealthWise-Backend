@@ -100,6 +100,40 @@ const permissions = [
     action: 'update',
     description: 'Update own profile',
   },
+
+  // Income
+  {
+    resource: 'income',
+    action: 'create',
+    description: 'Create income categories',
+  },
+  {
+    resource: 'income',
+    action: 'read',
+    description: 'View income categories',
+  },
+  {
+    resource: 'income',
+    action: 'update',
+    description: 'Update income categories',
+  },
+
+  // Transactions
+  {
+    resource: 'transactions',
+    action: 'create',
+    description: 'Create transactions',
+  },
+  {
+    resource: 'transactions',
+    action: 'read',
+    description: 'View transactions',
+  },
+  {
+    resource: 'transactions',
+    action: 'update',
+    description: 'Reverse transactions',
+  },
 ];
 
 export const seedPermissions = async (

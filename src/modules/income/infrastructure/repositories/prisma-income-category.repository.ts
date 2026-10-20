@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../infrastructure/database/prisma/prisma.service';
 import { IncomeCategory } from '../../domain/entities/income-category.entity';
+import { IncomeCategoryAlreadyExistsException } from '../../presentation/exceptions/income-category-already-exists.exception';
 
 import {
   ArchiveIncomeCategoryRepositoryInput,
   CreateIncomeCategoryRepositoryInput,
   FindIncomeCategoriesRepositoryInput,
   FindIncomeCategoriesRepositoryOutput,
+  FindIncomeCategoryByNormalizedNameRepositoryInput,
   IncomeCategoryRepository,
   UpdateIncomeCategoryRepositoryInput,
 } from '../../domain/repositories/income-category.repository';
@@ -20,14 +22,35 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
   async create(
     input: CreateIncomeCategoryRepositoryInput,
   ): Promise<IncomeCategory> {
-    const category = await this.prisma.incomeCategory.create({
-      data: {
-        userId: input.userId,
-        name: input.name,
+    try {
+      const category = await this.prisma.incomeCategory.create({
+        data: {
+          userId: input.userId,
+          name: input.name,
+          normalizedName: input.normalizedName,
+        },
+      });
+
+      return this.toDomain(category);
+    } catch (error) {
+      throw this.mapUniqueViolation(error);
+    }
+  }
+
+  async findAvailableByNormalizedName(
+    input: FindIncomeCategoryByNormalizedNameRepositoryInput,
+  ): Promise<IncomeCategory | null> {
+    const category = await this.prisma.incomeCategory.findFirst({
+      where: {
+        normalizedName: input.normalizedName,
+        id: input.excludeCategoryId
+          ? { not: input.excludeCategoryId }
+          : undefined,
+        OR: [{ userId: null }, { userId: input.userId }],
       },
     });
 
-    return this.toDomain(category);
+    return category ? this.toDomain(category) : null;
   }
 
   async findByIdAvailableToUser(
@@ -73,16 +96,22 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
   async updateCustomCategory(
     input: UpdateIncomeCategoryRepositoryInput,
   ): Promise<IncomeCategory | null> {
-    const result = await this.prisma.incomeCategory.updateMany({
-      where: {
-        id: input.categoryId,
-        userId: input.userId,
-        isArchived: false,
-      },
-      data: {
-        name: input.name,
-      },
-    });
+    let result: { count: number };
+    try {
+      result = await this.prisma.incomeCategory.updateMany({
+        where: {
+          id: input.categoryId,
+          userId: input.userId,
+          isArchived: false,
+        },
+        data: {
+          name: input.name,
+          normalizedName: input.normalizedName,
+        },
+      });
+    } catch (error) {
+      throw this.mapUniqueViolation(error);
+    }
 
     if (result.count === 0) {
       return null;
@@ -125,6 +154,19 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
     });
 
     return category ? this.toDomain(category) : null;
+  }
+
+  private mapUniqueViolation(error: unknown): unknown {
+    // A concurrent request can pass the pre-check and hit the unique index instead.
+    const isUniqueViolation =
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 'P2002';
+
+    return isUniqueViolation
+      ? new IncomeCategoryAlreadyExistsException()
+      : error;
   }
 
   private toDomain(category: {

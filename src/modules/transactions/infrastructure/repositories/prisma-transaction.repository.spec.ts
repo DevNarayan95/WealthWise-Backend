@@ -27,6 +27,7 @@ describe('PrismaTransactionRepository', () => {
       description: string | null;
       transactionDate: Date;
       reversalOfTransactionId: string | null;
+      incomeCategoryId: string | null;
       createdAt: Date;
       updatedAt: Date;
     }> = {},
@@ -41,6 +42,7 @@ describe('PrismaTransactionRepository', () => {
     description: 'Salary',
     transactionDate,
     reversalOfTransactionId: null,
+    incomeCategoryId: null,
     createdAt,
     updatedAt,
     ...overrides,
@@ -55,6 +57,7 @@ describe('PrismaTransactionRepository', () => {
       description: string | null;
       transactionDate: Date;
       reversalOfTransactionId: string | null;
+      incomeCategoryId: string | null;
     }> = {},
   ) => ({
     accountId: 'account-1',
@@ -64,6 +67,7 @@ describe('PrismaTransactionRepository', () => {
     description: 'Salary',
     transactionDate,
     reversalOfTransactionId: null,
+    incomeCategoryId: null,
     ...overrides,
   });
 
@@ -92,6 +96,23 @@ describe('PrismaTransactionRepository', () => {
       expect(result.currency).toBe('MYR');
       expect(result.description).toBe('Salary');
       expect(result.reversalOfTransactionId).toBeNull();
+    });
+
+    it('should persist the income category for an income transaction', async () => {
+      prisma.transaction.create.mockResolvedValue(
+        createPrismaTransaction({ incomeCategoryId: 'category-1' }),
+      );
+
+      const input = createTransactionInput({
+        incomeCategoryId: 'category-1',
+      });
+
+      const result = await repository.create(input);
+
+      expect(prisma.transaction.create).toHaveBeenCalledWith({
+        data: input,
+      });
+      expect(result.incomeCategoryId).toBe('category-1');
     });
 
     it('should create and map a reversal transaction', async () => {

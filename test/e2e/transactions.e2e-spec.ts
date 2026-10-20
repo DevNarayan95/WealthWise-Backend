@@ -172,6 +172,22 @@ describe('Transactions E2E', () => {
       },
     });
 
+    const customerRole = await prisma.role.findUnique({
+      where: { name: 'CUSTOMER' },
+    });
+
+    if (!customerRole) {
+      throw new Error('CUSTOMER role not found. Run npm run db:seed:test');
+    }
+
+    /*
+     * Another customer with transaction permissions, so the request
+     * reaches the ownership check (404) instead of the permission guard (403).
+     */
+    await prisma.userRole.create({
+      data: { userId: secondUser.id, roleId: customerRole.id },
+    });
+
     secondAccessToken = await jwtService.signAsync({
       sub: secondUser.id,
       email: secondUser.email,
@@ -673,7 +689,7 @@ describe('Transactions E2E', () => {
 
       expect(response.body.success).toBe(true);
 
-      expect(response.body.data).toEqual(
+      expect(response.body.data.items).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: listNewestTransactionId,
@@ -776,7 +792,7 @@ describe('Transactions E2E', () => {
         hasPreviousPage: false,
       });
 
-      expect(response.body.data).toHaveLength(3);
+      expect(response.body.data.items).toHaveLength(3);
     });
 
     it('should return transactions in transaction date descending order', async () => {
@@ -791,7 +807,9 @@ describe('Transactions E2E', () => {
         .expect(200);
 
       expect(
-        response.body.data.map((transaction: { id: string }) => transaction.id),
+        response.body.data.items.map(
+          (transaction: { id: string }) => transaction.id,
+        ),
       ).toEqual([
         listNewestTransactionId,
         listMiddleTransactionId,
@@ -884,10 +902,12 @@ describe('Transactions E2E', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data.items).toHaveLength(2);
 
       expect(
-        response.body.data.map((transaction: { id: string }) => transaction.id),
+        response.body.data.items.map(
+          (transaction: { id: string }) => transaction.id,
+        ),
       ).toEqual([listNewestTransactionId, listMiddleTransactionId]);
 
       expect(response.body.meta).toEqual({
@@ -912,9 +932,9 @@ describe('Transactions E2E', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data.items).toHaveLength(1);
 
-      expect(response.body.data[0]).toEqual(
+      expect(response.body.data.items[0]).toEqual(
         expect.objectContaining({
           id: listOldestTransactionId,
           accountId: listAccountId,

@@ -104,7 +104,6 @@ describe('AccountsController', () => {
         page: 1,
         limit: 10,
         total: 1,
-        totalPages: 1,
       });
 
       const request = createAuthenticatedRequest();
@@ -125,6 +124,8 @@ describe('AccountsController', () => {
         limit: 10,
         total: 1,
         totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
       });
     });
   });

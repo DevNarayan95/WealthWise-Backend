@@ -1,18 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
+
+import { PaginationMetaDto } from '../../../../common/pagination/pagination-meta.dto';
 import { TransactionResponseDto } from './transaction-response.dto';
-import { TransactionListMetaDto } from './transaction-list-meta.dto';
+
+export class TransactionListDataDto {
+  @ApiProperty({
+    type: [TransactionResponseDto],
+  })
+  items!: TransactionResponseDto[];
+}
 
 export class TransactionListResponseEnvelopeDto {
   @ApiProperty({ example: true })
   success!: true;
 
   @ApiProperty({
-    type: [TransactionResponseDto],
+    type: TransactionListDataDto,
   })
-  data!: TransactionResponseDto[];
+  data!: TransactionListDataDto;
 
   @ApiProperty({
-    type: TransactionListMetaDto,
+    type: PaginationMetaDto,
   })
-  meta!: TransactionListMetaDto;
+  meta!: PaginationMetaDto;
 }

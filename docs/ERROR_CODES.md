@@ -98,6 +98,17 @@ Setting the separator to `-` produces `WS-404`. Clients should not depend on eit
 | `TRANSACTION_ALREADY_REVERSED`   | 400         | `WS400`                | Reversing a transaction that was already reversed.                                     |
 | `TRANSACTION_CANNOT_BE_REVERSED` | 400         | `WS400`                | The transaction type cannot be reversed.                                               |
 
+### Income
+
+| `error.code`                       | HTTP status | `statusCode` (default) | When it is returned                                                                                                    |
+| ---------------------------------- | ----------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `INVALID_INCOME_CATEGORY`          | 400         | `WS400`                | Income category input is not valid (for example, an empty or too-long name).                                           |
+| `INCOME_CATEGORY_NOT_FOUND`        | 404         | `WS404`                | The income category does not exist, or it belongs to another user.                                                     |
+| `INCOME_CATEGORY_ALREADY_EXISTS`   | 409         | `WS409`                | An income category with the same name (case-insensitive) already exists for the user, or it matches a system category. |
+| `SYSTEM_INCOME_CATEGORY_READ_ONLY` | 403         | `WS403`                | Renaming or archiving a system income category. System categories are read-only.                                       |
+
+Linking an EXPENSE transaction to an income category returns `INVALID_TRANSACTION` (400), not `INVALID_INCOME_CATEGORY`.
+
 ## Client guidance
 
 - Branch on `error.code`, not on `message`.

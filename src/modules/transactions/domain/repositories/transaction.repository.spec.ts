@@ -58,6 +58,7 @@ describe('TransactionRepository', () => {
       amount: '1000.000',
       currency: 'MYR',
       description: null,
+      incomeCategoryId: null,
       transactionDate: new Date('2026-09-20T00:00:00.000Z'),
       reversalOfTransactionId: null,
     });

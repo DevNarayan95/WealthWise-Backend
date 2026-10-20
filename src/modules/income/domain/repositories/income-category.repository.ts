@@ -3,6 +3,13 @@ import { IncomeCategory } from '../entities/income-category.entity';
 export interface CreateIncomeCategoryRepositoryInput {
   userId: string;
   name: string;
+  normalizedName: string;
+}
+
+export interface FindIncomeCategoryByNormalizedNameRepositoryInput {
+  normalizedName: string;
+  userId: string;
+  excludeCategoryId?: string;
 }
 
 export interface FindIncomeCategoriesRepositoryInput {
@@ -20,6 +27,7 @@ export interface UpdateIncomeCategoryRepositoryInput {
   categoryId: string;
   userId: string;
   name: string;
+  normalizedName: string;
 }
 
 export interface ArchiveIncomeCategoryRepositoryInput {
@@ -31,6 +39,10 @@ export abstract class IncomeCategoryRepository {
   abstract create(
     input: CreateIncomeCategoryRepositoryInput,
   ): Promise<IncomeCategory>;
+
+  abstract findAvailableByNormalizedName(
+    input: FindIncomeCategoryByNormalizedNameRepositoryInput,
+  ): Promise<IncomeCategory | null>;
 
   abstract findByIdAvailableToUser(
     categoryId: string,
