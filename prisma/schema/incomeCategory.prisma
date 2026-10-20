@@ -12,5 +12,5 @@ model IncomeCategory {
 
   @@unique([userId, normalizedName])
   @@index([userId, isArchived])
-  @@map("income_categories")
+  @@map("nv_income_categories")
 }

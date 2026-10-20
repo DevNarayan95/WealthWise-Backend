@@ -10,7 +10,7 @@ import {
 
 export class RegisterDto {
   @ApiProperty({
-    example: 'john.doe@wealthwise.local',
+    example: 'john.doe@navro.local',
     description: 'User email address. Must be unique.',
     format: 'email',
   })

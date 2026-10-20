@@ -5,7 +5,7 @@ describe('UserResponseMapper', () => {
   it('should map a user without exposing sensitive fields', () => {
     const user = {
       id: '7f5d9c7e-6f1c-4e2b-8a3e-123456789abc',
-      email: 'admin@wealthwise.local',
+      email: 'admin@navro.local',
       passwordHash: '$2b$12$some-hash-value',
       firstName: 'System',
       lastName: 'Administrator',

@@ -33,7 +33,7 @@ describe('AppController (e2e)', () => {
     expect(response.body).toEqual(
       expect.objectContaining({
         status: 'ok',
-        service: 'wealthwise-backend',
+        service: 'navro-backend',
       }),
     );
   });

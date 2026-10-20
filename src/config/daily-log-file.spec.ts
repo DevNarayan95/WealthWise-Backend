@@ -13,7 +13,7 @@ describe('daily log file', () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'wealthwise-daily-log-'));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'navro-daily-log-'));
   });
 
   afterEach(() => {

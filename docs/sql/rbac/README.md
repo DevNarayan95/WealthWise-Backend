@@ -1,7 +1,7 @@
-# WealthWise RBAC SQL
+# NAVRO RBAC SQL
 
 This directory contains SQL queries used to inspect and verify the
-Role-Based Access Control (RBAC) data in the WealthWise database.
+Role-Based Access Control (RBAC) data in the NAVRO database.
 
 ## RBAC Structure
 

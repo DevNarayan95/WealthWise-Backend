@@ -66,7 +66,7 @@ describe('config-loader', () => {
       writeFileSync(
         join(configDir, 'default.json'),
         JSON.stringify({
-          app: { name: 'WealthWise', apiPrefix: 'api' },
+          app: { name: 'NAVRO', apiPrefix: 'api' },
           server: { port: 3000 },
         }),
       );
@@ -83,7 +83,7 @@ describe('config-loader', () => {
 
       expect(appEnv).toBe('uat');
       expect(config).toEqual({
-        app: { name: 'WealthWise', apiPrefix: 'api', environment: 'uat' },
+        app: { name: 'NAVRO', apiPrefix: 'api', environment: 'uat' },
         server: { port: 4000 },
       });
     });

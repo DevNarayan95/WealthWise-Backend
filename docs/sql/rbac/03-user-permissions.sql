@@ -1,5 +1,5 @@
 -- ============================================================
--- WealthWise RBAC
+-- NAVRO RBAC
 -- User Permission Verification
 -- ============================================================
 --
@@ -34,5 +34,5 @@ JOIN role_permissions rp
   ON rp.role_id = r.id
 JOIN permissions p
   ON p.id = rp.permission_id
-WHERE u.email = 'admin@wealthwise.local'
+WHERE u.email = 'admin@navro.local'
 ORDER BY p.resource, p.action;

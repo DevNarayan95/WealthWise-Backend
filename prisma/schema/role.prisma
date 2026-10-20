@@ -9,7 +9,7 @@ model Role {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("roles")
+  @@map("nv_roles")
 }
 
 model UserRole {
@@ -23,5 +23,5 @@ model UserRole {
 
   @@id([userId, roleId])
   @@index([roleId])
-  @@map("user_roles")
+  @@map("nv_user_roles")
 }

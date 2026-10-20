@@ -1,8 +1,8 @@
-# WealthWise Backend — AI Engineering Instructions
+# NAVRO Backend — AI Engineering Instructions
 
 ## 1. Purpose
 
-This document is the persistent engineering context for the **WealthWise Backend** project.
+This document is the persistent engineering context for the **NAVRO Backend** project.
 
 When an AI assistant receives this document, it must use the information in this file as the primary project context and continue development consistently with the existing architecture, coding style, conventions, project scope, engineering principles, and current implementation state.
 
@@ -18,7 +18,7 @@ The **actual source tree and current implementation are the latest source of tru
 
 ## Project Name
 
-WealthWise
+NAVRO
 
 ## Component
 
@@ -26,29 +26,261 @@ Backend API
 
 ## Purpose
 
-WealthWise is a personal finance management platform.
+NAVRO is a personal finance management platform.
 
 The platform is intended to help users manage:
 
-- Income
-- Expenses
-- Monthly budgets
-- Savings
-- Financial goals
-- Fixed deposits
-- Recurring deposits
-- Mutual funds
-- Stocks
-- Bonds
-- Investments
-- Multiple users
-- Authentication and authorization
-- Role-based access control
-- Permission-based access control
+- Self-registration with email OTP verification, password reset, login, and logout
+- Multiple accounts: savings, current, investment, wallets, fixed deposits (FD), recurring deposits (RD), cash, and credit cards
+- Income and expenses with categories (for example Salary, Freelance, Rental, Groceries, House Rent, Electricity)
+- Immutable transaction history, viewable month-wise and year-wise
+- Monthly budgets, checked after the month completes and comparable across months
+- Future financial goals (for example buy a home or car) with progress, linked accounts, linked investments, and transactions
+- Loans and EMIs of any type, with EMI payments stored as transactions and loan progress
+- Investment records (stocks, mutual funds, bonds, FD, RD) and recurring contributions
+- Net worth, an interactive dashboard, and monthly, yearly, and historical reports
+- Forecasting: runway, timing of the next loan, and loan affordability (for example for a house)
+- Multiple users with roles and permissions
+- Super admin: user management, system monitoring, backups, and configuration
+- Subscription management (future)
+- Only the React web frontend and future mobile apps can call the APIs
 
 The backend must be designed as a **production-ready modular monolith**.
 
 The architecture should allow future extraction of modules into microservices if the system grows.
+
+---
+
+## Product Requirements
+
+This section is the functional requirement baseline for NAVRO. Each requirement has a status:
+
+```text
+✅  Implemented and tested
+⏳  Planned in the roadmap (section 51), design not started
+❌  Gap: required but not yet designed or missing from the roadmap
+```
+
+Items marked **Approved** are final. Items marked **Proposed** are recommendations that still need confirmation. The business rules behind this section are in `docs/BUSINESS_REQUIREMENTS.md`, which is the authoritative source for requirement IDs (BR-*).
+
+Delivery order: Phase 1 (core application) first. The Super Admin panel (R13 admin items) follows after Phase 1 works end to end.
+
+### R1. Authentication and Account Access
+
+```text
+Self-registration with email OTP verification      ✅
+Resend verification OTP                            ✅
+Reset password by email OTP                        ✅
+Login (blocked until email is verified)            ✅
+Logout                                             ❌
+```
+
+There is no logout endpoint. JWT access tokens are stateless, so logout needs a session model.
+**Approved (best practice):** short-lived access tokens, single-use rotating refresh tokens stored as hashes, logout that revokes the session immediately, logout-all, and reuse detection. Full rules: `docs/BUSINESS_REQUIREMENTS.md`, BR-AUTH-06 to BR-AUTH-13.
+
+### R2. Accounts
+
+Users keep many accounts: savings, current, investment, wallet, FD, RD, cash, and credit card.
+
+```text
+Account creation, listing, archive, ownership      ✅
+Types BANK_ACCOUNT, CASH, CREDIT_CARD,
+  INVESTMENT, OTHER                                ✅
+Types SAVINGS, CURRENT, WALLET,
+  FIXED_DEPOSIT, RECURRING_DEPOSIT                 ❌
+```
+
+**Approved:** add the five missing types to `AccountType` with a migration. Existing values stay, so current data is unchanged.
+
+### R3. Income
+
+Example categories: Salary, Freelance, Rental, Interest from FD, stock gains.
+
+```text
+Per-user income categories, unique names, archive  ✅
+System income categories                           ✅
+Rental and stock-gain system categories            ❌
+```
+
+The current seed has Salary, Business, Freelance, Interest, Dividends, Gifts, Refunds, and Other. Rental and a stock-gain category (**Proposed:** Capital Gains) are missing.
+
+### R4. Expenses
+
+Example categories: Groceries, House Rent, Electricity, Medical Bills.
+
+```text
+Expense categories (per-user unique, system, archive)  ⏳ NEXT
+EXPENSE transactions linked to an expense category     ⏳ NEXT
+```
+
+**Approved:** users can add their own expense categories, and system defaults are provided, as with income. `expenseCategoryId` is set only on EXPENSE transactions. `incomeCategoryId` stays INCOME-only.
+
+**Proposed system defaults (pending confirmation):** Groceries, House Rent, Electricity, Water, Internet, Mobile, Transport, Medical Bills, Education, Dining, Shopping, Entertainment, Insurance, Loan EMI, Other.
+
+### R5. Transactions and History
+
+Every transaction is stored and never updated after creation. Corrections use reversal. History is queried by `transactionDate`.
+
+```text
+Immutable transactions, reversal workflow          ✅
+Listing per account, pagination                    ✅
+Listing across all accounts of a user              ❌
+Filter by date range (from, to)                    ❌
+Filter by type and category                        ❌
+Month-wise and year-wise history                   ❌
+```
+
+The current list requires `accountId` and has no date, type, or category filter. **Proposed:** add these filters to the transaction list. Monthly and yearly views are built in Reporting (R11).
+
+### R6. Budgets
+
+Monthly budgets set planned amounts for items such as house rent and loan EMI. After the month completes, the user checks the budget and compares it with older budgets.
+
+```text
+Monthly budget with planned amount per line        ❌
+Planned vs actual, by transactionDate              ❌
+Closed month budget is read-only                   ❌
+Compare budgets across months                      ❌
+```
+
+**Proposed rules:**
+
+- A budget belongs to one user and one month (`YYYY-MM`). Each line links to an expense category or a loan.
+- Actual amounts come from EXPENSE transactions in that month.
+- When the month ends, the budget is CLOSED and its plan can no longer change. Actual amounts still come from the immutable transactions.
+
+### R7. Financial Goals
+
+A goal, such as buying a home or a car, shows progress as a percentage. It also shows the accounts where the user saves for it, the investments held for it, and its transactions.
+
+```text
+Goal with name, target amount, target date         ❌
+Progress percentage                                ❌
+Goal linked to accounts                            ❌
+Goal linked to investments (for example 5-6 stocks) ❌
+Goal transaction history                           ❌
+```
+
+The current amount is measured from the attached accounts and investments only (Open Decision 5, approved).
+
+### R8. Loans and EMIs
+
+Loans can be of any type: education, consumer, personal, home, car, or other. The user records each EMI payment, the system stores it as a transaction, and the user can see loan progress.
+
+```text
+Loan record (type, principal, rate, tenure, EMI)   ❌
+EMI payment stored as an EXPENSE transaction       ❌
+Loan progress (EMIs paid, outstanding, percent)    ❌
+```
+
+`src/modules/loans` exists with no endpoints, and Loans is not in the roadmap. **Proposed:** add Loans and EMIs to the roadmap before Financial Goals. EMI payments are expenses, and goals and forecasting depend on loans.
+
+### R9. Investments and Deposits
+
+Records for stocks, mutual funds, bonds, FD, and RD. Recurring contributions (SIP, RD installments) are stored as transactions.
+
+```text
+Investment records (stock, MF, bond, FD, RD)       ❌
+Buy, sell, dividend, and interest events as transactions ❌
+Recurring monthly contributions                    ❌
+```
+
+FD and RD are account types (R2). Their full maturity details are stored (approved). See `docs/BUSINESS_REQUIREMENTS.md`, BR-DEP-01 to BR-DEP-06.
+
+### R10. Net Worth and Dashboard
+
+```text
+Net worth                                          ❌
+Dashboard data (read-only aggregate APIs)          ❌
+Per-category totals for any period                 ❌
+```
+
+**Proposed net worth formula**, calculated per currency without conversion:
+
+```text
+Net worth = sum of active asset account balances
+          + investment current value
+          - outstanding loan principal
+          - credit card balances owed
+```
+
+The backend provides read-only aggregate APIs. The interactive dashboard is built in the React frontend. The APIs must support: income vs expense trend, category breakdown, budget vs actual, goal progress, loan progress, upcoming EMIs, net worth trend, and recent transactions.
+
+### R11. Reports
+
+```text
+Monthly report                                     ❌
+Yearly report                                      ❌
+Historical report (custom date range)              ❌
+Totals: income, expense, net savings, category     ❌
+```
+
+Reports use `transactionDate`, not `createdAt`. Export: CSV and PDF, printable, generated on request (approved).
+
+### R12. Forecasting and Planning
+
+These answer planning questions with estimates.
+
+```text
+Runway: months of expenses covered by balances     ❌
+Extra month check (skip or extend a month)         ❌
+Timing of next loan (after current loan ends)      ❌
+Maximum loan for a target (for example a house)    ❌
+```
+
+**Proposed rules:**
+
+- The expense average uses a configured window (for example 6 months) from `config/default.json`.
+- Loan affordability: max EMI = monthly income × max EMI-to-income ratio (config) − existing EMIs. The loan amount comes from the standard EMI formula, using a rate and tenure.
+- All thresholds are configuration, not code.
+- Every response is labelled as an estimate and does not promise loan approval.
+- Lives in the `financial-insights` module.
+
+### R13. Multi-User, RBAC, and Super Admin
+
+```text
+Multiple users, roles, and permissions             ✅
+Roles SUPER_ADMIN, ADMIN, ACCOUNT_MANAGER, CUSTOMER ✅
+Blocked (SUSPENDED) users cannot log in            ✅
+List, create, block, and unblock users (admin API) ❌
+Assign roles (admin API)                           ❌
+System monitoring: CPU, memory, uptime, event loop ❌
+Database backup: on demand, scheduled, and listed  ❌
+Admin audit log                                    ❌
+Manage configuration from the dashboard            ❌ (conflict, see Open Decisions)
+Subscription management                            ⏳ future, no design
+```
+
+The health endpoints (`/health/live`, `/health/ready`) report status only. They are not system metrics.
+
+**Proposed:** blocking uses the existing `SUSPENDED` status. Restoring a backup is a manual operator procedure, not an API.
+
+### R14. API Access
+
+```text
+Only the React web frontend and future mobile apps  ✅
+  can call the APIs (API key and JWT)
+```
+
+---
+
+## Open Decisions
+
+Each decision must be answered before the related module is implemented. The AI must not decide these silently.
+
+1. **Logout model.** Approved: best practice (rotating refresh tokens, immediate revocation, logout-all, reuse detection). Rules: BR-AUTH-06 to BR-AUTH-13.
+2. **New account types.** Approved: add `SAVINGS`, `CURRENT`, `WALLET`, `FIXED_DEPOSIT`, and `RECURRING_DEPOSIT`, and keep the existing values.
+3. **FD and RD.** Approved: account types hold the balance. All maturity details are stored (BR-DEP-01 to BR-DEP-06).
+4. **Dashboard configuration (conflict).** Sections 1, 26, and 29 say configuration comes from files and secrets come only from environment variables. The requirement asks the Super Admin to manage mail and data configuration from the dashboard. **Deferred:** configuration stays in files for now. The Phase 2 admin-panel design decides whether non-secret settings move to the database. Secrets stay environment-only in all cases. Changing sections 1 and 26 needs your approval at that time.
+5. **Goal progress.** Approved: current amount = balances of the accounts plus current values of the investments the user explicitly attaches to the goal. Nothing is linked automatically (BR-GOAL-02, BR-GOAL-03).
+6. **Report export.** Approved: CSV and PDF, printable, generated on request.
+7. **Savings as a module.** Approved: savings is a separate module. The user attaches accounts to it and sees its transactions and progress. The `SAVINGS` account type (R2) is still available for individual accounts. Rules: BR-SAV-01 to BR-SAV-05.
+8. **Expense category defaults.** Approved: the 15 default expense categories in BRD section 6.3, as with income. Users can add their own.
+9. **Time zone for financial dates.** Approved: each user has a time zone. Financial dates use the user's local date (BRD decision 11, NFR-DATA-03).
+10. **Savings target.** Pending: the target amount is optional, and progress is shown only when a target is set (BRD decision 15).
+11. **Multi-currency.** Approved: each amount has a currency, with INR as the default. The user chooses the currency on income, expense, investment, loan, and other inputs. Net worth, reports, and the dashboard can show any selected currency (NFR-DATA-04).
+12. **Exchange rates.** Approved: Frankfurter (ECB reference rates, no API key). Income in RM converts to INR at that day's rate. Each transaction stores its rate. Coverage of INR, MYR, and AUD is verified before release (NFR-DATA-05, NFR-DATA-06).
+13. **Product name and prefixes.** Approved: product name NAVRO, error code prefix `NV`, database table prefix `nv_`.
 
 ---
 
@@ -89,7 +321,7 @@ The architecture should allow future extraction of modules into microservices if
 ## API Documentation
 
 - Swagger / OpenAPI: UI at `/docs`, spec at `/docs-json`.
-- Postman collection: `docs/postman/wealthwise.postman_collection.json`, generated by `npm run docs:postman` from `/docs-json` with the server running. Regenerate and commit it after any route, DTO, or Swagger change.
+- Postman collection: `docs/postman/navro.postman_collection.json`, generated by `npm run docs:postman` from `/docs-json` with the server running. Regenerate and commit it after any route, DTO, or Swagger change.
 
 ## Logging
 
@@ -602,7 +834,7 @@ The test database must be separate from development/production databases.
 Current test database:
 
 ```text
-wealthwise_test_db
+navro_test_db
 ```
 
 ## E2E Tests
@@ -919,7 +1151,7 @@ Every error response uses the same envelope, produced by `HttpExceptionFilter`:
 ```json
 {
   "success": false,
-  "statusCode": "WS404",
+  "statusCode": "NV404",
   "error": {
     "code": "ACCOUNT_NOT_FOUND",
     "message": "Account not found"
@@ -932,7 +1164,7 @@ Every error response uses the same envelope, produced by `HttpExceptionFilter`:
 
 Rules:
 
-- `statusCode` is `errors.statusCodePrefix` + `errors.statusCodeSeparator` + the HTTP status. The default is `WS404`. The prefix and separator come from `config/default.json` and are configurable.
+- `statusCode` is `errors.statusCodePrefix` + `errors.statusCodeSeparator` + the HTTP status. The default is `NV404`. The prefix and separator come from `config/default.json` and are configurable.
 - The real HTTP status is still set on the response. Only the body `statusCode` carries the prefix.
 - `error.code` is the plain domain code, such as `ACCOUNT_NOT_FOUND`. Never add the prefix to `ErrorCode` values.
 - `error.details` appears only when validation details exist.
@@ -1580,7 +1812,7 @@ Other production-hardening opportunities may similarly be recorded as review ite
 
 # 34. Current Development Philosophy
 
-WealthWise is being developed as a **real production-quality software engineering project**, not merely as a tutorial application.
+NAVRO is being developed as a **real production-quality software engineering project**, not merely as a tutorial application.
 
 The AI should therefore prioritize:
 
@@ -1756,7 +1988,7 @@ The Transactions milestone has already been committed after the implementation a
 
 # 38. Current Project Progress
 
-The WealthWise backend foundation, authentication/authorization, financial foundation, Accounts module, Transactions module, and Income categories have been implemented.
+The NAVRO backend foundation, authentication/authorization, financial foundation, Accounts module, Transactions module, and Income categories have been implemented.
 
 The actual source tree and current implementation remain the source of truth.
 
@@ -1957,7 +2189,7 @@ Created
 
 The Accounts module is **COMPLETE**.
 
-It is the first completed financial business module in WealthWise.
+It is the first completed financial business module in NAVRO.
 
 ## Accounts Scope
 
@@ -2113,7 +2345,7 @@ Income categories let a user label INCOME transactions (for example Salary or Fr
 - Another user's category returns 404 `INCOME_CATEGORY_NOT_FOUND`.
 - Permissions: `income:create`, `income:read`, `income:update`. There is no `income:delete`; archive uses `income:update`. CUSTOMER receives all three.
 - A transaction may set `incomeCategoryId` only when `type` is INCOME. Setting it on EXPENSE returns `INVALID_TRANSACTION`. Reversing a transaction clears `incomeCategoryId`.
-- Names are unique per user, compared case-insensitively after trimming. The database enforces this with `@@unique([userId, normalizedName])`, where `normalizedName = lower(btrim(name))`. The service pre-checks it, and a Prisma `P2002` race is mapped to `INCOME_CATEGORY_ALREADY_EXISTS` (409, `WS409`) in the repository.
+- Names are unique per user, compared case-insensitively after trimming. The database enforces this with `@@unique([userId, normalizedName])`, where `normalizedName = lower(btrim(name))`. The service pre-checks it, and a Prisma `P2002` race is mapped to `INCOME_CATEGORY_ALREADY_EXISTS` (409, `NV409`) in the repository.
 - Archived categories still reserve their name, because the unique index includes archived rows.
 - A user cannot create a category with the same name as a system category (for example "Salary").
 - The maximum name length comes from `income.categoryNameMaxLength` in `config/default.json`. Do not hard-code it.
@@ -2735,24 +2967,36 @@ Financial Domain
 │
 ├── Expenses                           ⏳ NEXT
 │
+├── Transaction History Filters        ⏳
+│
+├── Auth Session (Logout)              ⏳
+│
 ├── Transfers                          ⏳
 │
 ├── Budgets                            ⏳
 │
-├── Savings                            ⏳
-│
 ├── Financial Goals                    ⏳
 │
-├── Fixed Deposits                     ⏳
-│
-├── Recurring Deposits                 ⏳
+├── Loans and EMIs                     ⏳
 │
 ├── Investments                        ⏳
 │
-└── Reporting / Analytics              ⏳
+├── Deposits (FD / RD)                 ⏳
+│
+├── Reporting (Monthly / Yearly / Historical)  ⏳
+│
+├── Net Worth and Dashboard            ⏳
+│
+├── Forecasting and Planning           ⏳
+│
+└── Super Admin and System             ⏳
 ```
 
-The ordering may evolve as architectural dependencies become clearer, but completed milestones should not be reopened without a concrete reason.
+Account type extension (R2) and income system categories (R3) are small follow-up items to the completed Accounts and Income modules. They are scheduled alongside Expenses.
+
+Savings is a separate module (Open Decision 7). Users attach accounts to it and see its transactions and progress. It has no implementation status yet.
+
+The ordering follows dependencies: Expenses feeds Budgets and Reports, history filters feed Reports, EMI payments depend on Loans, and Forecasting depends on Income, Expenses, and Loans. The ordering may still evolve, but completed milestones should not be reopened without a concrete reason.
 
 ---
 
@@ -2761,7 +3005,7 @@ The ordering may evolve as architectural dependencies become clearer, but comple
 Current completed milestones:
 
 ```text
-WealthWise Backend Foundation
+NAVRO Backend Foundation
         ↓
         ✅ COMPLETE
 
@@ -2795,7 +3039,7 @@ Transactions Module
 # 53. Current Project Status
 
 ```text
-WEALTHWISE BACKEND
+NAVRO BACKEND
 
 ────────────────────────────────────────
 
@@ -2821,25 +3065,35 @@ Income                             ✅ COMPLETE
 
 Expenses                           ⏳ NEXT
 
+Transaction History Filters        ⏳
+
+Auth Session (Logout)              ⏳
+
 Transfers                          ⏳
 
 Budgets                            ⏳
 
-Savings                            ⏳
-
 Financial Goals                    ⏳
 
-Deposits                            ⏳
+Loans and EMIs                     ⏳
 
 Investments                        ⏳
 
+Deposits (FD / RD)                 ⏳
+
 Reporting                          ⏳
+
+Net Worth and Dashboard            ⏳
+
+Forecasting and Planning           ⏳
+
+Super Admin and System             ⏳
 
 ────────────────────────────────────────
 
 CURRENT MILESTONE
 
-└── Transactions                   ✅ COMPLETE
+└── Income                         ✅ COMPLETE
 
 CURRENT PHASE
 
@@ -2847,7 +3101,7 @@ CURRENT PHASE
 
 CURRENT TOPIC
 
-└── Account Balance — Domain Design  ⏳ NEXT
+└── Expenses — Domain Design  ⏳ NEXT
 ```
 
 ---
@@ -2857,19 +3111,21 @@ CURRENT TOPIC
 The latest completed checkpoint is:
 
 ```text
-Transactions Module
+Income Module (commit e7aa8e4)
 
 ├── Implementation                   ✅
 ├── Validation                       ✅
-├── Reversal workflow                ✅
+├── Per-user unique categories       ✅
+├── Pagination shape                 ✅
+├── Config-driven limits             ✅
 ├── Unit tests                       ✅
 ├── Controller tests                 ✅
 ├── E2E tests                        ✅
-├── Test database migration          ✅
 ├── Build                            ✅
 ├── Lint                             ✅
-├── Full check                       ✅
 └── Git commit                       ✅
+
+Related fix (commit 503d64d):        Health, RBAC, and lint fixes
 ```
 
 This is a **green checkpoint**.
@@ -2921,7 +3177,7 @@ The application service must remain independent from Prisma.
 
 # 56. Continuation Rule
 
-When continuing WealthWise development:
+When continuing NAVRO development:
 
 1. Treat the actual source tree as the latest implementation state.
 2. Treat this document as the persistent engineering context.
@@ -2951,46 +3207,26 @@ When continuing WealthWise development:
 
 # 57. Next Topic
 
-## Account Balance — Domain Design
+## Expenses — Domain Design
 
-The next session should begin with **Account Balance domain design**, not implementation.
+The next session should begin with **Expenses domain design**, not implementation. Expenses mirror Income (section 39 onward), so the design should reuse the existing patterns.
 
 We will first establish:
 
 ```text
-What exactly is an account balance?
+Expense categories: per-user unique, system defaults (R4), archive behavior
 
-What is the source of truth?
+How expenseCategoryId is stored on EXPENSE transactions only
 
-How does openingBalance participate?
+Whether incomeCategoryId and expenseCategoryId share one validation path
 
-How do INCOME transactions affect it?
+Whether the Loan EMI category is created by the system or the user
 
-How do EXPENSE transactions affect it?
+How expense reporting groups by category and transactionDate
 
-How do reversal transactions affect it?
+How the transaction list gains type and category filters (R5)
 
-Should transactionDate or createdAt be used?
-
-How does currency affect the calculation?
-
-What happens for archived accounts?
-
-How do we enforce ownership?
-
-Should balance be calculated in application code or PostgreSQL?
-
-What repository abstraction should expose the calculation?
-
-How should Decimal values cross the infrastructure boundary?
-
-How should the balance API be represented?
-
-How do we test correctness with reversals?
-
-How do we test large transaction histories?
-
-How do we avoid loading every transaction into memory?
+Which items in [Open Decisions](#open-decisions) must be answered first
 ```
 
 Only after these decisions are established should implementation begin.
@@ -3006,7 +3242,11 @@ Transactions Module
       ↓
       ✅ COMPLETE
 
-Account Balance — Domain Design
+Income Module
+      ↓
+      ✅ COMPLETE
+
+Expenses — Domain Design
       ↓
       ⏳ NEXT
 ```

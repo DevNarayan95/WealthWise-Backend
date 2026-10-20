@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import { VerifyEmailDto } from './verify-email.dto';
 
 const validPayload = {
-  email: 'john.doe@wealthwise.local',
+  email: 'john.doe@navro.local',
   code: '123456',
 };
 
@@ -18,10 +18,10 @@ describe('VerifyEmailDto', () => {
   it('normalizes the email to trimmed lowercase', () => {
     const dto = plainToInstance(VerifyEmailDto, {
       ...validPayload,
-      email: ' John.Doe@WealthWise.local ',
+      email: ' John.Doe@Navro.local ',
     });
 
-    expect(dto.email).toBe('john.doe@wealthwise.local');
+    expect(dto.email).toBe('john.doe@navro.local');
   });
 
   it('rejects a code that contains non-digit characters', async () => {

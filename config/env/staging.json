@@ -1,20 +1,20 @@
 {
   "app": {
-    "baseUrl": "https://staging-api.wealthwise.example.com",
+    "baseUrl": "https://staging-api.navro.example.com",
     "trustProxy": true
   },
   "server": {
     "port": 3000,
     "ssl": {
       "enabled": true,
-      "keyPath": "/etc/ssl/private/wealthwise-staging.key",
-      "certPath": "/etc/ssl/certs/wealthwise-staging.crt",
+      "keyPath": "/etc/ssl/private/navro-staging.key",
+      "certPath": "/etc/ssl/certs/navro-staging.crt",
       "caPath": ""
     }
   },
   "security": {
     "cors": {
-      "allowedOrigins": ["https://staging.wealthwise.example.com"],
+      "allowedOrigins": ["https://staging.navro.example.com"],
       "allowCredentials": false,
       "maxAgeSeconds": 600
     }

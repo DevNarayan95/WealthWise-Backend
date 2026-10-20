@@ -37,11 +37,11 @@ const buildHost = () => {
 
 describe('HttpExceptionFilter', () => {
   const defaultErrors = {
-    statusCodePrefix: 'WS',
+    statusCodePrefix: 'NV',
     statusCodeSeparator: '',
   };
 
-  it('returns a WS-prefixed statusCode and a plain error code for application errors', () => {
+  it('returns a NV-prefixed statusCode and a plain error code for application errors', () => {
     const filter = buildFilter(defaultErrors);
     const { host, status, json } = buildHost();
 
@@ -58,7 +58,7 @@ describe('HttpExceptionFilter', () => {
     expect(json).toHaveBeenCalledWith(
       expect.objectContaining({
         success: false,
-        statusCode: 'WS404',
+        statusCode: 'NV404',
         error: expect.objectContaining({
           code: 'ACCOUNT_NOT_FOUND',
           message: 'Account not found',
@@ -71,7 +71,7 @@ describe('HttpExceptionFilter', () => {
 
   it('applies a configured separator to the statusCode', () => {
     const filter = buildFilter({
-      statusCodePrefix: 'WS',
+      statusCodePrefix: 'NV',
       statusCodeSeparator: '-',
     });
     const { host, json } = buildHost();
@@ -86,11 +86,11 @@ describe('HttpExceptionFilter', () => {
     );
 
     expect(json).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: 'WS-404' }),
+      expect.objectContaining({ statusCode: 'NV-404' }),
     );
   });
 
-  it('maps unknown errors to WS500 INTERNAL_SERVER_ERROR without leaking details', () => {
+  it('maps unknown errors to NV500 INTERNAL_SERVER_ERROR without leaking details', () => {
     const filter = buildFilter(defaultErrors);
     const { host, status, json } = buildHost();
 
@@ -99,7 +99,7 @@ describe('HttpExceptionFilter', () => {
     expect(status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(json).toHaveBeenCalledWith(
       expect.objectContaining({
-        statusCode: 'WS500',
+        statusCode: 'NV500',
         error: expect.objectContaining({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Internal server error',
@@ -108,7 +108,7 @@ describe('HttpExceptionFilter', () => {
     );
   });
 
-  it('maps Prisma unique constraint violations to WS409 CONFLICT', () => {
+  it('maps Prisma unique constraint violations to NV409 CONFLICT', () => {
     const filter = buildFilter(defaultErrors);
     const { host, status, json } = buildHost();
 
@@ -120,7 +120,7 @@ describe('HttpExceptionFilter', () => {
     expect(status).toHaveBeenCalledWith(HttpStatus.CONFLICT);
     expect(json).toHaveBeenCalledWith(
       expect.objectContaining({
-        statusCode: 'WS409',
+        statusCode: 'NV409',
         error: expect.objectContaining({ code: ErrorCode.CONFLICT }),
       }),
     );

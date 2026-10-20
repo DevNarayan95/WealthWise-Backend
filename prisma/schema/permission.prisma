@@ -11,7 +11,7 @@ model Permission {
 
   @@unique([resource, action])
   @@index([resource])
-  @@map("permissions")
+  @@map("nv_permissions")
 }
 
 model RolePermission {
@@ -25,5 +25,5 @@ model RolePermission {
 
   @@id([roleId, permissionId])
   @@index([permissionId])
-  @@map("role_permissions")
+  @@map("nv_role_permissions")
 }

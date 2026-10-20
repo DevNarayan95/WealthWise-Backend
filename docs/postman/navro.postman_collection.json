@@ -1,7 +1,7 @@
 {
   "item": [
     {
-      "id": "d3b6033c-11aa-4272-adc7-3189ccfba4df",
+      "id": "9e5485d3-7e90-44db-a650-6e24b9045794",
       "name": "Health",
       "description": {
         "content": "",
@@ -9,7 +9,7 @@
       },
       "item": [
         {
-          "id": "04158511-b0be-43dd-a152-11f5b0bd21f3",
+          "id": "5ad2d34d-da23-457a-98b2-ff28b4e4e948",
           "name": "Health Controller live",
           "request": {
             "name": "Health Controller live",
@@ -33,7 +33,7 @@
           },
           "response": [
             {
-              "id": "bf0d0732-3e6b-4bbd-bdb0-0831d39246af",
+              "id": "1a31b619-389a-480e-a1cc-b7be487ca207",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -68,7 +68,7 @@
           }
         },
         {
-          "id": "626904ff-4795-4bc0-a0c3-4d1cd252005f",
+          "id": "5004370f-7980-438c-8382-5e7fe8c4e3de",
           "name": "Health Controller ready",
           "request": {
             "name": "Health Controller ready",
@@ -92,7 +92,7 @@
           },
           "response": [
             {
-              "id": "7d47de72-fe03-4d31-b9a4-f772c7bd3dff",
+              "id": "4218eb68-c018-4155-bba7-3aee598124c5",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -130,7 +130,7 @@
       "event": []
     },
     {
-      "id": "f3c8040e-cd07-4125-b781-97479aeb756f",
+      "id": "a3b81db8-3c3c-4df0-b275-5cce43cc4b2d",
       "name": "Users",
       "description": {
         "content": "",
@@ -138,7 +138,7 @@
       },
       "item": [
         {
-          "id": "609ffc62-b144-4347-908b-8b0303279c12",
+          "id": "91236492-7c2a-44b9-ad50-6e1e61fdc4be",
           "name": "Get current user",
           "request": {
             "name": "Get current user",
@@ -182,7 +182,7 @@
           },
           "response": [
             {
-              "id": "60c7b6d4-798f-4e42-a05c-7041d9432050",
+              "id": "81ead5d7-5f53-4a9e-b213-05d1db5c500d",
               "name": "Current user returned successfully.",
               "originalRequest": {
                 "url": {
@@ -223,12 +223,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"7f5d9c7e-6f1c-4e2b-8a3e-123456789abc\",\n    \"email\": \"admin@wealthwise.local\",\n    \"firstName\": \"System\",\n    \"lastName\": \"Administrator\",\n    \"createdAt\": \"2026-08-06T10:00:00.000Z\",\n    \"updatedAt\": \"2026-08-06T10:00:00.000Z\"\n  },\n  \"meta\": {}\n}",
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"7f5d9c7e-6f1c-4e2b-8a3e-123456789abc\",\n    \"email\": \"admin@navro.local\",\n    \"firstName\": \"System\",\n    \"lastName\": \"Administrator\",\n    \"createdAt\": \"2026-08-06T10:00:00.000Z\",\n    \"updatedAt\": \"2026-08-06T10:00:00.000Z\"\n  },\n  \"meta\": {}\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "d8c9cc39-7c87-4096-a813-c5c648c0e105",
+              "id": "3ec181c0-5fb4-4453-9e51-281ed888fa24",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -279,7 +279,7 @@
       "event": []
     },
     {
-      "id": "fa044717-ca85-47bc-8693-9e1c5b7cd83f",
+      "id": "0d36929e-3410-491c-8aab-2152fdc354fb",
       "name": "Authentication",
       "description": {
         "content": "",
@@ -287,7 +287,7 @@
       },
       "item": [
         {
-          "id": "74b2b087-11f9-47ca-8ede-cd39d775b893",
+          "id": "45d271bf-b75c-4b56-ba58-6a66a4ff7271",
           "name": "Authenticate a user",
           "request": {
             "name": "Authenticate a user",
@@ -329,7 +329,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@wealthwise.local\",\n  \"password\": \"Password123!\"\n}",
+              "raw": "{\n  \"email\": \"admin@navro.local\",\n  \"password\": \"Password123!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -339,7 +339,7 @@
           },
           "response": [
             {
-              "id": "9e3a4753-7e19-4975-afa4-593c9652b9a1",
+              "id": "1a99e904-93b9-4d2a-ae4b-1073bea0af51",
               "name": "Authentication successful.",
               "originalRequest": {
                 "url": {
@@ -372,7 +372,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"admin@wealthwise.local\",\n  \"password\": \"Password123!\"\n}",
+                  "raw": "{\n  \"email\": \"admin@navro.local\",\n  \"password\": \"Password123!\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -388,12 +388,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n      \"id\": \"7f5d9c7e-6f1c-4e2b-8a3e-123456789abc\",\n      \"email\": \"admin@wealthwise.local\",\n      \"firstName\": \"System\",\n      \"lastName\": \"Administrator\",\n      \"createdAt\": \"2026-08-06T10:00:00.000Z\",\n      \"updatedAt\": \"2026-08-06T10:00:00.000Z\"\n    }\n  },\n  \"meta\": {}\n}",
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n      \"id\": \"7f5d9c7e-6f1c-4e2b-8a3e-123456789abc\",\n      \"email\": \"admin@navro.local\",\n      \"firstName\": \"System\",\n      \"lastName\": \"Administrator\",\n      \"createdAt\": \"2026-08-06T10:00:00.000Z\",\n      \"updatedAt\": \"2026-08-06T10:00:00.000Z\"\n    }\n  },\n  \"meta\": {}\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "7bd345e1-384d-424b-b796-7357f6048fe5",
+              "id": "940ea135-4af0-4d7f-b2ad-2c768fd1ca4f",
               "name": "Invalid request data.",
               "originalRequest": {
                 "url": {
@@ -422,7 +422,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"admin@wealthwise.local\",\n  \"password\": \"Password123!\"\n}",
+                  "raw": "{\n  \"email\": \"admin@navro.local\",\n  \"password\": \"Password123!\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -443,7 +443,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "79ad20d7-365f-4ecc-a622-6fbb9da3bd88",
+              "id": "861cd3a4-3150-47c0-b4f2-52f503c0f3a8",
               "name": "Invalid email or password.",
               "originalRequest": {
                 "url": {
@@ -472,7 +472,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"admin@wealthwise.local\",\n  \"password\": \"Password123!\"\n}",
+                  "raw": "{\n  \"email\": \"admin@navro.local\",\n  \"password\": \"Password123!\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -493,7 +493,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "54328ca8-0fd1-4548-9440-ee1b8979eb23",
+              "id": "474a0903-f720-42bd-9899-0d4d47f27371",
               "name": "Email address not verified (EMAIL_NOT_VERIFIED).",
               "originalRequest": {
                 "url": {
@@ -522,7 +522,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"admin@wealthwise.local\",\n  \"password\": \"Password123!\"\n}",
+                  "raw": "{\n  \"email\": \"admin@navro.local\",\n  \"password\": \"Password123!\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -549,7 +549,7 @@
           }
         },
         {
-          "id": "9a6e5509-c93c-4221-807e-4579d5ca1b67",
+          "id": "c4f846d4-9578-48f4-8dac-7500fd877608",
           "name": "Register a new user",
           "request": {
             "name": "Register a new user",
@@ -591,7 +591,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
+              "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -601,7 +601,7 @@
           },
           "response": [
             {
-              "id": "8c0b9122-6f1f-4c4e-b9a0-99c085ef6a7b",
+              "id": "2d675094-51bf-410e-a01e-582bd2545e67",
               "name": "Account created.",
               "originalRequest": {
                 "url": {
@@ -634,7 +634,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -650,12 +650,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"user\": {\n      \"id\": \"7f5d9c7e-6f1c-4e2b-8a3e-123456789abc\",\n      \"email\": \"admin@wealthwise.local\",\n      \"firstName\": \"System\",\n      \"lastName\": \"Administrator\",\n      \"createdAt\": \"2026-08-06T10:00:00.000Z\",\n      \"updatedAt\": \"2026-08-06T10:00:00.000Z\"\n    },\n    \"verificationRequired\": true\n  },\n  \"meta\": {}\n}",
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"user\": {\n      \"id\": \"7f5d9c7e-6f1c-4e2b-8a3e-123456789abc\",\n      \"email\": \"admin@navro.local\",\n      \"firstName\": \"System\",\n      \"lastName\": \"Administrator\",\n      \"createdAt\": \"2026-08-06T10:00:00.000Z\",\n      \"updatedAt\": \"2026-08-06T10:00:00.000Z\"\n    },\n    \"verificationRequired\": true\n  },\n  \"meta\": {}\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "e376055d-96b7-417f-af33-89ce96b30d15",
+              "id": "56b5ca75-5c62-4876-870e-d06191481904",
               "name": "Invalid request data.",
               "originalRequest": {
                 "url": {
@@ -684,7 +684,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -705,7 +705,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "2006d181-323a-464c-bc7f-61895d882b92",
+              "id": "b98910ef-70bc-40c3-8392-1f9734920324",
               "name": "An account with this email already exists (USER_ALREADY_EXISTS).",
               "originalRequest": {
                 "url": {
@@ -734,7 +734,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -755,7 +755,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "f06c8aa3-0863-408e-a59a-13603bc15f6b",
+              "id": "231f4696-83af-4b5b-856c-88b713d4e462",
               "name": "The verification email could not be delivered (EMAIL_DELIVERY_FAILED). The account exists; use resend-verification.",
               "originalRequest": {
                 "url": {
@@ -784,7 +784,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"password\": \"Password@123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -811,7 +811,7 @@
           }
         },
         {
-          "id": "95350d05-a34e-445c-b515-801ec0883cb3",
+          "id": "86ab0051-5529-4251-9e95-2ebb7ef29836",
           "name": "Verify an email address with the emailed code",
           "request": {
             "name": "Verify an email address with the emailed code",
@@ -853,7 +853,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\"\n}",
+              "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -863,7 +863,7 @@
           },
           "response": [
             {
-              "id": "53d40bff-9a8c-4854-af17-6f19763fbb1a",
+              "id": "9b98a28c-2955-4002-b53c-75fe98241c9f",
               "name": "Email verified.",
               "originalRequest": {
                 "url": {
@@ -896,7 +896,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -917,7 +917,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "bc091f61-d520-4cc0-8868-a5ee3f1692ef",
+              "id": "6b6e517c-80fc-4416-8f10-b976d62c166d",
               "name": "Code is invalid (OTP_INVALID) or expired (OTP_EXPIRED).",
               "originalRequest": {
                 "url": {
@@ -946,7 +946,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -967,7 +967,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "b4bcfe7d-47eb-48e3-b4f2-2ffed2be7dd2",
+              "id": "136bca74-13c0-4099-b54d-795b64ea5b46",
               "name": "Too many wrong attempts (OTP_ATTEMPTS_EXCEEDED).",
               "originalRequest": {
                 "url": {
@@ -996,7 +996,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1023,7 +1023,7 @@
           }
         },
         {
-          "id": "5eb2b667-fe59-4d7b-b60d-18b2d07c8148",
+          "id": "c8735872-42f9-4bf2-9d8f-de731caa4b41",
           "name": "Resend the email verification code",
           "request": {
             "name": "Resend the email verification code",
@@ -1065,7 +1065,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"john.doe@wealthwise.local\"\n}",
+              "raw": "{\n  \"email\": \"john.doe@navro.local\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1075,7 +1075,7 @@
           },
           "response": [
             {
-              "id": "63971749-6d3c-4fd0-a8d1-47cfde514362",
+              "id": "8dd3828a-7dbd-413b-84e4-835bb4f20666",
               "name": "Request accepted.",
               "originalRequest": {
                 "url": {
@@ -1108,7 +1108,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1129,7 +1129,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "a9972ddf-33c7-4960-b281-e6b1b8b3e727",
+              "id": "6eaf5597-be56-44ae-9dd2-e893fa482d77",
               "name": "A code was requested too recently (OTP_RESEND_TOO_SOON).",
               "originalRequest": {
                 "url": {
@@ -1158,7 +1158,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1185,7 +1185,7 @@
           }
         },
         {
-          "id": "908bbd0a-b6da-4ca9-8e99-84486d561910",
+          "id": "0ec3386b-9242-4990-9566-dfa52bb4eea4",
           "name": "Request a password reset code",
           "request": {
             "name": "Request a password reset code",
@@ -1227,7 +1227,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"john.doe@wealthwise.local\"\n}",
+              "raw": "{\n  \"email\": \"john.doe@navro.local\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1237,7 +1237,7 @@
           },
           "response": [
             {
-              "id": "e17cfe48-31ee-436e-939a-ab5c793b52a7",
+              "id": "84336687-3dc7-4fed-a7d2-a9f0e911ec7c",
               "name": "Request accepted.",
               "originalRequest": {
                 "url": {
@@ -1270,7 +1270,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1297,7 +1297,7 @@
           }
         },
         {
-          "id": "3bdf61c2-71db-4ae5-8c6a-77012fe8c0b6",
+          "id": "4c641d4c-a09c-436d-a922-f26730dc63d0",
           "name": "Reset a password with the emailed code",
           "request": {
             "name": "Reset a password with the emailed code",
@@ -1339,7 +1339,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
+              "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1349,7 +1349,7 @@
           },
           "response": [
             {
-              "id": "7a648ced-41a4-4ccf-8a1e-941289441f6b",
+              "id": "40e79732-ae02-4f92-a1c1-3f12f3730614",
               "name": "Password reset.",
               "originalRequest": {
                 "url": {
@@ -1382,7 +1382,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1403,7 +1403,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "684cfbfd-671c-40b0-aa4c-d3cf1a618cb7",
+              "id": "8296c9db-856e-4f8b-9a29-1007668d4383",
               "name": "Code is invalid (OTP_INVALID) or expired (OTP_EXPIRED).",
               "originalRequest": {
                 "url": {
@@ -1432,7 +1432,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1453,7 +1453,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "3c880e37-bbaa-45d1-98b9-4755a940295c",
+              "id": "eee97fb7-2877-4417-bebe-346fde1282c5",
               "name": "Too many wrong attempts (OTP_ATTEMPTS_EXCEEDED).",
               "originalRequest": {
                 "url": {
@@ -1482,7 +1482,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"john.doe@wealthwise.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
+                  "raw": "{\n  \"email\": \"john.doe@navro.local\",\n  \"code\": \"123456\",\n  \"newPassword\": \"NewPassword@123\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1512,7 +1512,7 @@
       "event": []
     },
     {
-      "id": "fda6340a-0025-4f1c-a24e-469417855cb3",
+      "id": "2d169f9c-d0f2-40a8-b38e-7dac86109da1",
       "name": "Accounts",
       "description": {
         "content": "",
@@ -1520,7 +1520,7 @@
       },
       "item": [
         {
-          "id": "c41b9b38-3dd6-4b82-ad97-beade9be611d",
+          "id": "cd50d4f5-570e-4995-a593-6fbc2ffb2e46",
           "name": "Create an account",
           "request": {
             "name": "Create an account",
@@ -1576,7 +1576,7 @@
           },
           "response": [
             {
-              "id": "39804a88-49bb-49cb-bdf5-03dec87ac657",
+              "id": "684bec0e-fa66-4227-a210-4b5f751f46fb",
               "name": "Account created successfully.",
               "originalRequest": {
                 "url": {
@@ -1629,7 +1629,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "39cf4810-c268-44c7-aa1f-7eeac5c2d6cc",
+              "id": "cd0bfa45-57a8-4704-a049-bb5c706b865b",
               "name": "Invalid account data.",
               "originalRequest": {
                 "url": {
@@ -1678,7 +1678,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "25c1976b-9c99-4f11-8b64-c2f9ec9f1c91",
+              "id": "93854609-aa87-49c0-9447-e2a657d5518e",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -1727,7 +1727,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "75cd85ca-8bb8-4b2e-8da4-93ca1d8e5745",
+              "id": "5f40f81d-9c2d-4a39-a6d9-e33b55cd0b62",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -1782,7 +1782,7 @@
           }
         },
         {
-          "id": "035d6850-8f33-4514-a607-3e88888719c9",
+          "id": "47933179-d72a-48cf-b64c-ac3554aacb98",
           "name": "List accounts",
           "request": {
             "name": "List accounts",
@@ -1838,7 +1838,7 @@
           },
           "response": [
             {
-              "id": "acdbfe7e-642d-4d6b-952d-663d3564b6b1",
+              "id": "139852ed-917b-4ec3-a6ef-9b4546b530c7",
               "name": "Accounts returned successfully.",
               "originalRequest": {
                 "url": {
@@ -1898,7 +1898,7 @@
           }
         },
         {
-          "id": "753d6d21-5db8-4f35-a085-fc6da2f76953",
+          "id": "2eb1b08d-72d3-406c-bd81-361d191cd0fd",
           "name": "Get an account",
           "request": {
             "name": "Get an account",
@@ -1950,7 +1950,7 @@
           },
           "response": [
             {
-              "id": "94ab7cc7-ce78-436f-a5c7-489510d73589",
+              "id": "48026800-27ca-40f2-9367-f6614d3148f0",
               "name": "Account returned successfully.",
               "originalRequest": {
                 "url": {
@@ -2004,7 +2004,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "0b015c7a-2090-4fcc-a500-0bae65aaec68",
+              "id": "6aeee19d-71c7-4278-9fe8-90595cce5b71",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2054,7 +2054,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "20f7ea0f-c65d-4c91-8a0e-6d221e0e1c76",
+              "id": "f283e089-0d5a-4035-9ec8-7c8df4e96251",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -2104,7 +2104,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "7b9dbcad-aa7e-4b30-93e0-233eea090842",
+              "id": "6641efc4-42fb-4f2c-b9bc-d14933d92756",
               "name": "Account was not found.",
               "originalRequest": {
                 "url": {
@@ -2160,7 +2160,7 @@
           }
         },
         {
-          "id": "c99899cc-60f4-4efe-bf7d-8eb246febdfd",
+          "id": "5151e465-427d-4a90-9f7f-ce5b22f91026",
           "name": "Archive an account",
           "request": {
             "name": "Archive an account",
@@ -2184,7 +2184,7 @@
                 {
                   "disabled": false,
                   "type": "any",
-                  "value": "6a6bcf96-be21-5a47-5a96-3706f98864fa",
+                  "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
                   "key": "id",
                   "description": "(Required) Account ID"
                 }
@@ -2213,7 +2213,7 @@
           },
           "response": [
             {
-              "id": "da976bba-1125-46a0-bc11-51baa7d79c32",
+              "id": "12486a64-ffea-42a7-91f3-ae0e943132cb",
               "name": "Account archived successfully",
               "originalRequest": {
                 "url": {
@@ -2232,7 +2232,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "6a6bcf96-be21-5a47-5a96-3706f98864fa",
+                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2268,7 +2268,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "4857211b-e310-4929-bbe8-d8dc92fe53fe",
+              "id": "8c69fe52-a483-4617-8287-168f984849d6",
               "name": "Authentication is required",
               "originalRequest": {
                 "url": {
@@ -2287,7 +2287,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "6a6bcf96-be21-5a47-5a96-3706f98864fa",
+                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2319,7 +2319,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "10beb7ba-56c7-4786-834a-44f3bddf0388",
+              "id": "b25c02f9-d1f1-4d0c-811d-a42082d8818c",
               "name": "User does not have the accounts:update permission",
               "originalRequest": {
                 "url": {
@@ -2338,7 +2338,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "6a6bcf96-be21-5a47-5a96-3706f98864fa",
+                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2370,7 +2370,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "b824bcb6-43a4-496a-b558-34e6943c3abf",
+              "id": "4c898166-c3ea-4d36-9d5b-029a0a6e6009",
               "name": "Account was not found or does not belong to the authenticated user",
               "originalRequest": {
                 "url": {
@@ -2389,7 +2389,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "6a6bcf96-be21-5a47-5a96-3706f98864fa",
+                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2421,7 +2421,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "dc761d61-2da7-4a3c-bbcc-1e75f9b3adbe",
+              "id": "af29a0be-49ce-426d-acfb-21238521504e",
               "name": "Account is already archived",
               "originalRequest": {
                 "url": {
@@ -2440,7 +2440,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "6a6bcf96-be21-5a47-5a96-3706f98864fa",
+                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2478,7 +2478,7 @@
           }
         },
         {
-          "id": "346cfdcf-a576-4c12-b490-0ac670886754",
+          "id": "491b3a9e-e4e5-4c94-ab96-e4b3064ceb0c",
           "name": "Get account balance",
           "request": {
             "name": "Get account balance",
@@ -2531,7 +2531,7 @@
           },
           "response": [
             {
-              "id": "ace78f09-316b-4cca-8678-74adf1d0f407",
+              "id": "df126c81-6ee8-4adb-b6f9-916a441a9f4a",
               "name": "Account balance returned successfully.",
               "originalRequest": {
                 "url": {
@@ -2586,7 +2586,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "003c9e00-c3d7-4533-b946-5d841e66078e",
+              "id": "9c8a808b-eb15-47e8-b280-38a5ebb70eb2",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2637,7 +2637,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "d6823e28-cba3-43a5-9f6a-be0c0751f413",
+              "id": "e228fdce-c9e0-4fce-b874-1e6382fe9f5c",
               "name": "User does not have the accounts:read permission.",
               "originalRequest": {
                 "url": {
@@ -2688,7 +2688,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "c67194b9-9643-4e8c-a2fc-57f6b54e2b77",
+              "id": "9cb526d1-59e0-4deb-a798-af5c4969178d",
               "name": "Account was not found or does not belong to the authenticated user.",
               "originalRequest": {
                 "url": {
@@ -2748,7 +2748,7 @@
       "event": []
     },
     {
-      "id": "cdb0e343-3c48-42de-93a1-9c0a58f76ee1",
+      "id": "57524d8c-da56-4048-83ff-252dd5b4ca4b",
       "name": "Income",
       "description": {
         "content": "",
@@ -2756,7 +2756,7 @@
       },
       "item": [
         {
-          "id": "29c8e0a7-43dd-4166-bf75-263cb2df84bb",
+          "id": "4c02f6d0-759e-41b7-88dd-c2eda22808da",
           "name": "Create an income category",
           "request": {
             "name": "Create an income category",
@@ -2813,7 +2813,7 @@
           },
           "response": [
             {
-              "id": "9010680b-3a57-497f-938a-f4e984ae3ad3",
+              "id": "47430830-ccde-496b-b68a-f114937e4f09",
               "name": "Income category created successfully.",
               "originalRequest": {
                 "url": {
@@ -2867,7 +2867,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "a7d6555d-79a4-4066-bdb6-26a329ee3060",
+              "id": "53583432-5e1e-498d-bb33-1f35c883ce36",
               "name": "Invalid income category data.",
               "originalRequest": {
                 "url": {
@@ -2917,7 +2917,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "cf141695-7303-47c5-9325-6a56d39ced17",
+              "id": "d25bf2b2-1668-49c2-a66d-03fa0ce50ea9",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2967,7 +2967,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "2c6bec48-4e25-4e82-9488-b8e13a654530",
+              "id": "4a79ee75-e7fd-4484-96fb-2f9c05267d32",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -3023,7 +3023,7 @@
           }
         },
         {
-          "id": "aee12ca3-aed2-43a2-a146-600443f232ef",
+          "id": "0cddedf2-05c8-4afe-926c-c08cd782a879",
           "name": "List income categories",
           "request": {
             "name": "List income categories",
@@ -3080,7 +3080,7 @@
           },
           "response": [
             {
-              "id": "13b8efa2-9de2-45df-adf8-11f15f003087",
+              "id": "222fc490-45f9-46df-a176-c443c44efed8",
               "name": "Income categories returned successfully.",
               "originalRequest": {
                 "url": {
@@ -3141,7 +3141,7 @@
           }
         },
         {
-          "id": "e59df199-e8e2-43c7-a73f-a804d13fa346",
+          "id": "f892f661-e5ed-46b9-a99d-146870aff23b",
           "name": "Get an income category",
           "request": {
             "name": "Get an income category",
@@ -3194,7 +3194,7 @@
           },
           "response": [
             {
-              "id": "cb86c320-ce72-4de5-b517-59176e6e5279",
+              "id": "26bc99b4-d38a-476b-806f-6e06b0920ba0",
               "name": "Income category returned successfully.",
               "originalRequest": {
                 "url": {
@@ -3249,7 +3249,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "2d05caed-437d-4c73-b068-fb8af05f206d",
+              "id": "17f5703c-a6ae-4884-a8c6-ce6a633672b1",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -3306,7 +3306,7 @@
           }
         },
         {
-          "id": "1afa39d0-ce4a-48cf-9854-ad4cae26b7be",
+          "id": "a02ddb5b-26d4-4e7f-8034-d787a64b900a",
           "name": "Rename an income category",
           "request": {
             "name": "Rename an income category",
@@ -3372,7 +3372,7 @@
           },
           "response": [
             {
-              "id": "ab84031c-a4fa-40e7-8c32-b7fca977f57b",
+              "id": "98a6c7ed-fbc1-4c86-8e8e-8fdeaddbd622",
               "name": "Income category updated successfully.",
               "originalRequest": {
                 "url": {
@@ -3435,7 +3435,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "2805add4-3546-4dce-a458-3e34c6b52ef1",
+              "id": "ad10cb05-cd6a-4c33-a4d6-9f15e50ec9ea",
               "name": "Invalid income category data.",
               "originalRequest": {
                 "url": {
@@ -3494,7 +3494,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "5bdbf37b-eb2a-4961-b432-6a77a7ac74c6",
+              "id": "ea6ef1b6-11ca-4e24-8211-b5fbd60b6ebc",
               "name": "User lacks the income:update permission, or the category is a read-only system category.",
               "originalRequest": {
                 "url": {
@@ -3553,7 +3553,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "4f7f9a9e-d160-4ff9-9cde-14b82676d1c3",
+              "id": "85098765-698a-4067-941a-4fced4a985bc",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -3618,7 +3618,7 @@
           }
         },
         {
-          "id": "44752742-14c6-499e-bfaa-167f9155ca21",
+          "id": "dfb839d3-a319-490a-800d-b17cf8e0ad21",
           "name": "Archive an income category",
           "request": {
             "name": "Archive an income category",
@@ -3672,7 +3672,7 @@
           },
           "response": [
             {
-              "id": "5b6144c6-1989-48c3-b6f6-3199e69d5714",
+              "id": "38eeea37-9eb4-47cb-a8e2-431ef908732b",
               "name": "Income category archived successfully.",
               "originalRequest": {
                 "url": {
@@ -3728,7 +3728,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "3b037353-5c3c-4522-a845-6c87260c6bf2",
+              "id": "dcf05305-c93c-496c-ab3d-471c95b82e97",
               "name": "User lacks the income:update permission, or the category is a read-only system category.",
               "originalRequest": {
                 "url": {
@@ -3780,7 +3780,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "52f390cf-fd87-4509-9131-0610219b11a6",
+              "id": "36b150aa-e43f-4eb8-ba4c-77a6cfd6b53e",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -3841,7 +3841,7 @@
       "event": []
     },
     {
-      "id": "6a071068-74ba-45bd-ae95-d8c9bfacb0b9",
+      "id": "fe5deee3-844d-4298-b2ae-028bb5ef9d01",
       "name": "Transactions",
       "description": {
         "content": "",
@@ -3849,7 +3849,7 @@
       },
       "item": [
         {
-          "id": "dc0e90ec-7c4d-471f-b829-ed4fb19deb6f",
+          "id": "00b0862f-7b81-4189-b9d5-7639846bcb24",
           "name": "Create a transaction",
           "request": {
             "name": "Create a transaction",
@@ -3905,7 +3905,7 @@
           },
           "response": [
             {
-              "id": "90e0430b-cb1d-485a-8a36-42b6fac4c03c",
+              "id": "32431bf5-1690-4cc7-a030-cd85a2baf0dc",
               "name": "Transaction created successfully",
               "originalRequest": {
                 "url": {
@@ -3958,7 +3958,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "e3c2c93d-65e3-4e33-8b4e-c08bf6d2bce5",
+              "id": "e659e4df-1a8a-49a5-9314-0b9e268fe663",
               "name": "Invalid transaction data.",
               "originalRequest": {
                 "url": {
@@ -4007,7 +4007,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "3b24d336-2b35-4f77-a69d-4a8cee5bab9c",
+              "id": "dc6fdb81-7bc3-4ff1-a87a-f4240248cac0",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4056,7 +4056,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "4e735828-d96b-485b-96c8-8dd0c12cbd11",
+              "id": "fd662878-2d38-4507-a9a4-0d0aef401e54",
               "name": "Account not found.",
               "originalRequest": {
                 "url": {
@@ -4111,7 +4111,7 @@
           }
         },
         {
-          "id": "6ce7e264-dd7c-4a40-b075-243945692894",
+          "id": "14d74384-053f-4904-bd14-bdef5298cb44",
           "name": "List transactions",
           "request": {
             "name": "List transactions",
@@ -4171,7 +4171,7 @@
           },
           "response": [
             {
-              "id": "de86bed3-b607-4bd2-9336-d5424e5f088b",
+              "id": "5e995fd4-cd99-4a47-9dc0-33f1cf3f49c4",
               "name": "Transactions retrieved successfully.",
               "originalRequest": {
                 "url": {
@@ -4229,7 +4229,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "08722814-8840-4051-af58-25600ead4a8a",
+              "id": "5d1aa1ea-0353-4d9a-8ec9-83328afd76a0",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4283,7 +4283,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "2e5b3908-fa3b-45ca-a06f-f2e402170456",
+              "id": "1a6abcaf-18e0-46df-a52e-17cdbb4a192c",
               "name": "Account not found.",
               "originalRequest": {
                 "url": {
@@ -4343,7 +4343,7 @@
           }
         },
         {
-          "id": "795c3264-5a32-40ce-9b2b-36e5ecbc80a2",
+          "id": "ba9edfc5-2afe-4b55-a06b-97036a0f6a79",
           "name": "Get a transaction",
           "request": {
             "name": "Get a transaction",
@@ -4395,7 +4395,7 @@
           },
           "response": [
             {
-              "id": "7da55794-d083-419f-b724-242294a1b533",
+              "id": "72cd5e54-5572-4232-bad8-0e34a569f1b8",
               "name": "Transaction retrieved successfully.",
               "originalRequest": {
                 "url": {
@@ -4449,7 +4449,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "1a7c5024-f56a-4f7d-9267-e6d6065cd663",
+              "id": "94389062-7823-4aaf-906a-71fa49c4f343",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4499,7 +4499,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "1a6d1174-f936-403b-bd2b-0ffb7406e456",
+              "id": "ad10faf3-5b9e-4855-98ce-73a93ab8534d",
               "name": "Transaction not found.",
               "originalRequest": {
                 "url": {
@@ -4555,7 +4555,7 @@
           }
         },
         {
-          "id": "66ac1b1f-b8dc-433a-8548-6afaea5688a7",
+          "id": "095c274c-b919-4dbd-a632-d4e3ad973526",
           "name": "Reverse a transaction",
           "request": {
             "name": "Reverse a transaction",
@@ -4621,7 +4621,7 @@
           },
           "response": [
             {
-              "id": "7c9702ef-152a-4b5c-bb12-f267a733e73b",
+              "id": "d8965215-49cd-43c4-80c8-29bac43b6f1b",
               "name": "Transaction reversed successfully.",
               "originalRequest": {
                 "url": {
@@ -4684,7 +4684,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "4f805245-5561-4592-be84-42a8c7fa394e",
+              "id": "752dbfb5-24bf-4f2d-b763-5da6cfb2262b",
               "name": "Invalid reversal request or transaction cannot be reversed.",
               "originalRequest": {
                 "url": {
@@ -4743,7 +4743,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "4382d6d3-65e0-4b6c-b0cf-58730f418f46",
+              "id": "ba900df3-fbf3-435d-9970-165f6ac9954d",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4802,7 +4802,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "afea227a-f09b-4cc2-8f41-e8932173197c",
+              "id": "b583a20b-a32f-4912-a9a7-1f8db90204a7",
               "name": "Transaction not found.",
               "originalRequest": {
                 "url": {
@@ -4889,8 +4889,8 @@
     }
   ],
   "info": {
-    "_postman_id": "6c007338-f373-4506-909d-259c5c75d43f",
-    "name": "WealthWise API",
+    "_postman_id": "c9e5cac9-6ed4-47ca-b1fb-e32e54688609",
+    "name": "NAVRO API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {
       "content": "Production-ready REST API for managing personal finances.",

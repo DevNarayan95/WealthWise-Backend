@@ -79,7 +79,7 @@ describe('Accounts (E2E)', () => {
      */
     const superAdmin = await prisma.user.findUnique({
       where: {
-        email: 'admin@wealthwise.local',
+        email: process.env.SEED_ADMIN_EMAIL!,
       },
     });
 

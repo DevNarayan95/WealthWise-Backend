@@ -4,7 +4,7 @@ import { IsEmail } from 'class-validator';
 
 export class EmailDto {
   @ApiProperty({
-    example: 'john.doe@wealthwise.local',
+    example: 'john.doe@navro.local',
     description: 'Email address of the account.',
     format: 'email',
   })

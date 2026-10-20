@@ -11,7 +11,7 @@ import {
 
 export class ResetPasswordDto {
   @ApiProperty({
-    example: 'john.doe@wealthwise.local',
+    example: 'john.doe@navro.local',
     description: 'Email address of the account.',
     format: 'email',
   })

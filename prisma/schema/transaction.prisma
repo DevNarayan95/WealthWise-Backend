@@ -25,5 +25,5 @@ model Transaction {
   @@unique([reversalOfTransactionId])
   @@index([accountId])
   @@index([accountId, transactionDate])
-  @@map("transactions")
+  @@map("nv_transactions")
 }

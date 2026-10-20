@@ -10,7 +10,7 @@ import {
 
 export class VerifyEmailDto {
   @ApiProperty({
-    example: 'john.doe@wealthwise.local',
+    example: 'john.doe@navro.local',
     description: 'Email address that received the verification code.',
     format: 'email',
   })

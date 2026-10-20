@@ -1,6 +1,6 @@
 {
   "app": {
-    "baseUrl": "https://uat-api.wealthwise.example.com",
+    "baseUrl": "https://uat-api.navro.example.com",
     "trustProxy": true
   },
   "server": {
@@ -14,7 +14,7 @@
   },
   "security": {
     "cors": {
-      "allowedOrigins": ["https://uat.wealthwise.example.com"],
+      "allowedOrigins": ["https://uat.navro.example.com"],
       "allowCredentials": false,
       "maxAgeSeconds": 600
     }

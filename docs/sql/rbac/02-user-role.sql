@@ -1,5 +1,5 @@
 -- ============================================================
--- WealthWise RBAC
+-- NAVRO RBAC
 -- User Role Verification
 -- ============================================================
 --
@@ -17,4 +17,4 @@ JOIN user_roles ur
   ON ur.user_id = u.id
 JOIN roles r
   ON r.id = ur.role_id
-WHERE u.email = 'admin@wealthwise.local';
+WHERE u.email = 'admin@navro.local';

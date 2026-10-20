@@ -61,7 +61,7 @@ describe('Transactions E2E', () => {
 
     const superAdmin = await prisma.user.findUnique({
       where: {
-        email: 'admin@wealthwise.local',
+        email: process.env.SEED_ADMIN_EMAIL!,
       },
     });
 
@@ -164,7 +164,7 @@ describe('Transactions E2E', () => {
 
     const secondUser = await prisma.user.create({
       data: {
-        email: `transaction-test-${Date.now()}@wealthwise.local`,
+        email: `transaction-test-${Date.now()}@navro.local`,
         passwordHash: superAdmin.passwordHash,
         firstName: 'Transaction',
         lastName: 'Test User',

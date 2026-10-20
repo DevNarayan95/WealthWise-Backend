@@ -44,7 +44,7 @@ describe('logging config helpers', () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'wealthwise-logging-'));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'navro-logging-'));
   });
 
   afterEach(() => {

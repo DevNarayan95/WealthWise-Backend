@@ -8,8 +8,8 @@ export const createTestPrismaClient = (): PrismaClient => {
     throw new Error('DATABASE_URL is required to run integration tests');
   }
 
-  if (!connectionString.includes('wealthwise_test_db')) {
-    throw new Error('Integration tests must use wealthwise_test_db');
+  if (!connectionString.includes('navro_test_db')) {
+    throw new Error('Integration tests must use navro_test_db');
   }
 
   const adapter = new PrismaPg({ connectionString });

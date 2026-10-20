@@ -9,7 +9,7 @@ export class UserResponseDto {
   id!: string;
 
   @ApiProperty({
-    example: 'admin@wealthwise.local',
+    example: 'admin@navro.local',
     description: 'User email address.',
     format: 'email',
   })

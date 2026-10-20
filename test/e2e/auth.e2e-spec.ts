@@ -244,26 +244,26 @@ describe('Authentication (E2E)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/auth/login')
         .send({
-          email: 'ADMIN@WEALTHWISE.LOCAL',
+          email: adminEmail.toUpperCase(),
           password: 'Password123!',
         })
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data.user.email).toBe('admin@wealthwise.local');
+      expect(response.body.data.user.email).toBe(adminEmail.toLowerCase());
     });
 
     it('should normalize email whitespace and casing during login', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/auth/login')
         .send({
-          email: '  ADMIN@WEALTHWISE.LOCAL  ',
+          email: `  ${adminEmail.toUpperCase()}  `,
           password: 'Password123!',
         })
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data.user.email).toBe('admin@wealthwise.local');
+      expect(response.body.data.user.email).toBe(adminEmail.toLowerCase());
     });
   });
 
@@ -354,7 +354,7 @@ describe('Authentication (E2E)', () => {
     });
 
     it('should reject an access token when the user no longer exists', async () => {
-      const throwawayEmail = 'deleted-user@wealthwise.test';
+      const throwawayEmail = 'deleted-user@navro.test';
       const throwawayPassword = 'Throwaway123!';
 
       await prisma.user.deleteMany({ where: { email: throwawayEmail } });

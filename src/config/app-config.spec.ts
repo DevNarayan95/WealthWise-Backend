@@ -10,7 +10,7 @@ const SECRET = 'x'.repeat(48);
 
 const validSecrets: NodeJS.ProcessEnv = {
   JWT_SECRET: SECRET,
-  DATABASE_URL: 'postgresql://user:pass@localhost:5432/wealthwise_db',
+  DATABASE_URL: 'postgresql://user:pass@localhost:5432/navro_db',
   API_KEY_WEB_FRONTEND: SECRET,
   API_KEY_MOBILE_APP: SECRET,
 };
@@ -37,7 +37,7 @@ describe('app-config', () => {
   describe('validateAppConfigFile', () => {
     it('rejects an error prefix that is not letters only and names the path', () => {
       const raw = loadRawDefaults();
-      (raw.errors as Record<string, unknown>).statusCodePrefix = 'WS1';
+      (raw.errors as Record<string, unknown>).statusCodePrefix = 'NV1';
 
       expect(() => validateAppConfigFile(raw)).toThrow(
         'errors.statusCodePrefix',

@@ -1,6 +1,6 @@
 # Developer Guide
 
-This guide is for developers working on the WealthWise backend. It covers setup, how the code is organized, how to add a module, endpoint, error code, or database model, the testing rules, and how to troubleshoot common problems.
+This guide is for developers working on the NAVRO backend. It covers setup, how the code is organized, how to add a module, endpoint, error code, or database model, the testing rules, and how to troubleshoot common problems.
 
 Read these first:
 
@@ -28,7 +28,7 @@ curl http://localhost:3000/health/ready
 
 Open the API docs at `http://localhost:3000/docs`. Protected routes need two headers: `x-api-key` and a bearer token. In Swagger UI, click **Authorize**, set `api-key` to the value of `API_KEY_WEB_FRONTEND` from `.env`, then log in with `POST /api/v1/auth/login` and set `access-token` to the returned `accessToken`. The steps are in the [README](../README.md#documentation).
 
-To test in Postman, import `docs/postman/wealthwise.postman_collection.json`, set the `apiKey` variable, and set `accessToken` after login. Regenerate the collection after API changes with the server running: `npm run docs:postman`.
+To test in Postman, import `docs/postman/navro.postman_collection.json`, set the `apiKey` variable, and set `accessToken` after login. Regenerate the collection after API changes with the server running: `npm run docs:postman`.
 
 ### Generated Prisma client
 
@@ -79,7 +79,7 @@ Rules for dependencies:
 3. **Validation.** The global validation pipe checks DTOs with `class-validator`. Bad input returns `VALIDATION_ERROR`.
 4. **Service.** The controller calls a service. The service uses domain rules and repositories.
 5. **Response.** Success is wrapped by `successResponse` in [api-response.util.ts](../src/common/utils/api-response.util.ts).
-6. **Errors.** `HttpExceptionFilter` turns every error into the standard envelope. The public `statusCode` uses the `errors.statusCodePrefix` setting (for example `WS404`).
+6. **Errors.** `HttpExceptionFilter` turns every error into the standard envelope. The public `statusCode` uses the `errors.statusCodePrefix` setting (for example `NV404`).
 
 Each request has a request ID. A valid `x-request-id` header is reused; otherwise one is generated. The ID is logged and returned in `meta.requestId` on error responses. Use it to find all log lines for one request.
 
@@ -113,10 +113,10 @@ Every API error must have a code that is documented and returns a correct HTTP s
 1. Add the code to the `ErrorCode` enum in [error-code.constant.ts](../src/common/constants/error-code.constant.ts).
 2. Throw it with `ApplicationException(ErrorCode.X, 'message', HttpStatus.Y)` from the presentation or domain layer. Use the status that matches the meaning:
    - `400` bad input, `401` not authenticated, `403` not allowed, `404` not found, `409` conflict, `429` too many requests, `503` dependency unavailable.
-3. Add a row to [ERROR_CODES.md](./ERROR_CODES.md) with the HTTP status, the `WS` status code, and when it happens.
+3. Add a row to [ERROR_CODES.md](./ERROR_CODES.md) with the HTTP status, the `NV` status code, and when it happens.
 4. Add a test that asserts the code and the HTTP status.
 
-The public `statusCode` (for example `WS404`) is built from the HTTP status and the prefix in config. Do not hard-code it.
+The public `statusCode` (for example `NV404`) is built from the HTTP status and the prefix in config. Do not hard-code it.
 
 ## 7. Testing
 

@@ -173,7 +173,7 @@ describe('Income categories (E2E)', () => {
       ).expect(409);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.statusCode).toBe('WS409');
+      expect(response.body.statusCode).toBe('NV409');
       expect(response.body.error).toEqual(
         expect.objectContaining({ code: 'INCOME_CATEGORY_ALREADY_EXISTS' }),
       );
@@ -187,11 +187,11 @@ describe('Income categories (E2E)', () => {
       );
     });
 
-    it('should return 400 with a WS400 envelope when the name is empty', async () => {
+    it('should return 400 with a NV400 envelope when the name is empty', async () => {
       const response = await createCategory(ownerToken, '').expect(400);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.statusCode).toBe('WS400');
+      expect(response.body.statusCode).toBe('NV400');
     });
 
     it('should return 401 when no JWT is provided', async () => {
@@ -201,7 +201,7 @@ describe('Income categories (E2E)', () => {
         .expect(401);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.statusCode).toBe('WS401');
+      expect(response.body.statusCode).toBe('NV401');
     });
   });
 
@@ -266,7 +266,7 @@ describe('Income categories (E2E)', () => {
         .expect(404);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.statusCode).toBe('WS404');
+      expect(response.body.statusCode).toBe('NV404');
       expect(response.body.error).toEqual(
         expect.objectContaining({ code: 'INCOME_CATEGORY_NOT_FOUND' }),
       );
@@ -302,7 +302,7 @@ describe('Income categories (E2E)', () => {
         .send({ name: `${testPrefix}-TAKEN` })
         .expect(409);
 
-      expect(response.body.statusCode).toBe('WS409');
+      expect(response.body.statusCode).toBe('NV409');
       expect(response.body.error).toEqual(
         expect.objectContaining({ code: 'INCOME_CATEGORY_ALREADY_EXISTS' }),
       );
@@ -331,7 +331,7 @@ describe('Income categories (E2E)', () => {
         .expect(403);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.statusCode).toBe('WS403');
+      expect(response.body.statusCode).toBe('NV403');
       expect(response.body.error).toEqual(
         expect.objectContaining({ code: 'SYSTEM_INCOME_CATEGORY_READ_ONLY' }),
       );
@@ -413,7 +413,7 @@ describe('Income categories (E2E)', () => {
         )
         .expect(400);
 
-      expect(response.body.statusCode).toBe('WS400');
+      expect(response.body.statusCode).toBe('NV400');
       expect(response.body.error.code).toBe('INVALID_TRANSACTION');
     });
 

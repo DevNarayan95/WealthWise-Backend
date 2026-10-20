@@ -49,7 +49,7 @@ const writeConfigTree = (
 
 const PM2_DEFAULTS = {
   pm2: {
-    appName: 'wealthwise-backend',
+    appName: 'navro-backend',
     script: 'dist/src/main.js',
     instances: 1,
     execMode: 'fork',
@@ -80,7 +80,7 @@ describe('pm2-apps', () => {
 
     expect(app).toEqual(
       expect.objectContaining({
-        name: 'wealthwise-backend',
+        name: 'navro-backend',
         script: 'dist/src/main.js',
         instances: 1,
         exec_mode: 'fork',
@@ -122,7 +122,7 @@ describe('pm2-apps', () => {
 
     expect(app.instances).toBe('max');
     expect(app.max_memory_restart).toBe('1G');
-    expect(app.name).toBe('wealthwise-backend');
+    expect(app.name).toBe('navro-backend');
   });
 
   it('rejects an unknown environment name', () => {

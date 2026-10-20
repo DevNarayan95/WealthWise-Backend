@@ -9,7 +9,7 @@ describe('buildHttpsOptions', () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'wealthwise-ssl-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'navro-ssl-'));
   });
 
   afterEach(() => {

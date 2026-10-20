@@ -16,7 +16,7 @@ const OUTPUT_FILE =
     '..',
     'docs',
     'postman',
-    'wealthwise.postman_collection.json',
+    'navro.postman_collection.json',
   );
 
 const API_KEY_VARIABLE = '{{apiKey}}';

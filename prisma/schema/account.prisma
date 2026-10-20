@@ -28,5 +28,5 @@ model Account {
 
   @@index([userId])
   @@index([userId, status])
-  @@map("accounts")
+  @@map("nv_accounts")
 }

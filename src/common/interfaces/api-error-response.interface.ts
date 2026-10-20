@@ -7,7 +7,7 @@ export interface ApiErrorDetail {
 
 export interface ApiErrorResponse {
   success: false;
-  /** Configured prefix plus HTTP status, e.g. `WS404`. Also sent as the HTTP status code. */
+  /** Configured prefix plus HTTP status, e.g. `NV404`. Also sent as the HTTP status code. */
   statusCode: string;
   error: {
     /** Stable application error code, e.g. `ACCOUNT_NOT_FOUND`. */

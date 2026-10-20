@@ -17,7 +17,7 @@ const prisma = new PrismaClient({ adapter });
 
 const main = async (): Promise<void> => {
   console.log('========================================');
-  console.log('Starting WealthWise database seed...');
+  console.log('Starting NAVRO database seed...');
   console.log('========================================');
 
   await seedDatabase(prisma);

@@ -7,17 +7,15 @@ const validate_ = async (payload: Record<string, unknown>) =>
 
 describe('EmailDto', () => {
   it('accepts a valid email address', async () => {
-    expect(
-      await validate_({ email: 'john.doe@wealthwise.local' }),
-    ).toHaveLength(0);
+    expect(await validate_({ email: 'john.doe@navro.local' })).toHaveLength(0);
   });
 
   it('normalizes the email to trimmed lowercase', () => {
     const dto = plainToInstance(EmailDto, {
-      email: '  John.Doe@WealthWise.local ',
+      email: '  John.Doe@Navro.local ',
     });
 
-    expect(dto.email).toBe('john.doe@wealthwise.local');
+    expect(dto.email).toBe('john.doe@navro.local');
   });
 
   it('rejects a malformed email address', async () => {

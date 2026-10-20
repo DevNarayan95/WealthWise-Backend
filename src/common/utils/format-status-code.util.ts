@@ -5,7 +5,7 @@ export interface StatusCodeFormat {
 
 /**
  * Builds the public `statusCode` value returned in the error envelope,
- * for example `WS404`. The real HTTP status is still sent on the response.
+ * for example `NV404`. The real HTTP status is still sent on the response.
  */
 export const formatStatusCode = (
   httpStatus: number,

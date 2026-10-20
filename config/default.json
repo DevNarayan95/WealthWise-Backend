@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "WealthWise Backend",
+    "name": "NAVRO Backend",
     "baseUrl": "http://localhost:3000",
     "apiPrefix": "api",
     "trustProxy": false
@@ -16,7 +16,7 @@
     }
   },
   "errors": {
-    "statusCodePrefix": "WS",
+    "statusCodePrefix": "NV",
     "statusCodeSeparator": ""
   },
   "security": {
@@ -60,7 +60,7 @@
     "resendCooldownSeconds": 60
   },
   "mail": {
-    "fromAddress": "WealthWise <no-reply@wealthwise.local>",
+    "fromAddress": "NAVRO <no-reply@navro.local>",
     "smtp": {
       "host": "localhost",
       "port": 1025,
@@ -122,12 +122,12 @@
   "swagger": {
     "enabled": true,
     "path": "docs",
-    "title": "WealthWise API",
+    "title": "NAVRO API",
     "description": "Production-ready REST API for managing personal finances.",
     "version": "1.0"
   },
   "pm2": {
-    "appName": "wealthwise-backend",
+    "appName": "navro-backend",
     "script": "dist/src/main.js",
     "instances": 1,
     "execMode": "fork",

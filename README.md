@@ -1,6 +1,6 @@
-# WealthWise Backend
+# NAVRO Backend
 
-REST API for WealthWise, a personal finance platform. It provides user registration with email verification, account and transaction management, and the building blocks for budgets, savings goals, loans, investments, reports, and dashboards.
+REST API for NAVRO, a personal finance platform. It provides user registration with email verification, account and transaction management, and the building blocks for budgets, savings goals, loans, investments, reports, and dashboards.
 
 The API is consumed by the React web app and, later, by mobile apps. Every request must come from a registered client, identified by an API key.
 
@@ -141,7 +141,7 @@ $ openssl rand -hex 32      # API keys
 | ------------ | ------------------------------------------------------------------------ |
 | `app`        | Name, base URL, API prefix (`api`).                                      |
 | `server`     | Host, port, and SSL file paths.                                          |
-| `errors`     | Status code prefix (`WS`), used in error responses.                      |
+| `errors`     | Status code prefix (`NV`), used in error responses.                      |
 | `security`   | API key header, registered API clients, CORS origins, throttling limits. |
 | `auth`       | Access token lifetime, password salt rounds.                             |
 | `otp`        | Code length, expiry, max attempts, resend cooldown.                      |
@@ -213,7 +213,7 @@ Error responses:
 ```json
 {
   "success": false,
-  "statusCode": "WS404",
+  "statusCode": "NV404",
   "error": {
     "code": "ACCOUNT_NOT_FOUND",
     "message": "Account not found",
@@ -225,7 +225,7 @@ Error responses:
 }
 ```
 
-The HTTP status is the normal numeric code. `statusCode` adds the configured prefix (`WS`) so client logs can tell WealthWise errors apart. `error.code` never has the prefix.
+The HTTP status is the normal numeric code. `statusCode` adds the configured prefix (`NV`) so client logs can tell NAVRO errors apart. `error.code` never has the prefix.
 
 ### Documentation
 
@@ -234,8 +234,8 @@ The HTTP status is the normal numeric code. `statusCode` adds the configured pre
   1. Click **Authorize** and set `api-key` to the value of `API_KEY_WEB_FRONTEND` (or `API_KEY_MOBILE_APP`) from `.env`.
   2. Call `POST /api/v1/auth/login`, copy `accessToken` from the response, then set `access-token` to that value. Swagger adds the `Bearer` prefix.
   3. Protected routes now send both headers. Without the API key, every route returns 401.
-- Postman collection: `docs/postman/wealthwise.postman_collection.json`. It has a sample request body for each endpoint and uses the variables `baseUrl`, `apiKey`, and `accessToken`. Regenerate it after API changes with the server running: `npm run docs:postman`.
-- Error code reference, with HTTP status and `WS` status for each code: [docs/ERROR_CODES.md](docs/ERROR_CODES.md)
+- Postman collection: `docs/postman/navro.postman_collection.json`. It has a sample request body for each endpoint and uses the variables `baseUrl`, `apiKey`, and `accessToken`. Regenerate it after API changes with the server running: `npm run docs:postman`.
+- Error code reference, with HTTP status and `NV` status for each code: [docs/ERROR_CODES.md](docs/ERROR_CODES.md)
 
 ## Logging and monitoring
 
@@ -316,12 +316,13 @@ $ npm run test:e2e
 
 ## Documentation
 
-| Document                                           | Contents                                                 |
-| -------------------------------------------------- | -------------------------------------------------------- |
-| [AI-INSTRUCTIONS.md](AI-INSTRUCTIONS.md)           | Project rules, coding standards, and workflow.           |
-| [docs/ERROR_CODES.md](docs/ERROR_CODES.md)         | Error codes, HTTP status, and `WS` status codes.         |
-| [docs/CONFIGURATION.md](docs/CONFIGURATION.md)     | Environments, settings reference, and how to add config. |
-| [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | Adding modules and endpoints, testing, troubleshooting.  |
+| Document                                                       | Contents                                                  |
+| -------------------------------------------------------------- | --------------------------------------------------------- |
+| [AI-INSTRUCTIONS.md](AI-INSTRUCTIONS.md)                       | Project rules, coding standards, and workflow.            |
+| [docs/ERROR_CODES.md](docs/ERROR_CODES.md)                     | Error codes, HTTP status, and `NV` status codes.          |
+| [docs/CONFIGURATION.md](docs/CONFIGURATION.md)                 | Environments, settings reference, and how to add config.  |
+| [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)             | Adding modules and endpoints, testing, troubleshooting.   |
+| [docs/BUSINESS_REQUIREMENTS.md](docs/BUSINESS_REQUIREMENTS.md) | Product requirements, delivery phases, and decisions log. |
 
 ## License
 

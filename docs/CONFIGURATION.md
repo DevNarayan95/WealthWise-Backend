@@ -85,7 +85,7 @@ Every key below is in `config/default.json`. Overlays may change any of them.
 
 | Key          | Default                 | Meaning                                                                            |
 | ------------ | ----------------------- | ---------------------------------------------------------------------------------- |
-| `name`       | `WealthWise Backend`    | Display name.                                                                      |
+| `name`       | `NAVRO Backend`         | Display name.                                                                      |
 | `baseUrl`    | `http://localhost:3000` | Public base URL. Used in emails and links.                                         |
 | `apiPrefix`  | `api`                   | Global path prefix. Routes look like `/api/v1/...`.                                |
 | `trustProxy` | `false`                 | Trust `X-Forwarded-*` headers. Set `true` behind a load balancer or reverse proxy. |
@@ -107,8 +107,8 @@ When SSL is enabled, the startup check confirms the files exist and stops the ap
 
 | Key                   | Default | Meaning                                                           |
 | --------------------- | ------- | ----------------------------------------------------------------- |
-| `statusCodePrefix`    | `WS`    | Prefix for the public `statusCode` field (for example `WS404`).   |
-| `statusCodeSeparator` | `""`    | Text between the prefix and the HTTP status. Empty gives `WS404`. |
+| `statusCodePrefix`    | `NV`    | Prefix for the public `statusCode` field (for example `NV404`).   |
+| `statusCodeSeparator` | `""`    | Text between the prefix and the HTTP status. Empty gives `NV404`. |
 
 The HTTP status on the response is always numeric. Only the body field `statusCode` uses the prefix. See [ERROR_CODES.md](./ERROR_CODES.md).
 
@@ -151,13 +151,13 @@ The HTTP status on the response is always numeric. Only the body field `statusCo
 
 ### `mail`
 
-| Key                        | Default                                  | Meaning                                           |
-| -------------------------- | ---------------------------------------- | ------------------------------------------------- |
-| `fromAddress`              | `WealthWise <no-reply@wealthwise.local>` | Sender address for all emails.                    |
-| `smtp.host`                | `localhost`                              | SMTP host. Must be replaced in real environments. |
-| `smtp.port`                | `1025`                                   | SMTP port (1025 is Mailpit locally).              |
-| `smtp.secure`              | `false`                                  | Use TLS from the start (for port 465).            |
-| `smtp.connectionTimeoutMs` | `10000`                                  | Connection timeout.                               |
+| Key                        | Default                        | Meaning                                           |
+| -------------------------- | ------------------------------ | ------------------------------------------------- |
+| `fromAddress`              | `NAVRO <no-reply@navro.local>` | Sender address for all emails.                    |
+| `smtp.host`                | `localhost`                    | SMTP host. Must be replaced in real environments. |
+| `smtp.port`                | `1025`                         | SMTP port (1025 is Mailpit locally).              |
+| `smtp.secure`              | `false`                        | Use TLS from the start (for port 465).            |
+| `smtp.connectionTimeoutMs` | `10000`                        | Connection timeout.                               |
 
 `smtp.host` set to `CHANGE_ME_SMTP_HOST` is a placeholder. Environment overlays must replace it before the app starts.
 
@@ -221,24 +221,24 @@ Thresholds are per environment, so UAT can use stricter values than local develo
 | ------------- | ----------------- | ---------------------------- |
 | `enabled`     | `true`            | Serve the API docs UI.       |
 | `path`        | `docs`            | UI path (served at `/docs`). |
-| `title`       | `WealthWise API`  | Title in the docs.           |
+| `title`       | `NAVRO API`       | Title in the docs.           |
 | `description` | short description | Description in the docs.     |
 | `version`     | `1.0`             | Version in the docs.         |
 
 ### `pm2`
 
-| Key                | Default              | Meaning                                                |
-| ------------------ | -------------------- | ------------------------------------------------------ |
-| `appName`          | `wealthwise-backend` | PM2 process name.                                      |
-| `script`           | `dist/src/main.js`   | Entry point. The build output keeps the `src/` folder. |
-| `instances`        | `1`                  | Number of instances (cluster mode).                    |
-| `execMode`         | `fork`               | `fork` or `cluster`.                                   |
-| `maxMemoryRestart` | `512M`               | Restart a process above this memory.                   |
-| `autorestart`      | `true`               | Restart after a crash.                                 |
-| `maxRestarts`      | `10`                 | Restart attempts before PM2 gives up.                  |
-| `minUptimeMs`      | `5000`               | A process must stay up this long to count as started.  |
-| `killTimeoutMs`    | `5000`               | Grace period for shutdown.                             |
-| `listenTimeoutMs`  | `10000`              | Time allowed for the app to start listening.           |
+| Key                | Default            | Meaning                                                |
+| ------------------ | ------------------ | ------------------------------------------------------ |
+| `appName`          | `navro-backend`    | PM2 process name.                                      |
+| `script`           | `dist/src/main.js` | Entry point. The build output keeps the `src/` folder. |
+| `instances`        | `1`                | Number of instances (cluster mode).                    |
+| `execMode`         | `fork`             | `fork` or `cluster`.                                   |
+| `maxMemoryRestart` | `512M`             | Restart a process above this memory.                   |
+| `autorestart`      | `true`             | Restart after a crash.                                 |
+| `maxRestarts`      | `10`               | Restart attempts before PM2 gives up.                  |
+| `minUptimeMs`      | `5000`             | A process must stay up this long to count as started.  |
+| `killTimeoutMs`    | `5000`             | Grace period for shutdown.                             |
+| `listenTimeoutMs`  | `10000`            | Time allowed for the app to start listening.           |
 
 ## Environment overlays
 

@@ -24,7 +24,7 @@ describe('SmtpMailSender', () => {
   ): ConfigService<AppConfig, true> => {
     const values: Record<string, unknown> = {
       mail: {
-        fromAddress: 'WealthWise <no-reply@wealthwise.local>',
+        fromAddress: 'NAVRO <no-reply@navro.local>',
         smtp: {
           host: 'smtp.example.com',
           port: 587,
@@ -100,7 +100,7 @@ describe('SmtpMailSender', () => {
     await sender.send(message);
 
     expect(sendMail).toHaveBeenCalledWith({
-      from: 'WealthWise <no-reply@wealthwise.local>',
+      from: 'NAVRO <no-reply@navro.local>',
       to: 'john@example.com',
       subject: 'Subject',
       text: 'Body text',

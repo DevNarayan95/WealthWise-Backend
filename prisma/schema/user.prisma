@@ -28,7 +28,7 @@ model User {
 
   @@index([status])
   @@index([createdAt])
-  @@map("users")
+  @@map("nv_users")
 }
 
 model EmailOtp {
@@ -46,5 +46,5 @@ model EmailOtp {
 
   @@index([userId, purpose])
   @@index([expiresAt])
-  @@map("email_otps")
+  @@map("nv_email_otps")
 }

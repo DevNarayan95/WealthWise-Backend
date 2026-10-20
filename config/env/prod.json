@@ -1,20 +1,20 @@
 {
   "app": {
-    "baseUrl": "https://api.wealthwise.example.com",
+    "baseUrl": "https://api.navro.example.com",
     "trustProxy": true
   },
   "server": {
     "port": 3000,
     "ssl": {
       "enabled": true,
-      "keyPath": "/etc/ssl/private/wealthwise-prod.key",
-      "certPath": "/etc/ssl/certs/wealthwise-prod.crt",
-      "caPath": "/etc/ssl/certs/wealthwise-prod-ca.crt"
+      "keyPath": "/etc/ssl/private/navro-prod.key",
+      "certPath": "/etc/ssl/certs/navro-prod.crt",
+      "caPath": "/etc/ssl/certs/navro-prod-ca.crt"
     }
   },
   "security": {
     "cors": {
-      "allowedOrigins": ["https://wealthwise.example.com"],
+      "allowedOrigins": ["https://navro.example.com"],
       "allowCredentials": false,
       "maxAgeSeconds": 600
     }

@@ -19,7 +19,7 @@ describe('AuthEmailService', () => {
     mailSender = { send: jest.fn().mockResolvedValue(undefined) };
 
     const configValues: Record<string, unknown> = {
-      'app.name': 'WealthWise Backend',
+      'app.name': 'NAVRO Backend',
       'otp.expiresInSeconds': 600,
     };
 
@@ -57,7 +57,7 @@ describe('AuthEmailService', () => {
       const message = mailSender.send.mock.calls[0][0];
 
       expect(message.to).toBe('jane@example.com');
-      expect(message.subject).toContain('WealthWise Backend');
+      expect(message.subject).toContain('NAVRO Backend');
       expect(message.text).toContain('123456');
       expect(message.html).toContain('123456');
     });
@@ -96,7 +96,7 @@ describe('AuthEmailService', () => {
       const message = mailSender.send.mock.calls[0][0];
 
       expect(message.to).toBe('jane@example.com');
-      expect(message.subject).toContain('WealthWise Backend');
+      expect(message.subject).toContain('NAVRO Backend');
       expect(message.text).toContain('Jane');
     });
 

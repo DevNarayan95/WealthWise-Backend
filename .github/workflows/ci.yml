@@ -23,21 +23,21 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_DB: wealthwise_test_db
-          POSTGRES_USER: wealthwise
+          POSTGRES_DB: navro_test_db
+          POSTGRES_USER: navro
           # Throwaway password for an ephemeral service container only.
           POSTGRES_PASSWORD: ci-ephemeral-${{ github.run_id }}
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U wealthwise -d wealthwise_test_db"
+          --health-cmd "pg_isready -U navro -d navro_test_db"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
 
     env:
       APP_ENV: test
-      DATABASE_URL: postgresql://wealthwise:ci-ephemeral-${{ github.run_id }}@localhost:5432/wealthwise_test_db
+      DATABASE_URL: postgresql://navro:ci-ephemeral-${{ github.run_id }}@localhost:5432/navro_test_db
       SEED_ADMIN_EMAIL: admin@test.local
 
     steps:

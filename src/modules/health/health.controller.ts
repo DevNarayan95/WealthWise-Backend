@@ -8,7 +8,7 @@ import { ApplicationException } from '../../common/exceptions/application.except
 import { ErrorCode } from '../../common/constants/error-code.constant';
 import { PrismaService } from '../../infrastructure/database/prisma/prisma.service';
 
-const SERVICE_NAME = 'wealthwise-backend';
+const SERVICE_NAME = 'navro-backend';
 
 @Public()
 @Controller({

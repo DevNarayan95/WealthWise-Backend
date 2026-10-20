@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import { ResetPasswordDto } from './reset-password.dto';
 
 const validPayload = {
-  email: 'john.doe@wealthwise.local',
+  email: 'john.doe@navro.local',
   code: '123456',
   newPassword: 'NewPassword@123',
 };
@@ -19,10 +19,10 @@ describe('ResetPasswordDto', () => {
   it('normalizes the email to trimmed lowercase', () => {
     const dto = plainToInstance(ResetPasswordDto, {
       ...validPayload,
-      email: ' John.Doe@WealthWise.local ',
+      email: ' John.Doe@Navro.local ',
     });
 
-    expect(dto.email).toBe('john.doe@wealthwise.local');
+    expect(dto.email).toBe('john.doe@navro.local');
   });
 
   it('rejects a non-numeric code', async () => {
