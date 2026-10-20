@@ -27,6 +27,16 @@ describe('rolePermissions', () => {
     );
   });
 
+  it('grants ADMIN the expense permissions', () => {
+    expect(rolePermissions.ADMIN).toEqual(
+      expect.arrayContaining([
+        'expense:create',
+        'expense:read',
+        'expense:update',
+      ]),
+    );
+  });
+
   it('grants ACCOUNT_MANAGER account create permission', () => {
     expect(rolePermissions.ACCOUNT_MANAGER).toContain('accounts:create');
   });

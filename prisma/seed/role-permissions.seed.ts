@@ -11,6 +11,9 @@ export const rolePermissions: Record<string, string[]> = {
     'permissions:read',
     'accounts:read',
     'accounts:update',
+    'expense:create',
+    'expense:read',
+    'expense:update',
   ],
 
   ACCOUNT_MANAGER: [

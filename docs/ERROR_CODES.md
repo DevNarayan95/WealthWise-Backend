@@ -127,7 +127,7 @@ Linking an INCOME transaction to an expense category returns `INVALID_TRANSACTIO
 
 | `error.code`               | HTTP status | `statusCode` (default) | When it is returned                                                                                                                                                                 |
 | -------------------------- | ----------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `EXCHANGE_RATE_UNAVAILABLE` | 503         | `NV503`                | The rate provider is down, no stored rate exists for the currency on or before the date, and no manual rate is configured. A transaction is otherwise never rejected for a rate problem (see [NFR-DATA-07](./BUSINESS_REQUIREMENTS.md)). |
+| `EXCHANGE_RATE_UNAVAILABLE` | 503         | `NV503`                | The rate provider is down, no stored rate exists at all for the currency pair, and no manual rate is configured. A transaction is otherwise never rejected for a rate problem (see [NFR-DATA-07](./BUSINESS_REQUIREMENTS.md)). |
 
 ### Transaction dates
 

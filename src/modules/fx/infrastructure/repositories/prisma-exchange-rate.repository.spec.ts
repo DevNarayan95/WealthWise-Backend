@@ -79,6 +79,29 @@ describe('PrismaExchangeRateRepository', () => {
     });
   });
 
+  describe('findLatest', () => {
+    it('should return the most recent stored rate for the pair regardless of date', async () => {
+      prisma.exchangeRate.findFirst.mockResolvedValue({
+        rate: 24.1,
+        rateDate: new Date('2026-04-01T00:00:00.000Z'),
+      });
+
+      const result = await repository.findLatest('MYR', 'INR');
+
+      expect(prisma.exchangeRate.findFirst).toHaveBeenCalledWith({
+        where: { fromCurrency: 'MYR', toCurrency: 'INR' },
+        orderBy: { rateDate: 'desc' },
+      });
+      expect(result).toEqual({ rate: 24.1, rateDate: '2026-04-01' });
+    });
+
+    it('should return null when nothing is stored for the pair', async () => {
+      prisma.exchangeRate.findFirst.mockResolvedValue(null);
+
+      await expect(repository.findLatest('MYR', 'INR')).resolves.toBeNull();
+    });
+  });
+
   describe('save', () => {
     it('should upsert the rate on the compound key', async () => {
       prisma.exchangeRate.upsert.mockResolvedValue({});

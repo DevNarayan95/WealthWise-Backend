@@ -64,6 +64,18 @@ export class PrismaExchangeRateRepository extends ExchangeRateRepository {
     return row ? toStoredRate(row) : null;
   }
 
+  async findLatest(
+    fromCurrency: string,
+    toCurrency: string,
+  ): Promise<StoredExchangeRate | null> {
+    const row = await this.prisma.exchangeRate.findFirst({
+      where: { fromCurrency, toCurrency },
+      orderBy: { rateDate: 'desc' },
+    });
+
+    return row ? toStoredRate(row) : null;
+  }
+
   async save(input: SaveExchangeRateInput): Promise<void> {
     const key = {
       fromCurrency: input.fromCurrency,

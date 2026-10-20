@@ -22,6 +22,7 @@ describe('ExchangeRateService', () => {
     repository = {
       findOnDate: jest.fn().mockResolvedValue(null),
       findLatestOnOrBefore: jest.fn().mockResolvedValue(null),
+      findLatest: jest.fn().mockResolvedValue(null),
       save: jest.fn().mockResolvedValue(undefined),
     };
 
@@ -198,6 +199,45 @@ describe('ExchangeRateService', () => {
       source: 'FALLBACK',
     });
     expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it('should use the most recent stored rate after the date when no earlier rate exists', async () => {
+    provider.fetchRate.mockRejectedValue(new Error('down'));
+    repository.findLatest.mockResolvedValue({
+      rate: 24.1,
+      rateDate: '2026-04-01',
+    });
+
+    const quote = await service.getRate({
+      fromCurrency: 'MYR',
+      toCurrency: 'INR',
+      rateDate,
+    });
+
+    expect(repository.findLatest).toHaveBeenCalledWith('MYR', 'INR');
+    expect(quote).toEqual({
+      rate: 24.1,
+      rateDate: '2026-04-01',
+      source: 'FALLBACK',
+    });
+  });
+
+  it('should prefer a stored rate over the configured manual rate', async () => {
+    provider.fetchRate.mockRejectedValue(new Error('down'));
+    manualRates = { MYR: 23.0 };
+    repository.findLatest.mockResolvedValue({
+      rate: 24.1,
+      rateDate: '2026-04-01',
+    });
+
+    const quote = await service.getRate({
+      fromCurrency: 'MYR',
+      toCurrency: 'INR',
+      rateDate,
+    });
+
+    expect(quote.source).toBe('FALLBACK');
+    expect(quote.rate).toBe(24.1);
   });
 
   it('should use the configured manual rate when no provider or stored rate is available', async () => {

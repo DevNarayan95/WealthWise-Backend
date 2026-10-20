@@ -203,7 +203,7 @@ Changing these values changes validation for new input only.
 | `provider.timeoutMs`    | `5000`                           | Request timeout. A slow provider is treated as unavailable.                                                              |
 | `manualRates`           | `{}`                             | Manual fallback rate per source currency (for example `"USD": 83.5`). Used only when converting to `baseCurrency` and both the provider and stored rates are unavailable. |
 
-Lookup order: same currency, then a stored rate for the exact date, then the provider, then the most recent stored rate on or before the date, then a manual rate. See [NFR-DATA-07](./BUSINESS_REQUIREMENTS.md).
+Lookup order: same currency, then a stored rate for the exact date, then the provider, then the most recent stored rate on or before the date, then the most recent stored rate of any date, then a manual rate. See [NFR-DATA-07](./BUSINESS_REQUIREMENTS.md).
 
 ### `logging`
 

@@ -21,5 +21,10 @@ export abstract class ExchangeRateRepository {
     rateDate: string,
   ): Promise<StoredExchangeRate | null>;
 
+  abstract findLatest(
+    fromCurrency: string,
+    toCurrency: string,
+  ): Promise<StoredExchangeRate | null>;
+
   abstract save(input: SaveExchangeRateInput): Promise<void>;
 }

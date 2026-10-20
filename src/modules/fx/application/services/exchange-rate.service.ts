@@ -138,6 +138,21 @@ export class ExchangeRateService {
       };
     }
 
+    const lastGiven = await this.repository.findLatest(
+      fromCurrency,
+      toCurrency,
+    );
+    if (lastGiven) {
+      this.logger.warn(
+        `No exchange rate on or before ${rateDate}; using last stored rate from ${lastGiven.rateDate} for ${fromCurrency}->${toCurrency}`,
+      );
+      return {
+        rate: lastGiven.rate,
+        rateDate: lastGiven.rateDate,
+        source: 'FALLBACK',
+      };
+    }
+
     const { baseCurrency, manualRates } = this.configService.get(
       'exchangeRates',
       {

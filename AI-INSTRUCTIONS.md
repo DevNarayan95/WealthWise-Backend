@@ -281,7 +281,7 @@ Each decision must be answered before the related module is implemented. The AI 
 11. **Multi-currency.** Approved: each amount has a currency, with INR as the default. The user chooses the currency on income, expense, investment, loan, and other inputs. Net worth, reports, and the dashboard can show any selected currency (NFR-DATA-04).
 12. **Exchange rates.** Approved: Frankfurter (ECB reference rates, no API key). Income in RM converts to INR at that day's rate. Each transaction stores its rate. Coverage of INR, MYR, and AUD is verified before release (NFR-DATA-05, NFR-DATA-06).
 13. **Product name and prefixes.** Approved: product name NAVRO, error code prefix `NV`, database table prefix `nv_`.
-14. **Exchange-rate fallback.** Approved: provider rate for the date, then the most recent stored rate for that currency, then a manual rate in config. Transactions are never rejected (NFR-DATA-07).
+14. **Exchange-rate fallback.** Approved: provider rate for the date, then the most recent stored rate on or before the date, then the most recent stored rate of any date (last given rate), then a manual rate in config. Transactions are never rejected (NFR-DATA-07).
 15. **Loan EMI category and transaction currency.** Approved: Loan EMI is a system category, and a transaction uses its account's currency (decisions 18 and 19 in BRD section 11).
 
 ---
@@ -2302,7 +2302,17 @@ accounts:read
 accounts:update
 ```
 
-CUSTOMER receives `accounts:create` and `accounts:read`. ACCOUNT_MANAGER receives all three.
+CUSTOMER receives `accounts:create` and `accounts:read`. ACCOUNT_MANAGER receives all three. ADMIN receives `accounts:read` and `accounts:update`.
+
+## Expense Permissions
+
+```text
+expense:create
+expense:read
+expense:update
+```
+
+CUSTOMER and ADMIN receive all three. SUPER_ADMIN receives every permission through the `*` wildcard.
 
 ## Archive Rules
 
@@ -3267,8 +3277,9 @@ Expenses mirror Income (section 39 onward) and reuse its patterns. The decisions
 - Transaction currency must equal its account currency (Option A). Accounts already store a currency (BR-ACC-02). Conversion is used only for base-currency reporting, net worth, and the dashboard.
 - Exchange rate fallback, so transactions are never rejected because a third party is unavailable:
   1. Frankfurter rate for the transaction date. On weekends and holidays Frankfurter returns the last published rate, and `rate_date` stores the date it returns.
-  2. If Frankfurter is unavailable: the most recent rate already stored on an earlier transaction for the same currency.
-  3. If no stored rate exists yet: a manual rate per currency in `config/default.json` (operator-maintained).
+  2. If Frankfurter is unavailable: the most recent rate already stored on or before the transaction date for the same currency.
+  3. If no stored rate exists on or before that date: the most recent stored rate for the same currency, whatever its date (the last given rate).
+  4. If nothing is stored at all: a manual rate per currency in `config/default.json` (operator-maintained). If that is also missing, the request returns `EXCHANGE_RATE_UNAVAILABLE` (503).
 - `rate_source` is stored on each transaction (`PROVIDER`, `FALLBACK`, `MANUAL`, `IDENTITY`). Reports can flag approximate values.
 - Frankfurter supports INR, MYR, and AUD (verified against `/v1/currencies`).
 - `transaction_date` is a calendar date with no time. This follows the approved time-zone decision.
