@@ -835,6 +835,77 @@ describe('TransactionsService', () => {
       ).toHaveBeenCalledWith(input);
     });
 
+    it('should list across all user accounts when no accountId is given', async () => {
+      const input: ListTransactionsInput = {
+        userId: 'user-1',
+        offset: 0,
+        limit: 20,
+      };
+
+      transactionsRepository.findAllByAccountForUser.mockResolvedValue({
+        transactions: [createdTransaction],
+        total: 1,
+      });
+
+      const result = await service.findAll(input);
+
+      expect(result.total).toBe(1);
+      expect(accountsService.findById).not.toHaveBeenCalled();
+      expect(
+        transactionsRepository.findAllByAccountForUser,
+      ).toHaveBeenCalledWith(input);
+    });
+
+    it('should pass date, type, and category filters to the repository', async () => {
+      const input: ListTransactionsInput = {
+        userId: 'user-1',
+        offset: 0,
+        limit: 20,
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.EXPENSE,
+        expenseCategoryId: 'category-1',
+      };
+
+      transactionsRepository.findAllByAccountForUser.mockResolvedValue({
+        transactions: [],
+        total: 0,
+      });
+
+      await service.findAll(input);
+
+      expect(
+        transactionsRepository.findAllByAccountForUser,
+      ).toHaveBeenCalledWith(input);
+    });
+
+    it('should reject a from date later than the to date', async () => {
+      await expect(
+        service.findAll({
+          userId: 'user-1',
+          offset: 0,
+          limit: 20,
+          from: '2026-02-01',
+          to: '2026-01-31',
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+
+      expect(
+        transactionsRepository.findAllByAccountForUser,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should reject an invalid from date', async () => {
+      await expect(
+        service.findAll({
+          userId: 'user-1',
+          offset: 0,
+          limit: 20,
+          from: '2026-02-30',
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+    });
+
     it('should pass the pagination values to the repository', async () => {
       const input: ListTransactionsInput = {
         accountId: activeAccount.id,

@@ -226,7 +226,25 @@ export class TransactionsService {
     transactions: Transaction[];
     total: number;
   }> {
-    await this.accountsService.findById(input.accountId, input.userId);
+    if (input.from !== undefined && !isValidTransactionDate(input.from)) {
+      throw new InvalidTransactionException('From date must be a valid date');
+    }
+
+    if (input.to !== undefined && !isValidTransactionDate(input.to)) {
+      throw new InvalidTransactionException('To date must be a valid date');
+    }
+
+    if (input.from !== undefined && input.to !== undefined) {
+      if (input.from > input.to) {
+        throw new InvalidTransactionException(
+          'From date must not be after to date',
+        );
+      }
+    }
+
+    if (input.accountId !== undefined) {
+      await this.accountsService.findById(input.accountId, input.userId);
+    }
 
     return this.transactionsRepository.findAllByAccountForUser(input);
   }

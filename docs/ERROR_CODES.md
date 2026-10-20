@@ -112,6 +112,8 @@ Setting the separator to `-` produces `NV-404`. Clients should not depend on eit
 
 Linking an EXPENSE transaction to an income category returns `INVALID_TRANSACTION` (400), not `INVALID_INCOME_CATEGORY`.
 
+The transaction list (`GET /api/v1/transactions`) also returns `INVALID_TRANSACTION` (400) when `from` or `to` is not a valid `YYYY-MM-DD` date, or when `from` is after `to`. A supplied `accountId` that the caller does not own returns `ACCOUNT_NOT_FOUND`, not `INVALID_TRANSACTION`.
+
 ### Expenses
 
 | `error.code`                        | HTTP status | `statusCode` (default) | When it is returned                                                                                                     |

@@ -307,6 +307,59 @@ describe('PrismaTransactionRepository', () => {
   });
 
   describe('findAllByAccountForUser', () => {
+    it('should apply date, type, and category filters while keeping the user scope', async () => {
+      prisma.transaction.findMany.mockResolvedValue([]);
+      prisma.transaction.count.mockResolvedValue(0);
+
+      await repository.findAllByAccountForUser({
+        userId: 'user-1',
+        offset: 0,
+        limit: 10,
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.EXPENSE,
+        expenseCategoryId: 'category-1',
+      });
+
+      const expectedWhere = {
+        account: {
+          userId: 'user-1',
+        },
+        transactionDate: {
+          gte: new Date('2026-01-01T00:00:00.000Z'),
+          lte: new Date('2026-01-31T00:00:00.000Z'),
+        },
+        type: 'EXPENSE',
+        expenseCategoryId: 'category-1',
+      };
+
+      expect(prisma.transaction.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere }),
+      );
+      expect(prisma.transaction.count).toHaveBeenCalledWith({
+        where: expectedWhere,
+      });
+    });
+
+    it('should omit the account and filter clauses when none are given', async () => {
+      prisma.transaction.findMany.mockResolvedValue([]);
+      prisma.transaction.count.mockResolvedValue(0);
+
+      await repository.findAllByAccountForUser({
+        userId: 'user-1',
+        offset: 0,
+        limit: 10,
+      });
+
+      expect(prisma.transaction.count).toHaveBeenCalledWith({
+        where: {
+          account: {
+            userId: 'user-1',
+          },
+        },
+      });
+    });
+
     it('should return paginated transactions and total count', async () => {
       prisma.transaction.findMany.mockResolvedValue([
         createPrismaTransaction({

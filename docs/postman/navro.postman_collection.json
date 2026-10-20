@@ -1,7 +1,7 @@
 {
   "item": [
     {
-      "id": "75abe4a0-da89-452e-a679-20537d7cd914",
+      "id": "98a612df-3706-48bf-81c2-5f5f93e01749",
       "name": "Health",
       "description": {
         "content": "",
@@ -9,7 +9,7 @@
       },
       "item": [
         {
-          "id": "8171f66f-11d0-4178-8c8a-37782971d680",
+          "id": "c6a85df6-374e-48be-95a1-1808b3539506",
           "name": "Health Controller live",
           "request": {
             "name": "Health Controller live",
@@ -33,7 +33,7 @@
           },
           "response": [
             {
-              "id": "16e644c4-c799-472f-9061-0af08e0ab973",
+              "id": "aa4aa458-70fb-4fae-9fbd-74021a1edaa2",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -68,7 +68,7 @@
           }
         },
         {
-          "id": "e0a3ecc4-3ce5-4593-b988-1eaae67ab572",
+          "id": "361ba1e9-f6c2-403e-9655-9c0f4785a08a",
           "name": "Health Controller ready",
           "request": {
             "name": "Health Controller ready",
@@ -92,7 +92,7 @@
           },
           "response": [
             {
-              "id": "71cd72af-f025-4c3f-9180-1947bdd3d13e",
+              "id": "d618c07d-0fb0-420f-a1df-d323e96dd946",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -130,7 +130,7 @@
       "event": []
     },
     {
-      "id": "d4174ddd-269c-4c0e-8b06-5ecd651a033a",
+      "id": "bf8ee312-a335-4e09-83b8-4d6a443d0dec",
       "name": "Users",
       "description": {
         "content": "",
@@ -138,7 +138,7 @@
       },
       "item": [
         {
-          "id": "58831bfc-7425-4e4c-b23d-d5f0f9d01e7f",
+          "id": "10992877-f2f6-45fd-a9c0-798a868852b1",
           "name": "Get current user",
           "request": {
             "name": "Get current user",
@@ -182,7 +182,7 @@
           },
           "response": [
             {
-              "id": "e1730778-15d8-4334-a9fb-69794001a85a",
+              "id": "cf50cbcd-4013-44cb-8159-89f523e01f49",
               "name": "Current user returned successfully.",
               "originalRequest": {
                 "url": {
@@ -228,7 +228,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "5462b185-211c-470b-8fbf-ff09d3f86658",
+              "id": "b00a44bc-1b43-4c2b-b61c-95f9ac85ccdf",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -279,7 +279,7 @@
       "event": []
     },
     {
-      "id": "ce88806c-ff5e-4ec0-88f5-725a9af7a713",
+      "id": "5bd46877-7a3f-4268-8089-99cc6910214a",
       "name": "Authentication",
       "description": {
         "content": "",
@@ -287,7 +287,7 @@
       },
       "item": [
         {
-          "id": "64d2844a-261a-45d8-8474-72cfe3cb5906",
+          "id": "7a50f790-7550-4b90-bed6-149a7dd7a9a4",
           "name": "Authenticate a user",
           "request": {
             "name": "Authenticate a user",
@@ -339,7 +339,7 @@
           },
           "response": [
             {
-              "id": "b072fb5d-4bce-44b5-abb6-21f808be4e84",
+              "id": "da2a3be1-8a7c-4464-ac0a-27301f93062f",
               "name": "Authentication successful.",
               "originalRequest": {
                 "url": {
@@ -393,7 +393,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "87f25b5d-358c-4cf7-88a0-d2b328df5d64",
+              "id": "311d7e95-aff8-4f8e-92da-1c381280cffd",
               "name": "Invalid request data.",
               "originalRequest": {
                 "url": {
@@ -443,7 +443,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "134142ab-d2cc-4d24-82b8-622116049989",
+              "id": "807e2bc0-519d-4887-9fd3-7270116eff69",
               "name": "Invalid email or password.",
               "originalRequest": {
                 "url": {
@@ -493,7 +493,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "6f8434a3-447f-4447-bfc6-7673fdf2b34d",
+              "id": "c82c3fd4-44ab-4abe-9088-b61afb485742",
               "name": "Email address not verified (EMAIL_NOT_VERIFIED).",
               "originalRequest": {
                 "url": {
@@ -549,7 +549,7 @@
           }
         },
         {
-          "id": "58512cc9-8793-4c77-933c-06736bbb21ee",
+          "id": "ebdc70aa-c2a0-450c-aa9d-b547371799bc",
           "name": "Rotate the refresh token and issue a new access token",
           "request": {
             "name": "Rotate the refresh token and issue a new access token",
@@ -601,7 +601,7 @@
           },
           "response": [
             {
-              "id": "d0a94ab0-1dae-4a87-a91b-c2da25716428",
+              "id": "a58c44e8-95f2-447f-8ca0-61d51ce8f331",
               "name": "New access token and refresh token issued.",
               "originalRequest": {
                 "url": {
@@ -655,7 +655,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "32f482b3-b5a5-4d69-994a-2338992cf47b",
+              "id": "db7b1157-896b-4e75-8b4d-f417162fad26",
               "name": "Invalid request data.",
               "originalRequest": {
                 "url": {
@@ -705,7 +705,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "d3c7d45f-470b-4df2-92b7-9779b133dfcb",
+              "id": "e907d494-e96e-424f-a78d-c884d4032c5f",
               "name": "Refresh token is unknown, expired, or its session was revoked (INVALID_REFRESH_TOKEN). A reused token also revokes the session (REFRESH_TOKEN_REUSED).",
               "originalRequest": {
                 "url": {
@@ -761,7 +761,7 @@
           }
         },
         {
-          "id": "7ace10f9-8219-4b61-9530-9309491896b2",
+          "id": "db4b6178-742d-4887-9571-e017c264b2f7",
           "name": "Log out the current session",
           "request": {
             "name": "Log out the current session",
@@ -805,7 +805,7 @@
           },
           "response": [
             {
-              "id": "4414f851-1904-4701-84fc-b17e7575228e",
+              "id": "be74148f-a2e1-4eb8-89f1-39e047351bf2",
               "name": "Session revoked.",
               "originalRequest": {
                 "url": {
@@ -851,7 +851,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "11870188-fd94-45fa-828c-30d40cafc55f",
+              "id": "9b7a851c-6959-4fb5-8702-ac734645a793",
               "name": "Access token missing, invalid, or its session is revoked or expired.",
               "originalRequest": {
                 "url": {
@@ -899,7 +899,7 @@
           }
         },
         {
-          "id": "26dc015f-59db-4026-b25b-2aea5f579e2e",
+          "id": "8116455f-efbf-4c19-bd6e-84fecebd2bf5",
           "name": "Log out of all sessions",
           "request": {
             "name": "Log out of all sessions",
@@ -943,7 +943,7 @@
           },
           "response": [
             {
-              "id": "25dde2aa-0a94-4ca4-a385-bdfae66e7c7e",
+              "id": "5232e85b-6d25-4c48-b7fc-ea26e8b3d398",
               "name": "All sessions revoked.",
               "originalRequest": {
                 "url": {
@@ -989,7 +989,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "c612beee-ff71-40db-92ac-fab5f300e6b6",
+              "id": "89eeb42f-4b3f-44f1-a91e-1afc386c15bb",
               "name": "Access token missing, invalid, or its session is revoked or expired.",
               "originalRequest": {
                 "url": {
@@ -1037,7 +1037,7 @@
           }
         },
         {
-          "id": "2ff07fd7-7cd8-4379-b7d3-20d20d7da85c",
+          "id": "113fbbba-c46b-4a25-b043-7b9ce4be4412",
           "name": "Register a new user",
           "request": {
             "name": "Register a new user",
@@ -1089,7 +1089,7 @@
           },
           "response": [
             {
-              "id": "8e2043ce-435a-400d-b45f-719f37bbd7bc",
+              "id": "d16df83a-4645-44cf-ab67-fdca3abba5c0",
               "name": "Account created.",
               "originalRequest": {
                 "url": {
@@ -1143,7 +1143,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "26e8d6e5-a526-49f7-a009-890a62f17b18",
+              "id": "01c5914b-f03b-4e98-a775-787ac5675fe9",
               "name": "Invalid request data.",
               "originalRequest": {
                 "url": {
@@ -1193,7 +1193,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "0d7be04c-c0b0-4bd7-8998-ae29708c9964",
+              "id": "eaeb5d6d-a340-49c5-844d-c7d89f15ef4b",
               "name": "An account with this email already exists (USER_ALREADY_EXISTS).",
               "originalRequest": {
                 "url": {
@@ -1243,7 +1243,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "e418d92e-7e4e-488b-ba85-d700b26e969f",
+              "id": "e4c9f23c-bba1-48c1-959c-e93ccdebf7ea",
               "name": "The verification email could not be delivered (EMAIL_DELIVERY_FAILED). The account exists; use resend-verification.",
               "originalRequest": {
                 "url": {
@@ -1299,7 +1299,7 @@
           }
         },
         {
-          "id": "630b0197-c972-4d62-9619-489d1120eb2e",
+          "id": "5fb6aed2-7d65-42d5-b42b-9d055492fd05",
           "name": "Verify an email address with the emailed code",
           "request": {
             "name": "Verify an email address with the emailed code",
@@ -1351,7 +1351,7 @@
           },
           "response": [
             {
-              "id": "a65e7ac4-6f9c-426b-b516-3de0cb469f02",
+              "id": "366ab39e-f3cc-47fa-847a-f94ee8814df3",
               "name": "Email verified.",
               "originalRequest": {
                 "url": {
@@ -1405,7 +1405,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "0f369c48-43ad-4b7c-a6a3-119663ea78ba",
+              "id": "7afdeeb1-5429-4884-a815-bfabbd8ab564",
               "name": "Code is invalid (OTP_INVALID) or expired (OTP_EXPIRED).",
               "originalRequest": {
                 "url": {
@@ -1455,7 +1455,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "0292f491-1cc7-4e57-a1f9-173f3d3a7a07",
+              "id": "23888ed4-a857-4fe8-8c6f-c2a66018bdcd",
               "name": "Too many wrong attempts (OTP_ATTEMPTS_EXCEEDED).",
               "originalRequest": {
                 "url": {
@@ -1511,7 +1511,7 @@
           }
         },
         {
-          "id": "711a2ca5-2153-48a2-aeae-83c99e2f8736",
+          "id": "1fa467cb-3497-4dfb-96b2-1176a035b1d9",
           "name": "Resend the email verification code",
           "request": {
             "name": "Resend the email verification code",
@@ -1563,7 +1563,7 @@
           },
           "response": [
             {
-              "id": "cf8bc224-8af6-4cde-99d6-348d0014a65f",
+              "id": "639603a1-05a6-43f2-8044-520c0d581371",
               "name": "Request accepted.",
               "originalRequest": {
                 "url": {
@@ -1617,7 +1617,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "33579ac6-1413-4c89-9ea4-ac3afc88ea2b",
+              "id": "3a1b5d90-7ad8-483b-b66f-333fc038b31f",
               "name": "A code was requested too recently (OTP_RESEND_TOO_SOON).",
               "originalRequest": {
                 "url": {
@@ -1673,7 +1673,7 @@
           }
         },
         {
-          "id": "aef74fa6-3cb7-479d-a7df-e32fc0112a47",
+          "id": "e7aa8772-6d9f-4f4a-a70b-69c49c50c2f8",
           "name": "Request a password reset code",
           "request": {
             "name": "Request a password reset code",
@@ -1725,7 +1725,7 @@
           },
           "response": [
             {
-              "id": "169a24dc-56d9-4541-b70f-90ac87b8a4b6",
+              "id": "8a8bc8a6-f21c-402a-82db-43709b5fbb49",
               "name": "Request accepted.",
               "originalRequest": {
                 "url": {
@@ -1785,7 +1785,7 @@
           }
         },
         {
-          "id": "e18d388e-ef8f-4693-9545-2bdf34ed8dbf",
+          "id": "48c65872-98ea-40cd-a18f-b60e209a583f",
           "name": "Reset a password with the emailed code",
           "request": {
             "name": "Reset a password with the emailed code",
@@ -1837,7 +1837,7 @@
           },
           "response": [
             {
-              "id": "1268e1e0-e8f5-4b8a-a03e-c428e330ee2e",
+              "id": "aca2f9ae-436f-4f9a-aa03-a88a7bcd3096",
               "name": "Password reset.",
               "originalRequest": {
                 "url": {
@@ -1891,7 +1891,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "253cc323-a11b-44df-9c46-fda7a25a1349",
+              "id": "39cb375f-712d-4a43-a9bd-3779805f4f7e",
               "name": "Code is invalid (OTP_INVALID) or expired (OTP_EXPIRED).",
               "originalRequest": {
                 "url": {
@@ -1941,7 +1941,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "d03f080e-cbee-482e-9102-d010ecbda6e0",
+              "id": "d964fd8b-fd70-42af-8908-4cc96252f70e",
               "name": "Too many wrong attempts (OTP_ATTEMPTS_EXCEEDED).",
               "originalRequest": {
                 "url": {
@@ -2000,7 +2000,7 @@
       "event": []
     },
     {
-      "id": "4f729bfb-f50a-4110-86da-f940919fbd05",
+      "id": "5d0d2831-cc59-4dec-9bad-0846297b4b42",
       "name": "Accounts",
       "description": {
         "content": "",
@@ -2008,7 +2008,7 @@
       },
       "item": [
         {
-          "id": "3a307e1b-dce2-4697-96ae-62cf8a2cf07c",
+          "id": "c42ede4f-eedc-4554-80bc-c519b204bc80",
           "name": "Create an account",
           "request": {
             "name": "Create an account",
@@ -2064,7 +2064,7 @@
           },
           "response": [
             {
-              "id": "f5bbda1c-1c89-4c64-9836-02607b863f3b",
+              "id": "6c2fd63d-36e1-4026-97e4-73ed3c56826e",
               "name": "Account created successfully.",
               "originalRequest": {
                 "url": {
@@ -2117,7 +2117,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "90165a39-1671-418a-b919-9f3b9b02a2ad",
+              "id": "76d9426a-4553-422c-b38f-63444035bac4",
               "name": "Invalid account data.",
               "originalRequest": {
                 "url": {
@@ -2166,7 +2166,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "4c23f38d-ba41-408a-80d8-21e9df5ce7e1",
+              "id": "268d28a0-0c97-457f-b93b-8efa5a02372d",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2215,7 +2215,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "ec24b751-f9df-49d3-8115-da771cebfe48",
+              "id": "fa335eef-1a12-4d81-b256-26805fb5d67d",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -2270,7 +2270,7 @@
           }
         },
         {
-          "id": "3d729f55-325e-4bfe-8039-7de02dfb1318",
+          "id": "8fd04126-f0f7-4a20-86e5-8e58b0cf94eb",
           "name": "List accounts",
           "request": {
             "name": "List accounts",
@@ -2326,7 +2326,7 @@
           },
           "response": [
             {
-              "id": "42152187-ded7-47cd-a83e-19cfb10c223f",
+              "id": "05ef86d4-2a2b-4474-9bae-75424a7ca193",
               "name": "Accounts returned successfully.",
               "originalRequest": {
                 "url": {
@@ -2386,7 +2386,7 @@
           }
         },
         {
-          "id": "ef1db5bb-a6aa-42b6-8d5c-2f99a43a3d51",
+          "id": "52ce755d-6682-48aa-9742-1b178d32c6a3",
           "name": "Get an account",
           "request": {
             "name": "Get an account",
@@ -2438,7 +2438,7 @@
           },
           "response": [
             {
-              "id": "0dc8eaee-29b7-4983-8804-5855284b3a75",
+              "id": "501702fc-95b4-4e18-9076-656aad26ac7f",
               "name": "Account returned successfully.",
               "originalRequest": {
                 "url": {
@@ -2492,7 +2492,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "9a5938b7-d0d3-446b-8676-6a67a2f9b6ba",
+              "id": "bb7c614a-f6eb-4a0d-bc50-2a5047e51105",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2542,7 +2542,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "3104a7e3-3f10-4c21-b201-90860f6eb2ce",
+              "id": "75808d4b-c71b-4c47-b4f8-79a73f03bc01",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -2592,7 +2592,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "8d2a40f4-56bd-4b53-9640-43f69d30e659",
+              "id": "435704a6-f9f9-448c-b9a5-2d2c27e32419",
               "name": "Account was not found.",
               "originalRequest": {
                 "url": {
@@ -2648,7 +2648,7 @@
           }
         },
         {
-          "id": "6d4d9880-03bd-4854-aa89-5d9873d2e2ec",
+          "id": "036f073d-a3a6-48cb-9056-d09d609850e4",
           "name": "Archive an account",
           "request": {
             "name": "Archive an account",
@@ -2672,7 +2672,7 @@
                 {
                   "disabled": false,
                   "type": "any",
-                  "value": "80ac6b0e-66c3-50b2-1b03-7ee490f36e21",
+                  "value": "e5aae181-9935-6378-277d-561876f3e36b",
                   "key": "id",
                   "description": "(Required) Account ID"
                 }
@@ -2701,7 +2701,7 @@
           },
           "response": [
             {
-              "id": "faeb76e3-c9a4-4c34-aca0-b6572568f36d",
+              "id": "c25a89cf-e6c8-4338-85ba-f38569f91ebd",
               "name": "Account archived successfully",
               "originalRequest": {
                 "url": {
@@ -2720,7 +2720,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "80ac6b0e-66c3-50b2-1b03-7ee490f36e21",
+                      "value": "e5aae181-9935-6378-277d-561876f3e36b",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2756,7 +2756,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "d11697b9-f775-4455-b358-42f0cb0d20cb",
+              "id": "b90d1c63-82e3-4edf-bdc3-989e7f413669",
               "name": "Authentication is required",
               "originalRequest": {
                 "url": {
@@ -2775,7 +2775,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "80ac6b0e-66c3-50b2-1b03-7ee490f36e21",
+                      "value": "e5aae181-9935-6378-277d-561876f3e36b",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2807,7 +2807,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "be67f855-af2b-4142-a30b-955061e2e9f0",
+              "id": "714242a5-bd8a-4a9e-b52d-803a32610e3e",
               "name": "User does not have the accounts:update permission",
               "originalRequest": {
                 "url": {
@@ -2826,7 +2826,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "80ac6b0e-66c3-50b2-1b03-7ee490f36e21",
+                      "value": "e5aae181-9935-6378-277d-561876f3e36b",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2858,7 +2858,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "09222b7d-7492-49b3-bb4d-d2de6ff7f276",
+              "id": "3f1ffa79-9b3f-4c4b-a94c-d260616a9ebb",
               "name": "Account was not found or does not belong to the authenticated user",
               "originalRequest": {
                 "url": {
@@ -2877,7 +2877,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "80ac6b0e-66c3-50b2-1b03-7ee490f36e21",
+                      "value": "e5aae181-9935-6378-277d-561876f3e36b",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2909,7 +2909,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "cb8fb8fe-ca0d-4346-bb98-087a7da8c504",
+              "id": "6020e461-c2c4-49ab-92f2-577d38a3f5f8",
               "name": "Account is already archived",
               "originalRequest": {
                 "url": {
@@ -2928,7 +2928,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "80ac6b0e-66c3-50b2-1b03-7ee490f36e21",
+                      "value": "e5aae181-9935-6378-277d-561876f3e36b",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2966,7 +2966,7 @@
           }
         },
         {
-          "id": "97c56787-96c6-477a-982e-c1bf3a9c127d",
+          "id": "549f2d36-fc21-4f1f-8d91-96d0160818d8",
           "name": "Get account balance",
           "request": {
             "name": "Get account balance",
@@ -3019,7 +3019,7 @@
           },
           "response": [
             {
-              "id": "f6fbb272-8a44-4760-8247-53c256dfd70d",
+              "id": "189a179d-8604-45be-a77b-ac97c404a3c2",
               "name": "Account balance returned successfully.",
               "originalRequest": {
                 "url": {
@@ -3074,7 +3074,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "7a2256ec-eb2a-4236-ad3f-a4117d9393aa",
+              "id": "d5e23701-e9b6-436f-85cc-5efc240bdca5",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -3125,7 +3125,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "8fc8228f-005b-494d-8174-75c387fbe800",
+              "id": "d097b817-f77a-4189-aad7-aca78ece0887",
               "name": "User does not have the accounts:read permission.",
               "originalRequest": {
                 "url": {
@@ -3176,7 +3176,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "427fda07-313c-4d60-a4af-4e039c9196d6",
+              "id": "9c47572f-e0f6-4440-9acb-5d6cd096a6c2",
               "name": "Account was not found or does not belong to the authenticated user.",
               "originalRequest": {
                 "url": {
@@ -3236,7 +3236,7 @@
       "event": []
     },
     {
-      "id": "22ff3933-5b22-4e2f-83fc-bf79fef54da3",
+      "id": "f015fdd0-ef37-4c0a-b751-62249e0772f5",
       "name": "Income",
       "description": {
         "content": "",
@@ -3244,7 +3244,7 @@
       },
       "item": [
         {
-          "id": "74c7842e-3d9c-4f94-a061-071f6e1f0452",
+          "id": "4ab7521e-2cef-4692-b326-2c0f9a1221d8",
           "name": "Create an income category",
           "request": {
             "name": "Create an income category",
@@ -3301,7 +3301,7 @@
           },
           "response": [
             {
-              "id": "cf08ba20-759a-4800-8635-7fc4a6991ae0",
+              "id": "b873e2ce-be6a-488a-b658-3d313770328a",
               "name": "Income category created successfully.",
               "originalRequest": {
                 "url": {
@@ -3355,7 +3355,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "222c92d6-19b1-45f3-bd5e-5f35c8d4809b",
+              "id": "c2f8f71c-5ce7-48bd-8800-f5bb83bcc196",
               "name": "Invalid income category data.",
               "originalRequest": {
                 "url": {
@@ -3405,7 +3405,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "75069f79-aa37-4432-b064-70a776abf7ab",
+              "id": "deb75dd0-7b18-4b30-a639-a85a1abb84f4",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -3455,7 +3455,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "05b705c3-c0b1-4b5d-8938-9def3c12274f",
+              "id": "aded8edb-ed6d-4d86-92f8-64bae9fb479f",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -3511,7 +3511,7 @@
           }
         },
         {
-          "id": "6912e43d-8e42-477b-b2fc-04d693f30d94",
+          "id": "426bacfb-8ac6-4b49-9505-76dfb7901943",
           "name": "List income categories",
           "request": {
             "name": "List income categories",
@@ -3568,7 +3568,7 @@
           },
           "response": [
             {
-              "id": "6da645c6-308b-430f-a0e1-03a06859cc51",
+              "id": "0b363360-5745-4976-873d-9bb3a6bc07eb",
               "name": "Income categories returned successfully.",
               "originalRequest": {
                 "url": {
@@ -3629,7 +3629,7 @@
           }
         },
         {
-          "id": "a545f4b6-b68d-455f-8dfb-42e3b016dffa",
+          "id": "297c0b1e-f340-4a68-a9fd-a2ec80630f44",
           "name": "Get an income category",
           "request": {
             "name": "Get an income category",
@@ -3682,7 +3682,7 @@
           },
           "response": [
             {
-              "id": "1bd8ba8d-9d15-46cd-9617-86309ac34b98",
+              "id": "24990abe-8fb0-4e67-a937-fe86923af719",
               "name": "Income category returned successfully.",
               "originalRequest": {
                 "url": {
@@ -3737,7 +3737,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "4600c221-35f6-437b-ac9a-031a8c240154",
+              "id": "ccfc63c5-814f-4ce7-a24a-45047c1b7cfc",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -3794,7 +3794,7 @@
           }
         },
         {
-          "id": "636b0c54-99fb-4965-9a44-caf1480c97e2",
+          "id": "3355dc62-519e-4696-a922-b80bd59e0789",
           "name": "Rename an income category",
           "request": {
             "name": "Rename an income category",
@@ -3860,7 +3860,7 @@
           },
           "response": [
             {
-              "id": "e7ec25a6-6d06-4166-bfae-cdf3f0e65780",
+              "id": "ba14403d-cae4-4e6e-81eb-019e572200f9",
               "name": "Income category updated successfully.",
               "originalRequest": {
                 "url": {
@@ -3923,7 +3923,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "e6f009f8-f227-4938-9777-8b86fd622f91",
+              "id": "3ee1dc29-9c38-45b6-bf67-3d9bcdeac8b4",
               "name": "Invalid income category data.",
               "originalRequest": {
                 "url": {
@@ -3982,7 +3982,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "f3626260-b05c-4be2-b76a-a08bb1997de7",
+              "id": "aa2365dc-d173-4712-8187-a5c9b5ae135d",
               "name": "User lacks the income:update permission, or the category is a read-only system category.",
               "originalRequest": {
                 "url": {
@@ -4041,7 +4041,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "f400eb51-8dfa-4bff-adf3-fb8e382d32f1",
+              "id": "f710c5f3-d9ed-4327-a3ee-419470e9b341",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -4106,7 +4106,7 @@
           }
         },
         {
-          "id": "3f2fc67b-0f62-4d9b-8c3b-fbaf60b9dab8",
+          "id": "a30ddb91-c727-4a6f-bcfa-8dd3a26aa94d",
           "name": "Archive an income category",
           "request": {
             "name": "Archive an income category",
@@ -4160,7 +4160,7 @@
           },
           "response": [
             {
-              "id": "5acb5622-7b2c-405c-b9b6-67e3956ed629",
+              "id": "6e4fa13b-a03b-4500-8e0d-5206c97af893",
               "name": "Income category archived successfully.",
               "originalRequest": {
                 "url": {
@@ -4216,7 +4216,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "3f127807-5934-447d-a2a3-9d01eb87a7eb",
+              "id": "05ccecaf-1401-47dd-aad3-8ed67c09549d",
               "name": "User lacks the income:update permission.",
               "originalRequest": {
                 "url": {
@@ -4268,7 +4268,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "75e280cf-0e47-4c24-8ba0-82ca6984f857",
+              "id": "09f51f0d-494d-4a02-9255-2708248742e6",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -4329,7 +4329,7 @@
       "event": []
     },
     {
-      "id": "567f67d4-c1de-4a7d-b297-d31348bdc503",
+      "id": "6def64ed-00fb-459b-bf70-e4950c1d9b11",
       "name": "Expenses",
       "description": {
         "content": "",
@@ -4337,7 +4337,7 @@
       },
       "item": [
         {
-          "id": "b713b639-25bb-4e01-bc9d-f7be3bcb0dcd",
+          "id": "ec00b469-ec79-4d92-be13-02de685ed697",
           "name": "Create an expense category",
           "request": {
             "name": "Create an expense category",
@@ -4394,7 +4394,7 @@
           },
           "response": [
             {
-              "id": "20f4ae02-9275-4357-96ad-74abddcc7de2",
+              "id": "4eb5bc23-10ce-4ab4-87bd-fda73794ac06",
               "name": "Expense category created successfully.",
               "originalRequest": {
                 "url": {
@@ -4448,7 +4448,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "566e0c49-83c3-4093-bef4-3e4887a13719",
+              "id": "16c6487f-92d5-4930-ba31-e4745cc88840",
               "name": "Invalid expense category data.",
               "originalRequest": {
                 "url": {
@@ -4498,7 +4498,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "33e14508-a40f-4b4a-ba3c-c4ecb21a6259",
+              "id": "1209c6e4-8e47-430a-a173-2c650285d8f5",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4548,7 +4548,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "28bc7585-d19e-4131-a216-8b4ff395cee7",
+              "id": "92edc3cd-d875-4789-a29c-c0b167640425",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -4604,7 +4604,7 @@
           }
         },
         {
-          "id": "067b4c06-09af-4a79-9d2c-cf8907af75b2",
+          "id": "80c1694b-08b1-489a-8278-57ca5ea99120",
           "name": "List expense categories",
           "request": {
             "name": "List expense categories",
@@ -4661,7 +4661,7 @@
           },
           "response": [
             {
-              "id": "ac59cd3c-3c2b-41e4-ba12-4d785c5f4627",
+              "id": "6563a43e-408a-47ce-bc70-2ad4aa78cb04",
               "name": "Expense categories returned successfully.",
               "originalRequest": {
                 "url": {
@@ -4722,7 +4722,7 @@
           }
         },
         {
-          "id": "865c1ac6-107b-48c4-9ab7-e1134dacb1aa",
+          "id": "b521ec2d-210e-4051-b141-79611539a97d",
           "name": "Get an expense category",
           "request": {
             "name": "Get an expense category",
@@ -4775,7 +4775,7 @@
           },
           "response": [
             {
-              "id": "14edb001-c2c5-484f-bd21-d338aeb319f6",
+              "id": "61c03728-8e1b-4bcb-8073-504436d7dd4e",
               "name": "Expense category returned successfully.",
               "originalRequest": {
                 "url": {
@@ -4830,7 +4830,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "90190992-772f-421d-8b4e-a1968a3d0303",
+              "id": "db470e9d-ccfa-438e-a922-d8de3c69e3d1",
               "name": "Expense category not found.",
               "originalRequest": {
                 "url": {
@@ -4887,7 +4887,7 @@
           }
         },
         {
-          "id": "5aff5202-1c4e-432f-8a0c-5445367ebe27",
+          "id": "2cd5be79-9b26-41c9-b5a6-64bf0215d83b",
           "name": "Rename an expense category",
           "request": {
             "name": "Rename an expense category",
@@ -4953,7 +4953,7 @@
           },
           "response": [
             {
-              "id": "c27feb2f-f816-4505-bfc5-a6109915843b",
+              "id": "82810557-f66d-4c07-b730-fedf5278fba6",
               "name": "Expense category updated successfully.",
               "originalRequest": {
                 "url": {
@@ -5016,7 +5016,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "92d22cfc-8842-4313-8d9b-d83c980bf422",
+              "id": "4af90a4e-6772-44d9-8857-676aaddc58ad",
               "name": "Invalid expense category data.",
               "originalRequest": {
                 "url": {
@@ -5075,7 +5075,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "bcc77372-784a-4f9c-8288-8468839d606a",
+              "id": "60a889df-3efa-45c7-9808-ee7b36dfa884",
               "name": "User lacks the expense:update permission, or the category is a read-only system category.",
               "originalRequest": {
                 "url": {
@@ -5134,7 +5134,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "c421ce5f-4963-48bd-9e20-c0edfc04da44",
+              "id": "e53e9cd0-0e08-44cb-bc00-607951135d6f",
               "name": "Expense category not found.",
               "originalRequest": {
                 "url": {
@@ -5199,7 +5199,7 @@
           }
         },
         {
-          "id": "17e21e93-b117-49ec-ab59-6061b66ae21b",
+          "id": "4107fdcf-d782-444e-9be0-ae2e24d5cec1",
           "name": "Archive an expense category",
           "request": {
             "name": "Archive an expense category",
@@ -5253,7 +5253,7 @@
           },
           "response": [
             {
-              "id": "ffa70733-7ab8-450b-aa9d-6f62dbc877ad",
+              "id": "91b93b92-734b-4a28-8a06-8d30b4d822a5",
               "name": "Expense category archived successfully.",
               "originalRequest": {
                 "url": {
@@ -5309,7 +5309,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "fdd27d7c-713a-4290-a2e7-bffed52e1a09",
+              "id": "386e9cbc-165d-4e35-bed6-8341876682c3",
               "name": "User lacks the expense:update permission.",
               "originalRequest": {
                 "url": {
@@ -5361,7 +5361,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "f1430088-65bf-4dcd-ac2e-35d9c3454c29",
+              "id": "03f4cd18-b206-45ac-b98d-8ee16255551c",
               "name": "Expense category not found.",
               "originalRequest": {
                 "url": {
@@ -5422,7 +5422,7 @@
       "event": []
     },
     {
-      "id": "6dd3d88e-4a8b-491a-9422-59069412e3cd",
+      "id": "c3d55d4a-53c3-4452-bc2c-0b9734eef87c",
       "name": "Transactions",
       "description": {
         "content": "",
@@ -5430,7 +5430,7 @@
       },
       "item": [
         {
-          "id": "0b7c296b-a7d4-40ce-a49b-2b95ac33ad0a",
+          "id": "dced33a9-3d93-4588-bfaa-c42e4f9d27a8",
           "name": "Create a transaction",
           "request": {
             "name": "Create a transaction",
@@ -5486,7 +5486,7 @@
           },
           "response": [
             {
-              "id": "89070987-f3e8-4639-935a-3ead64e6ccd7",
+              "id": "3949f4bf-2a6d-4dcc-bf87-7109b75a8bd4",
               "name": "Transaction created successfully",
               "originalRequest": {
                 "url": {
@@ -5539,7 +5539,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "c10105ae-0903-42f7-875c-cfdf29fb39b1",
+              "id": "3d48021e-1aa4-46bc-9037-cf480649a04c",
               "name": "Invalid transaction data.",
               "originalRequest": {
                 "url": {
@@ -5588,7 +5588,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "12fca861-bbf9-426a-bd28-bb0155454b7d",
+              "id": "bf9f8e69-2598-420b-8819-34505fb023ae",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -5637,7 +5637,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "33674b33-95b2-47e5-9c3c-ef5ff396ab5b",
+              "id": "89fdb2ae-070f-4c33-b5e1-19640db19a0b",
               "name": "Account not found.",
               "originalRequest": {
                 "url": {
@@ -5692,12 +5692,12 @@
           }
         },
         {
-          "id": "db05111d-d2b2-4e2d-a2fb-ca6e8668b7e1",
+          "id": "17e7ddfa-0913-414c-9a3d-2df7ea4d02fe",
           "name": "List transactions",
           "request": {
             "name": "List transactions",
             "description": {
-              "content": "Retrieves paginated transactions for an account owned by the authenticated user.",
+              "content": "Retrieves paginated transactions owned by the authenticated user. Results can be narrowed by account, date range (from, to), type, and category. Omit accountId to list across all accounts.",
               "type": "text/plain"
             },
             "url": {
@@ -5714,7 +5714,37 @@
                   "disabled": false,
                   "key": "accountId",
                   "value": "b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f",
-                  "description": "(Required) Account whose transactions should be listed."
+                  "description": "Account whose transactions should be listed. Omit to list transactions across all accounts of the user."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "2026-01-01",
+                  "description": "Inclusive start date (YYYY-MM-DD) on transactionDate. Use with to for month-wise or year-wise history."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "2026-01-31",
+                  "description": "Inclusive end date (YYYY-MM-DD) on transactionDate. Must not be earlier than from."
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "EXPENSE",
+                  "description": "Only return transactions of this type."
+                },
+                {
+                  "disabled": false,
+                  "key": "incomeCategoryId",
+                  "value": "8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12",
+                  "description": "Only return INCOME transactions in this income category."
+                },
+                {
+                  "disabled": false,
+                  "key": "expenseCategoryId",
+                  "value": "3f2b9c1e-7d4a-4b8e-9f10-2a6c5d8e1b47",
+                  "description": "Only return EXPENSE transactions in this expense category."
                 },
                 {
                   "disabled": false,
@@ -5752,7 +5782,7 @@
           },
           "response": [
             {
-              "id": "e0040d6a-9160-4051-a269-7f70e97a2a52",
+              "id": "61880a14-e01c-4d90-9d18-2e79c6e6c01a",
               "name": "Transactions retrieved successfully.",
               "originalRequest": {
                 "url": {
@@ -5768,6 +5798,26 @@
                     {
                       "key": "accountId",
                       "value": "b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-01-31"
+                    },
+                    {
+                      "key": "type",
+                      "value": "EXPENSE"
+                    },
+                    {
+                      "key": "incomeCategoryId",
+                      "value": "8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12"
+                    },
+                    {
+                      "key": "expenseCategoryId",
+                      "value": "3f2b9c1e-7d4a-4b8e-9f10-2a6c5d8e1b47"
                     },
                     {
                       "key": "page",
@@ -5810,7 +5860,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "dd77eb26-7335-42c8-827b-50abe522c684",
+              "id": "ea1a317a-01c4-46cc-b94b-3256ae144041",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -5826,6 +5876,26 @@
                     {
                       "key": "accountId",
                       "value": "b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-01-31"
+                    },
+                    {
+                      "key": "type",
+                      "value": "EXPENSE"
+                    },
+                    {
+                      "key": "incomeCategoryId",
+                      "value": "8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12"
+                    },
+                    {
+                      "key": "expenseCategoryId",
+                      "value": "3f2b9c1e-7d4a-4b8e-9f10-2a6c5d8e1b47"
                     },
                     {
                       "key": "page",
@@ -5864,7 +5934,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "cf33b817-1e60-493e-a332-25935f68b757",
+              "id": "c693904b-ebbf-429d-a04f-8ea703c6d8b7",
               "name": "Account not found.",
               "originalRequest": {
                 "url": {
@@ -5880,6 +5950,26 @@
                     {
                       "key": "accountId",
                       "value": "b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-01-31"
+                    },
+                    {
+                      "key": "type",
+                      "value": "EXPENSE"
+                    },
+                    {
+                      "key": "incomeCategoryId",
+                      "value": "8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12"
+                    },
+                    {
+                      "key": "expenseCategoryId",
+                      "value": "3f2b9c1e-7d4a-4b8e-9f10-2a6c5d8e1b47"
                     },
                     {
                       "key": "page",
@@ -5924,7 +6014,7 @@
           }
         },
         {
-          "id": "75544113-8e23-4a6f-81a5-e8eff67e3a1d",
+          "id": "a78ba503-8234-45e6-b6b0-cc153177456a",
           "name": "Get a transaction",
           "request": {
             "name": "Get a transaction",
@@ -5976,7 +6066,7 @@
           },
           "response": [
             {
-              "id": "ae699735-eee8-4c93-839b-66d87cca633d",
+              "id": "e9f79536-eb03-4c2d-aace-4f262a1f325e",
               "name": "Transaction retrieved successfully.",
               "originalRequest": {
                 "url": {
@@ -6030,7 +6120,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "d9054cdb-a42d-4d4c-95ce-c566c1144bfb",
+              "id": "9dff5542-d131-4c13-b8fc-c3550363d892",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -6080,7 +6170,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "13f62a7d-5cb7-4f28-82e3-c2fcea98c08e",
+              "id": "7c9a76bc-1264-44c8-a825-3b3cb3c25955",
               "name": "Transaction not found.",
               "originalRequest": {
                 "url": {
@@ -6136,7 +6226,7 @@
           }
         },
         {
-          "id": "239ac7dd-5b84-441e-9f03-4e19471c48ab",
+          "id": "275e18d2-b34a-446a-9d37-1ea37da3dc7f",
           "name": "Reverse a transaction",
           "request": {
             "name": "Reverse a transaction",
@@ -6202,7 +6292,7 @@
           },
           "response": [
             {
-              "id": "f58f065e-b7c5-46ab-906d-359a442f5bf1",
+              "id": "418470d6-53b0-484b-9ecf-d5c774c7a050",
               "name": "Transaction reversed successfully.",
               "originalRequest": {
                 "url": {
@@ -6265,7 +6355,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "2a6f0b58-1807-40b9-a3ac-6e4d6dde42a1",
+              "id": "9bd45bb0-f54a-4372-8472-2be5268834c8",
               "name": "Invalid reversal request or transaction cannot be reversed.",
               "originalRequest": {
                 "url": {
@@ -6324,7 +6414,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "3a827641-afaf-47ec-9a80-eaeff261ea18",
+              "id": "512d1acd-b94e-4168-9fca-9824b3ec5520",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -6383,7 +6473,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "55187022-fcf5-4bf3-8a1d-a8c947e5b5fd",
+              "id": "2475e190-5179-4ff7-9637-12ca2f2f936b",
               "name": "Transaction not found.",
               "originalRequest": {
                 "url": {
@@ -6470,7 +6560,7 @@
     }
   ],
   "info": {
-    "_postman_id": "fb1023e9-39af-4d94-b4ba-c00128f05491",
+    "_postman_id": "373ffb2c-abfb-4111-b675-fd16909967b2",
     "name": "NAVRO API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

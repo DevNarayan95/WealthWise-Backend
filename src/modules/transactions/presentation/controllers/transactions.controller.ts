@@ -122,7 +122,7 @@ export class TransactionsController {
   @ApiOperation({
     summary: 'List transactions',
     description:
-      'Retrieves paginated transactions for an account owned by the authenticated user.',
+      'Retrieves paginated transactions owned by the authenticated user. Results can be narrowed by account, date range (from, to), type, and category. Omit accountId to list across all accounts.',
   })
   @ApiResponse({
     status: 200,
@@ -148,6 +148,11 @@ export class TransactionsController {
       userId: request.user.userId,
       offset,
       limit: query.limit,
+      from: query.from,
+      to: query.to,
+      type: query.type,
+      incomeCategoryId: query.incomeCategoryId,
+      expenseCategoryId: query.expenseCategoryId,
     });
 
     return buildPaginatedResponse({

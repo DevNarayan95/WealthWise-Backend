@@ -124,13 +124,13 @@ Every transaction is stored and never updated after creation. Corrections use re
 ```text
 Immutable transactions, reversal workflow          ✅
 Listing per account, pagination                    ✅
-Listing across all accounts of a user              ❌
-Filter by date range (from, to)                    ❌
-Filter by type and category                        ❌
-Month-wise and year-wise history                   ❌
+Listing across all accounts of a user              ✅
+Filter by date range (from, to)                    ✅
+Filter by type and category                        ✅
+Month-wise and year-wise history                   ✅ (via from and to, inclusive)
 ```
 
-The current list requires `accountId` and has no date, type, or category filter. **Proposed:** add these filters to the transaction list. Monthly and yearly views are built in Reporting (R11).
+`accountId` is optional. Without it, the list covers every account the caller owns. A supplied `accountId` must belong to the caller, or the request returns 404. Dates are inclusive. `from` must not be after `to`, or the request returns 400 `INVALID_TRANSACTION`. Dedicated monthly and yearly report exports are built in Reporting (R11).
 
 ### R6. Budgets
 

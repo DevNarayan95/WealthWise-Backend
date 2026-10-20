@@ -87,12 +87,7 @@ export class PrismaTransactionRepository extends TransactionRepository {
   async findAllByAccountForUser(
     input: FindTransactionsRepositoryInput,
   ): Promise<FindTransactionsRepositoryOutput> {
-    const where = {
-      accountId: input.accountId,
-      account: {
-        userId: input.userId,
-      },
-    };
+    const where = this.buildListWhere(input);
 
     const [transactions, total] = await Promise.all([
       this.prisma.transaction.findMany({
@@ -119,6 +114,53 @@ export class PrismaTransactionRepository extends TransactionRepository {
       ),
       total,
     };
+  }
+
+  private buildListWhere(input: FindTransactionsRepositoryInput) {
+    const where: {
+      accountId?: string;
+      account: { userId: string };
+      transactionDate?: { gte?: Date; lte?: Date };
+      type?: TransactionType;
+      incomeCategoryId?: string;
+      expenseCategoryId?: string;
+    } = {
+      account: {
+        userId: input.userId,
+      },
+    };
+
+    if (input.accountId !== undefined) {
+      where.accountId = input.accountId;
+    }
+
+    const dateRange: { gte?: Date; lte?: Date } = {};
+
+    if (input.from !== undefined) {
+      dateRange.gte = toDateColumnValue(input.from);
+    }
+
+    if (input.to !== undefined) {
+      dateRange.lte = toDateColumnValue(input.to);
+    }
+
+    if (Object.keys(dateRange).length > 0) {
+      where.transactionDate = dateRange;
+    }
+
+    if (input.type !== undefined) {
+      where.type = input.type;
+    }
+
+    if (input.incomeCategoryId !== undefined) {
+      where.incomeCategoryId = input.incomeCategoryId;
+    }
+
+    if (input.expenseCategoryId !== undefined) {
+      where.expenseCategoryId = input.expenseCategoryId;
+    }
+
+    return where;
   }
 
   private toDomain(transaction: {

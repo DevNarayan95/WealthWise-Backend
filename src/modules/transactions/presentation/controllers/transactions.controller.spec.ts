@@ -311,6 +311,40 @@ describe('TransactionsController', () => {
       });
     });
 
+    it('should pass date, type, and category filters through to the service', async () => {
+      transactionsService.findAll.mockResolvedValue({
+        transactions: [],
+        total: 0,
+      });
+
+      const query = {
+        page: 1,
+        limit: 20,
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.INCOME,
+        incomeCategoryId: 'income-category-id',
+      };
+
+      const request = {
+        user: {
+          userId: 'user-id',
+        },
+      } as AuthenticatedRequest;
+
+      await controller.findAll(query, request);
+
+      expect(transactionsService.findAll).toHaveBeenCalledWith({
+        userId: 'user-id',
+        offset: 0,
+        limit: 20,
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.INCOME,
+        incomeCategoryId: 'income-category-id',
+      });
+    });
+
     it('should calculate zero offset for the first page', async () => {
       transactionsService.findAll.mockResolvedValue({
         transactions: [],

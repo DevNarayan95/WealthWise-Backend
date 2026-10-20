@@ -22,10 +22,15 @@ export interface CreateTransactionRepositoryInput {
 }
 
 export interface FindTransactionsRepositoryInput {
-  accountId: string;
+  accountId?: string;
   userId: string;
   offset: number;
   limit: number;
+  from?: string;
+  to?: string;
+  type?: TransactionType;
+  incomeCategoryId?: string;
+  expenseCategoryId?: string;
 }
 
 export interface FindTransactionsRepositoryOutput {

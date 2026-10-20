@@ -27,6 +27,7 @@ describe('Transactions E2E', () => {
 
   let accessToken: string;
   let secondAccessToken: string;
+  let secondUserId: string;
 
   let superAdminId: string;
 
@@ -226,6 +227,8 @@ describe('Transactions E2E', () => {
     await prisma.userRole.create({
       data: { userId: secondUser.id, roleId: customerRole.id },
     });
+
+    secondUserId = secondUser.id;
 
     secondAccessToken = await createAccessToken(app, {
       userId: secondUser.id,
@@ -993,6 +996,319 @@ describe('Transactions E2E', () => {
         hasNextPage: false,
         hasPreviousPage: true,
       });
+    });
+  });
+
+  describe('GET /api/v1/transactions filters', () => {
+    const windowFrom = '2031-03-01';
+    const windowTo = '2031-03-31';
+
+    let filterAccountAId: string;
+    let secondUserAccountId: string;
+    let systemIncomeCategoryId: string;
+    let systemExpenseCategoryId: string;
+    let filterIncomeTransactionId: string;
+    let filterCategorizedExpenseId: string;
+    let filterUncategorizedExpenseId: string;
+    let secondUserTransactionId: string;
+
+    const createFilterTransaction = (data: {
+      accountId: string;
+      type: 'INCOME' | 'EXPENSE';
+      amount: string;
+      transactionDate: string;
+      description: string;
+      incomeCategoryId?: string;
+      expenseCategoryId?: string;
+    }) => {
+      const rateDate = new Date(`${data.transactionDate}T00:00:00.000Z`);
+
+      return prisma.transaction.create({
+        data: {
+          accountId: data.accountId,
+          type: data.type,
+          amount: data.amount,
+          currency: 'MYR',
+          description: data.description,
+          transactionDate: rateDate,
+          incomeCategoryId: data.incomeCategoryId,
+          expenseCategoryId: data.expenseCategoryId,
+          ...seedFxFields(data.amount, rateDate),
+        },
+      });
+    };
+
+    const listTransactions = (
+      token: string,
+      query: Record<string, string | number>,
+    ) =>
+      request(app.getHttpServer())
+        .get('/api/v1/transactions')
+        .query(query)
+        .set('Authorization', `Bearer ${token}`);
+
+    const itemIds = (body: { data: { items: { id: string }[] } }) =>
+      body.data.items.map((item) => item.id);
+
+    beforeAll(async () => {
+      const systemIncomeCategory = await prisma.incomeCategory.findFirst({
+        where: { userId: null },
+      });
+      const systemExpenseCategory = await prisma.expenseCategory.findFirst({
+        where: { userId: null },
+      });
+
+      if (!systemIncomeCategory || !systemExpenseCategory) {
+        throw new Error(
+          'System categories not found. Run npm run db:seed:test',
+        );
+      }
+
+      systemIncomeCategoryId = systemIncomeCategory.id;
+      systemExpenseCategoryId = systemExpenseCategory.id;
+
+      const accountA = await prisma.account.create({
+        data: {
+          userId: superAdminId,
+          name: 'Transaction Filter Account A',
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
+        },
+      });
+      const accountB = await prisma.account.create({
+        data: {
+          userId: superAdminId,
+          name: 'Transaction Filter Account B',
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
+        },
+      });
+      const secondAccount = await prisma.account.create({
+        data: {
+          userId: secondUserId,
+          name: 'Transaction Filter Second User Account',
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
+        },
+      });
+
+      filterAccountAId = accountA.id;
+      secondUserAccountId = secondAccount.id;
+
+      const incomeTransaction = await createFilterTransaction({
+        accountId: accountA.id,
+        type: 'INCOME',
+        amount: '1000.0000',
+        transactionDate: '2031-03-05',
+        description: 'Filter income',
+        incomeCategoryId: systemIncomeCategoryId,
+      });
+      const categorizedExpense = await createFilterTransaction({
+        accountId: accountA.id,
+        type: 'EXPENSE',
+        amount: '200.0000',
+        transactionDate: '2031-03-10',
+        description: 'Filter categorized expense',
+        expenseCategoryId: systemExpenseCategoryId,
+      });
+      const uncategorizedExpense = await createFilterTransaction({
+        accountId: accountB.id,
+        type: 'EXPENSE',
+        amount: '50.0000',
+        transactionDate: '2031-03-20',
+        description: 'Filter uncategorized expense',
+      });
+      const secondUserTransaction = await createFilterTransaction({
+        accountId: secondAccount.id,
+        type: 'EXPENSE',
+        amount: '999.0000',
+        transactionDate: '2031-03-10',
+        description: 'Filter second user expense',
+      });
+
+      filterIncomeTransactionId = incomeTransaction.id;
+      filterCategorizedExpenseId = categorizedExpense.id;
+      filterUncategorizedExpenseId = uncategorizedExpense.id;
+      secondUserTransactionId = secondUserTransaction.id;
+    });
+
+    it('should list transactions across all accounts when accountId is omitted', async () => {
+      const response = await listTransactions(accessToken, {
+        from: windowFrom,
+        to: windowTo,
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(itemIds(response.body)).toHaveLength(3);
+      expect(itemIds(response.body)).toEqual(
+        expect.arrayContaining([
+          filterIncomeTransactionId,
+          filterCategorizedExpenseId,
+          filterUncategorizedExpenseId,
+        ]),
+      );
+      expect(response.body.meta.total).toBe(3);
+    });
+
+    it('should include transactions on both ends of the date range', async () => {
+      const response = await listTransactions(accessToken, {
+        from: '2031-03-10',
+        to: '2031-03-20',
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(response.body)).toHaveLength(2);
+      expect(itemIds(response.body)).toEqual(
+        expect.arrayContaining([
+          filterCategorizedExpenseId,
+          filterUncategorizedExpenseId,
+        ]),
+      );
+    });
+
+    it('should return only transactions on a single day when from equals to', async () => {
+      const response = await listTransactions(accessToken, {
+        from: '2031-03-10',
+        to: '2031-03-10',
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(response.body)).toEqual([filterCategorizedExpenseId]);
+    });
+
+    it('should filter transactions by type', async () => {
+      const expenseResponse = await listTransactions(accessToken, {
+        from: windowFrom,
+        to: windowTo,
+        type: 'EXPENSE',
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(expenseResponse.body)).toHaveLength(2);
+      expect(itemIds(expenseResponse.body)).toEqual(
+        expect.arrayContaining([
+          filterCategorizedExpenseId,
+          filterUncategorizedExpenseId,
+        ]),
+      );
+
+      const incomeResponse = await listTransactions(accessToken, {
+        from: windowFrom,
+        to: windowTo,
+        type: 'INCOME',
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(incomeResponse.body)).toEqual([filterIncomeTransactionId]);
+    });
+
+    it('should filter transactions by expense category', async () => {
+      const response = await listTransactions(accessToken, {
+        from: windowFrom,
+        to: windowTo,
+        expenseCategoryId: systemExpenseCategoryId,
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(response.body)).toEqual([filterCategorizedExpenseId]);
+    });
+
+    it('should filter transactions by income category', async () => {
+      const response = await listTransactions(accessToken, {
+        from: windowFrom,
+        to: windowTo,
+        incomeCategoryId: systemIncomeCategoryId,
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(response.body)).toEqual([filterIncomeTransactionId]);
+    });
+
+    it('should combine accountId with the other filters', async () => {
+      const response = await listTransactions(accessToken, {
+        accountId: filterAccountAId,
+        from: windowFrom,
+        to: windowTo,
+        type: 'EXPENSE',
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(response.body)).toEqual([filterCategorizedExpenseId]);
+      expect(response.body.meta.total).toBe(1);
+    });
+
+    it('should return 400 when from is after to', async () => {
+      const response = await listTransactions(accessToken, {
+        from: '2031-03-20',
+        to: '2031-03-01',
+        page: 1,
+        limit: 20,
+      }).expect(400);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toEqual(
+        expect.objectContaining({ code: 'INVALID_TRANSACTION' }),
+      );
+    });
+
+    it('should reject a malformed from date', async () => {
+      await listTransactions(accessToken, {
+        from: '03/10/2031',
+        page: 1,
+        limit: 20,
+      }).expect(400);
+    });
+
+    it('should reject an unknown transaction type', async () => {
+      await listTransactions(accessToken, {
+        type: 'TRANSFER',
+        page: 1,
+        limit: 20,
+      }).expect(400);
+    });
+
+    it('should reject a category id that is not a UUID', async () => {
+      await listTransactions(accessToken, {
+        expenseCategoryId: 'not-a-uuid',
+        page: 1,
+        limit: 20,
+      }).expect(400);
+    });
+
+    it('should return only the authenticated user transactions', async () => {
+      const response = await listTransactions(secondAccessToken, {
+        from: windowFrom,
+        to: windowTo,
+        page: 1,
+        limit: 20,
+      }).expect(200);
+
+      expect(itemIds(response.body)).toEqual([secondUserTransactionId]);
+      expect(response.body.meta.total).toBe(1);
+    });
+
+    it('should return 404 when filtering by another user account', async () => {
+      const response = await listTransactions(accessToken, {
+        accountId: secondUserAccountId,
+        from: windowFrom,
+        to: windowTo,
+        page: 1,
+        limit: 20,
+      }).expect(404);
+
+      expect(response.body.success).toBe(false);
     });
   });
 
