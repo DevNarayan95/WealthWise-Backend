@@ -13,6 +13,12 @@ export class TransactionResponseMapper {
       transactionDate: transaction.transactionDate,
       reversalOfTransactionId: transaction.reversalOfTransactionId,
       incomeCategoryId: transaction.incomeCategoryId,
+      expenseCategoryId: transaction.expenseCategoryId,
+      baseCurrency: transaction.baseCurrency,
+      baseAmount: transaction.baseAmount,
+      exchangeRate: transaction.exchangeRate,
+      rateDate: transaction.rateDate,
+      rateSource: transaction.rateSource,
       createdAt: transaction.createdAt,
       updatedAt: transaction.updatedAt,
     };

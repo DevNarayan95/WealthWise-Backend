@@ -346,14 +346,15 @@ Phase 2 starts only after Phase 1 is complete.
 
 ### 8.2 Data Integrity
 
-| ID          | Requirement                                                                                                                                                                                                                                            |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| NFR-DATA-01 | Financial history is never physically deleted without a written architectural decision.                                                                                                                                                                |
-| NFR-DATA-02 | Money is stored and calculated as exact decimals.                                                                                                                                                                                                      |
-| NFR-DATA-03 | Financial events use the user's local calendar date, based on the user's time zone.                                                                                                                                                                    |
-| NFR-DATA-04 | Each amount has a currency. The default is INR.                                                                                                                                                                                                        |
-| NFR-DATA-05 | Each transaction stores the exchange rate for its date. Rates come from Frankfurter (ECB reference rates, no API key). Net worth, balances, and the dashboard convert at the rate for the as-of date. Reports convert each row at its own date's rate. |
-| NFR-DATA-06 | Conversion uses daily reference rates only. Live market prices and intraday rates are out of scope.                                                                                                                                                    |
+| ID          | Requirement                                                                                                                                                                                                                                                                              |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NFR-DATA-01 | Financial history is never physically deleted without a written architectural decision.                                                                                                                                                                                                  |
+| NFR-DATA-02 | Money is stored and calculated as exact decimals.                                                                                                                                                                                                                                        |
+| NFR-DATA-03 | Financial events use the user's local calendar date, based on the user's time zone.                                                                                                                                                                                                      |
+| NFR-DATA-04 | Each amount has a currency. The default is INR.                                                                                                                                                                                                                                          |
+| NFR-DATA-05 | Each transaction stores the exchange rate for its date. Rates come from Frankfurter (ECB reference rates, no API key). Net worth, balances, and the dashboard convert at the rate for the as-of date. Reports convert each row at its own date's rate.                                   |
+| NFR-DATA-06 | Conversion uses daily reference rates only. Live market prices and intraday rates are out of scope.                                                                                                                                                                                      |
+| NFR-DATA-07 | A transaction is never rejected because the rate provider is unavailable. Its rate comes from the most recent stored rate for that currency, or from a manual rate in config. The rate source (PROVIDER, FALLBACK, MANUAL, or IDENTITY) is stored, so approximate values can be flagged. |
 
 ### 8.3 Performance and Scale
 
@@ -436,6 +437,11 @@ These rules apply to every Phase 1 API. They are summarized here for business re
 | 14  | Exchange rates              | Source: Frankfurter (ECB reference rates, no API key). Income in RM converts to INR at that day's rate. Each transaction stores the rate for its date. Coverage of INR, MYR, and AUD is verified before release. | Approved |
 | 15  | Savings target              | Proposed: the target amount is optional. Progress is shown only when a target is set.                                                                                                                            | Pending  |
 | 16  | Product name and prefixes   | Product name NAVRO. Error code prefix `NV`. Database table prefix `nv_`.                                                                                                                                         | Approved |
+| 17  | Exchange-rate fallback      | Provider rate for the date, then the most recent stored rate for that currency, then a manual rate in config. Transactions are never rejected. The rate source is stored. (NFR-DATA-07)                          | Approved |
+| 18  | Loan EMI category           | Loan EMI is a system category. Users do not create it.                                                                                                                                                           | Approved |
+| 19  | Transaction currency        | A transaction uses its account's currency. Conversion is used only for base-currency reporting, net worth, and the dashboard.                                                                                    | Approved |
+| 20  | System category rows        | Default categories are shared rows (`user_id` NULL) with a partial unique index on the normalized name. Users can archive system categories for themselves through a per-user archive table. | Approved |
+| 21  | Transaction date            | `transactionDate` and `rateDate` are calendar dates (`YYYY-MM-DD`), not timestamps. This is a breaking API change, made in development before release. Base amounts store 4 decimal places. | Approved |
 
 ---
 

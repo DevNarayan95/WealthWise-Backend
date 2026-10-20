@@ -1,12 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
 export class ReverseTransactionDto {
   @ApiProperty({
-    example: '2026-09-21T00:00:00.000Z',
-    description: 'Date and time when the reversal financial event occurred.',
+    example: '2026-09-21',
+    format: 'date',
+    description:
+      'Calendar date (YYYY-MM-DD) in the user local date when the reversal occurred.',
   })
-  @IsDateString()
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'transactionDate must use the YYYY-MM-DD format',
+  })
   transactionDate!: string;
 
   @ApiPropertyOptional({

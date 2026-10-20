@@ -21,10 +21,13 @@ model User {
   updatedAt       DateTime   @updatedAt @map("updated_at")
   deletedAt       DateTime?  @map("deleted_at")
 
-  roles            UserRole[]
-  accounts         Account[]
-  incomeCategories IncomeCategory[]
-  emailOtps        EmailOtp[]
+  roles                   UserRole[]
+  accounts                Account[]
+  incomeCategories        IncomeCategory[]
+  incomeCategoryArchives UserIncomeCategoryArchive[]
+  expenseCategories ExpenseCategory[]
+  expenseCategoryArchives UserExpenseCategoryArchive[]
+  emailOtps               EmailOtp[]
 
   @@index([status])
   @@index([createdAt])

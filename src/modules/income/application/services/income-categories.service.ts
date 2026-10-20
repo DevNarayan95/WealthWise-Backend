@@ -104,10 +104,9 @@ export class IncomeCategoriesService {
   }
 
   async archive(categoryId: string, userId: string): Promise<IncomeCategory> {
-    const existing = await this.findById(categoryId, userId);
-    this.assertCustomCategory(existing);
+    await this.findById(categoryId, userId);
 
-    const archived = await this.incomeCategoryRepository.archiveCustomCategory({
+    const archived = await this.incomeCategoryRepository.archiveForUser({
       categoryId,
       userId,
     });

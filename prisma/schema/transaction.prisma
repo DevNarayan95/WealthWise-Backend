@@ -3,6 +3,14 @@ enum TransactionType {
   EXPENSE
 }
 
+// How the exchange rate was obtained. Stored per transaction so reports can flag approximate values.
+enum RateSource {
+  PROVIDER
+  FALLBACK
+  MANUAL
+  IDENTITY
+}
+
 model Transaction {
   id                      String          @id @default(uuid()) @db.Uuid
   accountId               String          @map("account_id") @db.Uuid
@@ -10,17 +18,24 @@ model Transaction {
   amount                  Decimal         @db.Decimal(19, 4)
   currency                String          @db.Char(3)
   description             String?         @db.VarChar(255)
-  transactionDate         DateTime        @map("transaction_date")
+  transactionDate         DateTime        @map("transaction_date") @db.Date
   reversalOfTransactionId String?         @map("reversal_of_transaction_id") @db.Uuid
   incomeCategoryId        String?         @map("income_category_id") @db.Uuid
+  expenseCategoryId       String?         @map("expense_category_id") @db.Uuid
+  baseCurrency            String          @map("base_currency") @db.Char(3)
+  baseAmount              Decimal         @map("base_amount") @db.Decimal(27, 4)
+  exchangeRate            Decimal         @map("exchange_rate") @db.Decimal(19, 8)
+  rateDate                DateTime        @map("rate_date") @db.Date
+  rateSource              RateSource      @map("rate_source")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  account        Account         @relation(fields: [accountId], references: [id])
-  reversalOf     Transaction?    @relation("TransactionReversal", fields: [reversalOfTransactionId], references: [id], onDelete: Restrict)
-  reversal       Transaction?    @relation("TransactionReversal")
-  incomeCategory IncomeCategory? @relation(fields: [incomeCategoryId], references: [id], onDelete: Restrict)
+  account         Account          @relation(fields: [accountId], references: [id])
+  reversalOf      Transaction?     @relation("TransactionReversal", fields: [reversalOfTransactionId], references: [id], onDelete: Restrict)
+  reversal        Transaction?     @relation("TransactionReversal")
+  incomeCategory  IncomeCategory?  @relation(fields: [incomeCategoryId], references: [id], onDelete: Restrict)
+  expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id], onDelete: Restrict)
 
   @@unique([reversalOfTransactionId])
   @@index([accountId])

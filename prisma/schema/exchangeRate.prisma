@@ -1,0 +1,12 @@
+// Daily reference rates fetched from the provider. Stored so a later provider outage can fall back to the most recent rate.
+model ExchangeRate {
+  id           String   @id @default(uuid()) @db.Uuid
+  fromCurrency String   @map("from_currency") @db.VarChar(3)
+  toCurrency   String   @map("to_currency") @db.VarChar(3)
+  rateDate     DateTime @map("rate_date") @db.Date
+  rate         Decimal  @db.Decimal(19, 8)
+  fetchedAt    DateTime @default(now()) @map("fetched_at")
+
+  @@unique([fromCurrency, toCurrency, rateDate])
+  @@map("nv_exchange_rates")
+}

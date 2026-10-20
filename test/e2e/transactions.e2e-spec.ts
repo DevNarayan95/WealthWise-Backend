@@ -10,6 +10,17 @@ import request from './support/api-request';
 import { AppModule } from '../../src/app.module';
 import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
 
+// Seeds bypass the service, so FX fields use a labelled MANUAL rate instead of a provider lookup.
+const SEED_EXCHANGE_RATE = 20;
+
+const seedFxFields = (amount: string, rateDate: Date) => ({
+  baseCurrency: 'INR',
+  baseAmount: (Number(amount) * SEED_EXCHANGE_RATE).toFixed(4),
+  exchangeRate: SEED_EXCHANGE_RATE.toFixed(8),
+  rateDate,
+  rateSource: 'MANUAL' as const,
+});
+
 describe('Transactions E2E', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -59,6 +70,32 @@ describe('Transactions E2E', () => {
     jwtService = app.get(JwtService);
     prisma = app.get(PrismaService);
 
+    // Stored rates for the dates used below keep MYR conversions off the FX provider, so tests do not depend on network access.
+    const storedRateDates = [
+      '2026-09-01',
+      '2026-09-02',
+      '2026-09-03',
+      '2026-09-04',
+    ];
+    for (const rateDate of storedRateDates.map((date) => new Date(date))) {
+      await prisma.exchangeRate.upsert({
+        where: {
+          fromCurrency_toCurrency_rateDate: {
+            fromCurrency: 'MYR',
+            toCurrency: 'INR',
+            rateDate,
+          },
+        },
+        update: { rate: SEED_EXCHANGE_RATE.toFixed(8) },
+        create: {
+          fromCurrency: 'MYR',
+          toCurrency: 'INR',
+          rateDate,
+          rate: SEED_EXCHANGE_RATE.toFixed(8),
+        },
+      });
+    }
+
     const superAdmin = await prisma.user.findUnique({
       where: {
         email: process.env.SEED_ADMIN_EMAIL!,
@@ -100,6 +137,7 @@ describe('Transactions E2E', () => {
         currency: 'MYR',
         description: 'Retrieve transaction test',
         transactionDate: new Date('2026-09-05T00:00:00.000Z'),
+        ...seedFxFields('75.5000', new Date('2026-09-05T00:00:00.000Z')),
       },
     });
 
@@ -131,6 +169,7 @@ describe('Transactions E2E', () => {
         currency: 'MYR',
         description: 'List transaction income',
         transactionDate: new Date('2026-09-10T00:00:00.000Z'),
+        ...seedFxFields('1500.0000', new Date('2026-09-10T00:00:00.000Z')),
       },
     });
 
@@ -144,6 +183,7 @@ describe('Transactions E2E', () => {
         currency: 'MYR',
         description: 'List transaction expense',
         transactionDate: new Date('2026-09-08T00:00:00.000Z'),
+        ...seedFxFields('25.2500', new Date('2026-09-08T00:00:00.000Z')),
       },
     });
 
@@ -157,6 +197,7 @@ describe('Transactions E2E', () => {
         currency: 'MYR',
         description: 'List transaction oldest',
         transactionDate: new Date('2026-09-05T00:00:00.000Z'),
+        ...seedFxFields('75.5000', new Date('2026-09-05T00:00:00.000Z')),
       },
     });
 
@@ -200,7 +241,7 @@ describe('Transactions E2E', () => {
 
   describe('POST /api/v1/transactions', () => {
     it('should create an expense transaction for an authenticated user', async () => {
-      const transactionDate = '2026-09-01T00:00:00.000Z';
+      const transactionDate = '2026-09-01';
 
       const response = await request(app.getHttpServer())
         .post('/api/v1/transactions')
@@ -244,9 +285,9 @@ describe('Transactions E2E', () => {
       expect(persistedTransaction?.amount.toString()).toBe('50');
       expect(persistedTransaction?.currency.trim()).toBe('MYR');
       expect(persistedTransaction?.description).toBe('Lunch');
-      expect(persistedTransaction?.transactionDate.toISOString()).toBe(
-        transactionDate,
-      );
+      expect(
+        persistedTransaction?.transactionDate.toISOString().slice(0, 10),
+      ).toBe(transactionDate);
     });
 
     it('should reject creating a transaction without authentication', async () => {
@@ -258,7 +299,7 @@ describe('Transactions E2E', () => {
           amount: '50.0000',
           currency: 'MYR',
           description: 'Unauthorized transaction',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(401);
     });
@@ -275,7 +316,7 @@ describe('Transactions E2E', () => {
           amount: '25.0000',
           currency: 'MYR',
           description,
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(404);
 
@@ -302,7 +343,7 @@ describe('Transactions E2E', () => {
           amount: 'invalid',
           currency: 'MYR',
           description: 'Invalid amount',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -317,7 +358,7 @@ describe('Transactions E2E', () => {
           amount: '0',
           currency: 'MYR',
           description: 'Zero amount',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -332,7 +373,7 @@ describe('Transactions E2E', () => {
           amount: '-10.00',
           currency: 'MYR',
           description: 'Negative amount',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -347,7 +388,7 @@ describe('Transactions E2E', () => {
           amount: '10.12345',
           currency: 'MYR',
           description: 'Too many decimals',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -362,7 +403,7 @@ describe('Transactions E2E', () => {
           amount: '1234567890123456.00',
           currency: 'MYR',
           description: 'Too many integer digits',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -377,7 +418,7 @@ describe('Transactions E2E', () => {
           amount: '50.00',
           currency: 'MYR',
           description: 'Invalid transaction type',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -392,7 +433,7 @@ describe('Transactions E2E', () => {
           amount: '50.00',
           currency: 'MY',
           description: 'Invalid currency',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -407,7 +448,7 @@ describe('Transactions E2E', () => {
           amount: '50.00',
           currency: 'M1R',
           description: 'Invalid currency',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -422,7 +463,7 @@ describe('Transactions E2E', () => {
           amount: '50.00',
           currency: 'USD',
           description: 'Currency mismatch',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
 
@@ -459,7 +500,7 @@ describe('Transactions E2E', () => {
           amount: '50.00',
           currency: 'MYR',
           description,
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
 
@@ -498,7 +539,7 @@ describe('Transactions E2E', () => {
           amount: '50.00',
           currency: 'MYR',
           description: 'a'.repeat(256),
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
         })
         .expect(400);
     });
@@ -513,7 +554,7 @@ describe('Transactions E2E', () => {
           amount: '50.00',
           currency: 'MYR',
           description: 'Unexpected field',
-          transactionDate: '2026-09-01T00:00:00.000Z',
+          transactionDate: '2026-09-01',
           userId: superAdminId,
         })
         .expect(400);
@@ -529,7 +570,7 @@ describe('Transactions E2E', () => {
           amount: '123456789012345.1234',
           currency: 'MYR',
           description: 'Maximum supported amount format',
-          transactionDate: '2026-09-02T00:00:00.000Z',
+          transactionDate: '2026-09-02',
         })
         .expect(201);
 
@@ -559,7 +600,7 @@ describe('Transactions E2E', () => {
           amount: '15.50',
           currency: 'myr',
           description: 'Lowercase currency',
-          transactionDate: '2026-09-03T00:00:00.000Z',
+          transactionDate: '2026-09-03',
         })
         .expect(201);
 
@@ -586,7 +627,7 @@ describe('Transactions E2E', () => {
           amount: '20.00',
           currency: 'MYR',
           description: null,
-          transactionDate: '2026-09-04T00:00:00.000Z',
+          transactionDate: '2026-09-04',
         })
         .expect(201);
 
@@ -612,7 +653,7 @@ describe('Transactions E2E', () => {
           amount: '75.5000',
           currency: 'MYR',
           description: 'Retrieve transaction test',
-          transactionDate: '2026-09-05T00:00:00.000Z',
+          transactionDate: '2026-09-05',
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
         }),
@@ -667,7 +708,9 @@ describe('Transactions E2E', () => {
           amount: persistedTransaction?.amount.toFixed(4),
           currency: persistedTransaction?.currency.trim(),
           description: persistedTransaction?.description,
-          transactionDate: persistedTransaction?.transactionDate.toISOString(),
+          transactionDate: persistedTransaction?.transactionDate
+            .toISOString()
+            .slice(0, 10),
           createdAt: persistedTransaction?.createdAt.toISOString(),
           updatedAt: persistedTransaction?.updatedAt.toISOString(),
         }),
@@ -698,7 +741,7 @@ describe('Transactions E2E', () => {
             amount: '1500.0000',
             currency: 'MYR',
             description: 'List transaction income',
-            transactionDate: '2026-09-10T00:00:00.000Z',
+            transactionDate: '2026-09-10',
           }),
           expect.objectContaining({
             id: listMiddleTransactionId,
@@ -707,7 +750,7 @@ describe('Transactions E2E', () => {
             amount: '25.2500',
             currency: 'MYR',
             description: 'List transaction expense',
-            transactionDate: '2026-09-08T00:00:00.000Z',
+            transactionDate: '2026-09-08',
           }),
           expect.objectContaining({
             id: listOldestTransactionId,
@@ -716,7 +759,7 @@ describe('Transactions E2E', () => {
             amount: '75.5000',
             currency: 'MYR',
             description: 'List transaction oldest',
-            transactionDate: '2026-09-05T00:00:00.000Z',
+            transactionDate: '2026-09-05',
           }),
         ]),
       );
@@ -957,7 +1000,7 @@ describe('Transactions E2E', () => {
 
   describe('POST /api/v1/transactions/:id/reversal', () => {
     it('should create a reversal transaction for the authenticated owner', async () => {
-      const transactionDate = '2026-09-11T00:00:00.000Z';
+      const transactionDate = '2026-09-11';
 
       const response = await request(app.getHttpServer())
         .post(`/api/v1/transactions/${transactionId}/reversal`)
@@ -1008,7 +1051,7 @@ describe('Transactions E2E', () => {
       await request(app.getHttpServer())
         .post(`/api/v1/transactions/${transactionId}/reversal`)
         .send({
-          transactionDate: '2026-09-12T00:00:00.000Z',
+          transactionDate: '2026-09-12',
           description: 'Unauthorized reversal',
         })
         .expect(401);
@@ -1023,10 +1066,11 @@ describe('Transactions E2E', () => {
           currency: 'MYR',
           description: 'Expense reversal source',
           transactionDate: new Date('2026-09-13T00:00:00.000Z'),
+          ...seedFxFields('125.2500', new Date('2026-09-13T00:00:00.000Z')),
         },
       });
 
-      const transactionDate = '2026-09-14T00:00:00.000Z';
+      const transactionDate = '2026-09-14';
 
       const response = await request(app.getHttpServer())
         .post(`/api/v1/transactions/${sourceTransaction.id}/reversal`)
@@ -1054,7 +1098,7 @@ describe('Transactions E2E', () => {
         .post(`/api/v1/transactions/${transactionId}/reversal`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          transactionDate: '2026-09-15T00:00:00.000Z',
+          transactionDate: '2026-09-15',
           description: 'Duplicate reversal',
         })
         .expect(400);
@@ -1067,7 +1111,7 @@ describe('Transactions E2E', () => {
         .post(`/api/v1/transactions/${reversalTransactionId}/reversal`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          transactionDate: '2026-09-16T00:00:00.000Z',
+          transactionDate: '2026-09-16',
           description: 'Reversal of reversal',
         })
         .expect(400);
@@ -1082,7 +1126,7 @@ describe('Transactions E2E', () => {
         .post(`/api/v1/transactions/${nonExistentTransactionId}/reversal`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          transactionDate: '2026-09-17T00:00:00.000Z',
+          transactionDate: '2026-09-17',
           description: 'Missing transaction reversal',
         })
         .expect(404);
@@ -1099,6 +1143,7 @@ describe('Transactions E2E', () => {
           currency: 'MYR',
           description: 'Cross-user reversal source',
           transactionDate: new Date('2026-09-23T00:00:00.000Z'),
+          ...seedFxFields('90.0000', new Date('2026-09-23T00:00:00.000Z')),
         },
       });
 
@@ -1106,7 +1151,7 @@ describe('Transactions E2E', () => {
         .post(`/api/v1/transactions/${sourceTransaction.id}/reversal`)
         .set('Authorization', `Bearer ${secondAccessToken}`)
         .send({
-          transactionDate: '2026-09-24T00:00:00.000Z',
+          transactionDate: '2026-09-24',
           description: 'Unauthorized reversal',
         })
         .expect(404);
@@ -1138,7 +1183,7 @@ describe('Transactions E2E', () => {
         .post(`/api/v1/transactions/${transactionId}/reversal`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          transactionDate: '2026-09-19T00:00:00.000Z',
+          transactionDate: '2026-09-19',
           description: 'a'.repeat(256),
         })
         .expect(400);
@@ -1149,7 +1194,7 @@ describe('Transactions E2E', () => {
         .post(`/api/v1/transactions/${transactionId}/reversal`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          transactionDate: '2026-09-20T00:00:00.000Z',
+          transactionDate: '2026-09-20',
           description: 'Unexpected reversal field',
           accountId,
           type: 'INCOME',
@@ -1168,6 +1213,7 @@ describe('Transactions E2E', () => {
           currency: 'MYR',
           description: 'Income reversal source',
           transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+          ...seedFxFields('300.0000', new Date('2026-09-21T00:00:00.000Z')),
         },
       });
 
@@ -1175,7 +1221,7 @@ describe('Transactions E2E', () => {
         .post(`/api/v1/transactions/${sourceTransaction.id}/reversal`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
-          transactionDate: '2026-09-22T00:00:00.000Z',
+          transactionDate: '2026-09-22',
           description: null,
         })
         .expect(201);

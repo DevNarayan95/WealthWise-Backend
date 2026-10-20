@@ -76,8 +76,9 @@ export class TransactionsController {
       amount: dto.amount,
       currency: dto.currency,
       description: dto.description ?? null,
-      transactionDate: new Date(dto.transactionDate),
+      transactionDate: dto.transactionDate,
       incomeCategoryId: dto.incomeCategoryId ?? null,
+      expenseCategoryId: dto.expenseCategoryId ?? null,
     });
 
     return successResponse(TransactionResponseMapper.toDto(transaction));
@@ -192,7 +193,7 @@ export class TransactionsController {
     const transaction = await this.transactionsService.reverse({
       transactionId: id,
       userId: request.user.userId,
-      transactionDate: new Date(dto.transactionDate),
+      transactionDate: dto.transactionDate,
       description: dto.description ?? null,
     });
 

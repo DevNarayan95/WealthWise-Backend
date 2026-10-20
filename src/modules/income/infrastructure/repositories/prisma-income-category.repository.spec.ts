@@ -10,6 +10,9 @@ describe('PrismaIncomeCategoryRepository', () => {
       count: jest.fn(),
       updateMany: jest.fn(),
     },
+    userIncomeCategoryArchive: {
+      upsert: jest.fn(),
+    },
   };
 
   const createdAt = new Date('2026-09-20T10:00:00.000Z');
@@ -20,7 +23,6 @@ describe('PrismaIncomeCategoryRepository', () => {
       id: string;
       userId: string | null;
       name: string;
-      isArchived: boolean;
       createdAt: Date;
       updatedAt: Date;
     }> = {},
@@ -28,7 +30,6 @@ describe('PrismaIncomeCategoryRepository', () => {
     id: 'category-1',
     userId: 'user-1',
     name: 'Salary',
-    isArchived: false,
     createdAt,
     updatedAt,
     ...overrides,
@@ -114,12 +115,10 @@ describe('PrismaIncomeCategoryRepository', () => {
       expect(prisma.incomeCategory.findFirst).toHaveBeenCalledWith({
         where: {
           id: 'category-1',
-          isArchived: false,
+          archives: { none: { userId: 'user-1' } },
           OR: [{ userId: null }, { userId: 'user-1' }],
         },
       });
-
-      expect(result).not.toBeNull();
       expect(result?.userId).toBeNull();
       expect(result?.isSystem).toBe(true);
       expect(result?.name).toBe('Investment Income');
@@ -153,7 +152,7 @@ describe('PrismaIncomeCategoryRepository', () => {
       expect(prisma.incomeCategory.findFirst).toHaveBeenCalledWith({
         where: {
           id: 'category-1',
-          isArchived: false,
+          archives: { none: { userId: 'user-2' } },
           OR: [{ userId: null }, { userId: 'user-2' }],
         },
       });
@@ -183,7 +182,7 @@ describe('PrismaIncomeCategoryRepository', () => {
       });
 
       const expectedWhere = {
-        isArchived: false,
+        archives: { none: { userId: 'user-1' } },
         OR: [{ userId: null }, { userId: 'user-1' }],
       };
 
@@ -218,7 +217,7 @@ describe('PrismaIncomeCategoryRepository', () => {
       expect(result.total).toBe(0);
     });
 
-    it('should exclude archived categories and categories owned by other users', async () => {
+    it('should exclude categories archived by the user and categories owned by other users', async () => {
       prisma.incomeCategory.findMany.mockResolvedValue([]);
       prisma.incomeCategory.count.mockResolvedValue(0);
 
@@ -231,7 +230,7 @@ describe('PrismaIncomeCategoryRepository', () => {
       expect(prisma.incomeCategory.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            isArchived: false,
+            archives: { none: { userId: 'user-1' } },
             OR: [{ userId: null }, { userId: 'user-1' }],
           },
         }),
@@ -300,7 +299,7 @@ describe('PrismaIncomeCategoryRepository', () => {
         where: {
           id: 'category-1',
           userId: 'user-1',
-          isArchived: false,
+          archives: { none: { userId: 'user-1' } },
         },
         data: {
           name: 'Bonus',
@@ -327,44 +326,51 @@ describe('PrismaIncomeCategoryRepository', () => {
     });
   });
 
-  describe('archiveCustomCategory', () => {
-    it('should archive a custom category owned by the user', async () => {
-      prisma.incomeCategory.updateMany.mockResolvedValue({ count: 1 });
+  describe('archiveForUser', () => {
+    it('should record a per-user archive for a category visible to the user and return it as archived', async () => {
       prisma.incomeCategory.findFirst.mockResolvedValue(
-        createPrismaIncomeCategory({
-          isArchived: true,
-        }),
+        createPrismaIncomeCategory({ userId: null, name: 'Salary' }),
       );
+      prisma.userIncomeCategoryArchive.upsert.mockResolvedValue({});
 
-      const result = await repository.archiveCustomCategory({
+      const result = await repository.archiveForUser({
         categoryId: 'category-1',
         userId: 'user-1',
       });
 
-      expect(prisma.incomeCategory.updateMany).toHaveBeenCalledWith({
+      expect(prisma.incomeCategory.findFirst).toHaveBeenCalledWith({
         where: {
           id: 'category-1',
-          userId: 'user-1',
-          isArchived: false,
-        },
-        data: {
-          isArchived: true,
+          archives: { none: { userId: 'user-1' } },
+          OR: [{ userId: null }, { userId: 'user-1' }],
         },
       });
+      expect(prisma.userIncomeCategoryArchive.upsert).toHaveBeenCalledWith({
+        where: {
+          userId_incomeCategoryId: {
+            userId: 'user-1',
+            incomeCategoryId: 'category-1',
+          },
+        },
+        create: { userId: 'user-1', incomeCategoryId: 'category-1' },
+        update: {},
+      });
 
+      expect(result?.id).toBe('category-1');
+      expect(result?.isSystem).toBe(true);
       expect(result?.isArchived).toBe(true);
     });
 
-    it('should return null when the category cannot be archived', async () => {
-      prisma.incomeCategory.updateMany.mockResolvedValue({ count: 0 });
+    it('should return null and record nothing when the category is not visible to the user', async () => {
+      prisma.incomeCategory.findFirst.mockResolvedValue(null);
 
-      const result = await repository.archiveCustomCategory({
+      const result = await repository.archiveForUser({
         categoryId: 'category-1',
         userId: 'user-2',
       });
 
       expect(result).toBeNull();
-      expect(prisma.incomeCategory.findFirst).not.toHaveBeenCalled();
+      expect(prisma.userIncomeCategoryArchive.upsert).not.toHaveBeenCalled();
     });
   });
 });

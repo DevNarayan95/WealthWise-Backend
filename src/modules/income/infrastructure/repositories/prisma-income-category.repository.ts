@@ -60,7 +60,7 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
     const category = await this.prisma.incomeCategory.findFirst({
       where: {
         id: categoryId,
-        isArchived: false,
+        archives: { none: { userId } },
         OR: [{ userId: null }, { userId }],
       },
     });
@@ -72,7 +72,7 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
     input: FindIncomeCategoriesRepositoryInput,
   ): Promise<FindIncomeCategoriesRepositoryOutput> {
     const where = {
-      isArchived: false,
+      archives: { none: { userId: input.userId } },
       OR: [{ userId: null }, { userId: input.userId }],
     };
 
@@ -102,7 +102,7 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
         where: {
           id: input.categoryId,
           userId: input.userId,
-          isArchived: false,
+          archives: { none: { userId: input.userId } },
         },
         data: {
           name: input.name,
@@ -121,39 +121,41 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
       where: {
         id: input.categoryId,
         userId: input.userId,
-        isArchived: false,
+        archives: { none: { userId: input.userId } },
       },
     });
 
     return category ? this.toDomain(category) : null;
   }
 
-  async archiveCustomCategory(
+  async archiveForUser(
     input: ArchiveIncomeCategoryRepositoryInput,
   ): Promise<IncomeCategory | null> {
-    const result = await this.prisma.incomeCategory.updateMany({
-      where: {
-        id: input.categoryId,
-        userId: input.userId,
-        isArchived: false,
-      },
-      data: {
-        isArchived: true,
-      },
-    });
-
-    if (result.count === 0) {
-      return null;
-    }
-
     const category = await this.prisma.incomeCategory.findFirst({
       where: {
         id: input.categoryId,
-        userId: input.userId,
+        archives: { none: { userId: input.userId } },
+        OR: [{ userId: null }, { userId: input.userId }],
       },
     });
 
-    return category ? this.toDomain(category) : null;
+    if (!category) {
+      return null;
+    }
+
+    // Upsert keeps a concurrent double-archive idempotent instead of failing on the composite key.
+    await this.prisma.userIncomeCategoryArchive.upsert({
+      where: {
+        userId_incomeCategoryId: {
+          userId: input.userId,
+          incomeCategoryId: input.categoryId,
+        },
+      },
+      create: { userId: input.userId, incomeCategoryId: input.categoryId },
+      update: {},
+    });
+
+    return this.toDomain(category, true);
   }
 
   private mapUniqueViolation(error: unknown): unknown {
@@ -169,19 +171,21 @@ export class PrismaIncomeCategoryRepository extends IncomeCategoryRepository {
       : error;
   }
 
-  private toDomain(category: {
-    id: string;
-    userId: string | null;
-    name: string;
-    isArchived: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  }): IncomeCategory {
+  private toDomain(
+    category: {
+      id: string;
+      userId: string | null;
+      name: string;
+      createdAt: Date;
+      updatedAt: Date;
+    },
+    isArchivedForUser = false,
+  ): IncomeCategory {
     return IncomeCategory.create({
       id: category.id,
       userId: category.userId,
       name: category.name,
-      isArchived: category.isArchived,
+      isArchived: isArchivedForUser,
       createdAt: category.createdAt,
       updatedAt: category.updatedAt,
     });

@@ -1,4 +1,7 @@
-import { TransactionType } from '../../domain/entities/transaction.entity';
+import {
+  TransactionRateSource,
+  TransactionType,
+} from '../../domain/entities/transaction.entity';
 import { PrismaTransactionRepository } from './prisma-transaction.repository';
 
 describe('PrismaTransactionRepository', () => {
@@ -28,6 +31,7 @@ describe('PrismaTransactionRepository', () => {
       transactionDate: Date;
       reversalOfTransactionId: string | null;
       incomeCategoryId: string | null;
+      expenseCategoryId: string | null;
       createdAt: Date;
       updatedAt: Date;
     }> = {},
@@ -43,6 +47,16 @@ describe('PrismaTransactionRepository', () => {
     transactionDate,
     reversalOfTransactionId: null,
     incomeCategoryId: null,
+    expenseCategoryId: null,
+    baseCurrency: 'INR',
+    baseAmount: {
+      toFixed: () => '26252.6250',
+    },
+    exchangeRate: {
+      toFixed: () => '5.25000000',
+    },
+    rateDate: transactionDate,
+    rateSource: 'PROVIDER',
     createdAt,
     updatedAt,
     ...overrides,
@@ -55,9 +69,15 @@ describe('PrismaTransactionRepository', () => {
       amount: string;
       currency: string;
       description: string | null;
-      transactionDate: Date;
+      transactionDate: string;
       reversalOfTransactionId: string | null;
       incomeCategoryId: string | null;
+      expenseCategoryId: string | null;
+      baseCurrency: string;
+      baseAmount: string;
+      exchangeRate: string;
+      rateDate: string;
+      rateSource: TransactionRateSource;
     }> = {},
   ) => ({
     accountId: 'account-1',
@@ -65,10 +85,24 @@ describe('PrismaTransactionRepository', () => {
     amount: '5000.5000',
     currency: 'MYR',
     description: 'Salary',
-    transactionDate,
+    transactionDate: '2026-09-20',
     reversalOfTransactionId: null,
     incomeCategoryId: null,
+    expenseCategoryId: null,
+    baseCurrency: 'INR',
+    baseAmount: '26252.6250',
+    exchangeRate: '5.25000000',
+    rateDate: '2026-09-20',
+    rateSource: 'PROVIDER' as const,
     ...overrides,
+  });
+
+  const toExpectedPrismaData = (
+    input: ReturnType<typeof createTransactionInput>,
+  ) => ({
+    ...input,
+    transactionDate: new Date(`${input.transactionDate}T00:00:00.000Z`),
+    rateDate: new Date(`${input.rateDate}T00:00:00.000Z`),
   });
 
   let repository: PrismaTransactionRepository;
@@ -86,7 +120,7 @@ describe('PrismaTransactionRepository', () => {
       const result = await repository.create(createTransactionInput());
 
       expect(prisma.transaction.create).toHaveBeenCalledWith({
-        data: createTransactionInput(),
+        data: toExpectedPrismaData(createTransactionInput()),
       });
 
       expect(result.id).toBe('transaction-1');
@@ -110,7 +144,7 @@ describe('PrismaTransactionRepository', () => {
       const result = await repository.create(input);
 
       expect(prisma.transaction.create).toHaveBeenCalledWith({
-        data: input,
+        data: toExpectedPrismaData(input),
       });
       expect(result.incomeCategoryId).toBe('category-1');
     });
@@ -129,14 +163,15 @@ describe('PrismaTransactionRepository', () => {
       const input = createTransactionInput({
         type: TransactionType.EXPENSE,
         description: 'Reversal of salary',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
+        rateDate: '2026-09-21',
         reversalOfTransactionId: 'transaction-1',
       });
 
       const result = await repository.create(input);
 
       expect(prisma.transaction.create).toHaveBeenCalledWith({
-        data: input,
+        data: toExpectedPrismaData(input),
       });
 
       expect(result.id).toBe('reversal-1');

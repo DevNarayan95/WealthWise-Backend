@@ -129,6 +129,9 @@ describe('Income categories (E2E)', () => {
       where: { account: { userId: { in: userIds } } },
     });
     await prisma.account.deleteMany({ where: { userId: { in: userIds } } });
+    await prisma.userIncomeCategoryArchive.deleteMany({
+      where: { userId: { in: userIds } },
+    });
     await prisma.incomeCategory.deleteMany({
       where: { userId: { in: userIds } },
     });
@@ -361,23 +364,47 @@ describe('Income categories (E2E)', () => {
       expect(fetched.body.error.code).toBe('INCOME_CATEGORY_NOT_FOUND');
     });
 
-    it('should return 403 SYSTEM_INCOME_CATEGORY_READ_ONLY when archiving a system category', async () => {
+    it('should hide a system category only for the user who archived it', async () => {
       const response = await request(app.getHttpServer())
         .patch(`/api/v1/income/categories/${systemCategoryId}/archive`)
         .set('Authorization', `Bearer ${ownerToken}`)
-        .expect(403);
+        .expect(200);
 
-      expect(response.body.error.code).toBe('SYSTEM_INCOME_CATEGORY_READ_ONLY');
+      expect(response.body.data.id).toBe(systemCategoryId);
+      expect(response.body.data.isArchived).toBe(true);
+
+      await request(app.getHttpServer())
+        .get(`/api/v1/income/categories/${systemCategoryId}`)
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .expect(404);
+
+      const otherUserView = await request(app.getHttpServer())
+        .get(`/api/v1/income/categories/${systemCategoryId}`)
+        .set('Authorization', `Bearer ${otherUserToken}`)
+        .expect(200);
+
+      expect(otherUserView.body.data.isArchived).toBe(false);
     });
   });
 
   describe('Transactions linked to income categories', () => {
+    let linkedCategoryId: string;
+
+    beforeAll(async () => {
+      // A custom category is used because the archive test above hides the shared system category for the owner.
+      const created = await createCategory(
+        ownerToken,
+        `${testPrefix}-linked`,
+      ).expect(201);
+      linkedCategoryId = created.body.data.id;
+    });
+
     const transactionBody = (overrides: Record<string, unknown>) => ({
       accountId,
       amount: '1000.0000',
       currency: 'MYR',
       description: 'Monthly pay',
-      transactionDate: '2026-09-01T00:00:00.000Z',
+      transactionDate: '2026-09-01',
       ...overrides,
     });
 
@@ -388,7 +415,7 @@ describe('Income categories (E2E)', () => {
         .send(
           transactionBody({
             type: 'INCOME',
-            incomeCategoryId: systemCategoryId,
+            incomeCategoryId: linkedCategoryId,
           }),
         )
         .expect(201);
@@ -396,7 +423,7 @@ describe('Income categories (E2E)', () => {
       expect(response.body.data).toEqual(
         expect.objectContaining({
           type: 'INCOME',
-          incomeCategoryId: systemCategoryId,
+          incomeCategoryId: linkedCategoryId,
         }),
       );
     });

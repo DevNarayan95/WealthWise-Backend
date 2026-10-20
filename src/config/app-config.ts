@@ -109,6 +109,18 @@ export interface AppConfigFile {
   income: {
     categoryNameMaxLength: number;
   };
+  expenses: {
+    categoryNameMaxLength: number;
+  };
+  exchangeRates: {
+    baseCurrency: string;
+    provider: {
+      name: string;
+      baseUrl: string;
+      timeoutMs: number;
+    };
+    manualRates: Record<string, number>;
+  };
   logging: {
     level: LogLevel;
     pretty: boolean;
@@ -336,6 +348,30 @@ const appConfigFileSchema = joi
     income: joi
       .object({
         categoryNameMaxLength: joi.number().integer().min(1).required(),
+      })
+      .required(),
+    expenses: joi
+      .object({
+        categoryNameMaxLength: joi.number().integer().min(1).required(),
+      })
+      .required(),
+    exchangeRates: joi
+      .object({
+        baseCurrency: joi
+          .string()
+          .pattern(/^[A-Z]{3}$/)
+          .required(),
+        provider: joi
+          .object({
+            name: joi.string().valid('frankfurter').required(),
+            baseUrl: joi.string().uri().required(),
+            timeoutMs: joi.number().integer().min(100).required(),
+          })
+          .required(),
+        manualRates: joi
+          .object()
+          .pattern(/^[A-Z]{3}$/, joi.number().positive())
+          .required(),
       })
       .required(),
     logging: joi

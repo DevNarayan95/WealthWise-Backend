@@ -19,6 +19,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { IncomeModule } from './modules/income/income.module';
+import { ExpensesModule } from './modules/expenses/expenses.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { IncomeModule } from './modules/income/income.module';
     AuthModule,
     AccountsModule,
     IncomeModule,
+    ExpensesModule,
     TransactionsModule,
   ],
   providers: [

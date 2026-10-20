@@ -17,7 +17,7 @@ describe('IncomeCategoriesService', () => {
     findByIdAvailableToUser: jest.Mock;
     findAllAvailableToUser: jest.Mock;
     updateCustomCategory: jest.Mock;
-    archiveCustomCategory: jest.Mock;
+    archiveForUser: jest.Mock;
   };
 
   const createdAt = new Date('2026-09-20T10:00:00.000Z');
@@ -50,7 +50,7 @@ describe('IncomeCategoriesService', () => {
       findByIdAvailableToUser: jest.fn(),
       findAllAvailableToUser: jest.fn(),
       updateCustomCategory: jest.fn(),
-      archiveCustomCategory: jest.fn(),
+      archiveForUser: jest.fn(),
     };
 
     service = new IncomeCategoriesService(repository);
@@ -312,7 +312,7 @@ describe('IncomeCategoriesService', () => {
   });
 
   describe('archive', () => {
-    it('should archive a custom category', async () => {
+    it('should archive a custom category for the user', async () => {
       const archived = IncomeCategory.create({
         id: 'category-1',
         userId: 'user-1',
@@ -323,12 +323,34 @@ describe('IncomeCategoriesService', () => {
       });
 
       repository.findByIdAvailableToUser.mockResolvedValue(customCategory);
-      repository.archiveCustomCategory.mockResolvedValue(archived);
+      repository.archiveForUser.mockResolvedValue(archived);
 
       const result = await service.archive('category-1', 'user-1');
 
-      expect(repository.archiveCustomCategory).toHaveBeenCalledWith({
+      expect(repository.archiveForUser).toHaveBeenCalledWith({
         categoryId: 'category-1',
+        userId: 'user-1',
+      });
+      expect(result).toBe(archived);
+    });
+
+    it('should archive a system category for the user only', async () => {
+      const archived = IncomeCategory.create({
+        id: 'system-category-1',
+        userId: null,
+        name: 'Salary',
+        isArchived: true,
+        createdAt,
+        updatedAt,
+      });
+
+      repository.findByIdAvailableToUser.mockResolvedValue(systemCategory);
+      repository.archiveForUser.mockResolvedValue(archived);
+
+      const result = await service.archive('system-category-1', 'user-1');
+
+      expect(repository.archiveForUser).toHaveBeenCalledWith({
+        categoryId: 'system-category-1',
         userId: 'user-1',
       });
       expect(result).toBe(archived);
@@ -341,22 +363,12 @@ describe('IncomeCategoriesService', () => {
         service.archive('category-1', 'user-1'),
       ).rejects.toBeInstanceOf(IncomeCategoryNotFoundException);
 
-      expect(repository.archiveCustomCategory).not.toHaveBeenCalled();
-    });
-
-    it('should reject archiving system categories', async () => {
-      repository.findByIdAvailableToUser.mockResolvedValue(systemCategory);
-
-      await expect(
-        service.archive('system-category-1', 'user-1'),
-      ).rejects.toBeInstanceOf(SystemIncomeCategoryReadOnlyException);
-
-      expect(repository.archiveCustomCategory).not.toHaveBeenCalled();
+      expect(repository.archiveForUser).not.toHaveBeenCalled();
     });
 
     it('should throw not found when the repository reports no archived row', async () => {
       repository.findByIdAvailableToUser.mockResolvedValue(customCategory);
-      repository.archiveCustomCategory.mockResolvedValue(null);
+      repository.archiveForUser.mockResolvedValue(null);
 
       await expect(
         service.archive('category-1', 'user-1'),

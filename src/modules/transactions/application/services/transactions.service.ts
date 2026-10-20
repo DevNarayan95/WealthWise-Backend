@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AccountStatus } from '../../../accounts/domain/entities/account.entity';
 import { AccountsService } from '../../../accounts/application/services/accounts.service';
+import { ExchangeRateService } from '../../../fx/application/services/exchange-rate.service';
+import { ExpenseCategoriesService } from '../../../expenses/application/services/expense-categories.service';
 import { IncomeCategoriesService } from '../../../income/application/services/income-categories.service';
 
 import {
@@ -35,6 +37,8 @@ export class TransactionsService {
     private readonly transactionsRepository: TransactionRepository,
     private readonly accountsService: AccountsService,
     private readonly incomeCategoriesService: IncomeCategoriesService,
+    private readonly exchangeRateService: ExchangeRateService,
+    private readonly expenseCategoriesService: ExpenseCategoriesService,
   ) {}
 
   async create(input: CreateTransactionInput): Promise<Transaction> {
@@ -42,6 +46,7 @@ export class TransactionsService {
     const amount = input.amount.trim();
     const description = input.description?.trim() || null;
     const incomeCategoryId = input.incomeCategoryId ?? null;
+    const expenseCategoryId = input.expenseCategoryId ?? null;
 
     if (!isTransactionType(input.type)) {
       throw new InvalidTransactionException('Invalid transaction type');
@@ -78,6 +83,12 @@ export class TransactionsService {
       );
     }
 
+    if (expenseCategoryId !== null && input.type !== TransactionType.EXPENSE) {
+      throw new InvalidTransactionException(
+        'Expense category can only be set on expense transactions',
+      );
+    }
+
     const account = await this.accountsService.findById(
       input.accountId,
       input.userId,
@@ -102,6 +113,21 @@ export class TransactionsService {
       );
     }
 
+    if (expenseCategoryId !== null) {
+      await this.expenseCategoriesService.findById(
+        expenseCategoryId,
+        input.userId,
+      );
+    }
+
+    const baseConversion = await this.exchangeRateService.convertToBaseCurrency(
+      {
+        amount,
+        fromCurrency: currency,
+        rateDate: input.transactionDate,
+      },
+    );
+
     return this.transactionsRepository.create({
       accountId: account.id,
       type: input.type,
@@ -111,6 +137,12 @@ export class TransactionsService {
       transactionDate: input.transactionDate,
       reversalOfTransactionId: null,
       incomeCategoryId,
+      expenseCategoryId,
+      baseCurrency: baseConversion.baseCurrency,
+      baseAmount: baseConversion.baseAmount,
+      exchangeRate: baseConversion.exchangeRate,
+      rateDate: baseConversion.rateDate,
+      rateSource: baseConversion.rateSource,
     });
   }
 
@@ -168,6 +200,12 @@ export class TransactionsService {
       transactionDate: input.transactionDate,
       reversalOfTransactionId: transaction.id,
       incomeCategoryId: null,
+      expenseCategoryId: null,
+      baseCurrency: transaction.baseCurrency,
+      baseAmount: transaction.baseAmount,
+      exchangeRate: transaction.exchangeRate,
+      rateDate: transaction.rateDate,
+      rateSource: transaction.rateSource,
     });
   }
 

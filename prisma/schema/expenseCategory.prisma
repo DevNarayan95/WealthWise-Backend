@@ -1,0 +1,32 @@
+// System expense categories have userId = NULL and are shared by all users.
+// Uniqueness for system rows is a partial index added in SQL (see the migration),
+// because Prisma cannot express "UNIQUE ... WHERE user_id IS NULL".
+model ExpenseCategory {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String?  @map("user_id") @db.Uuid
+  name           String   @db.VarChar(100)
+  normalizedName String   @map("normalized_name") @db.VarChar(100)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user         User?                        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  archives     UserExpenseCategoryArchive[]
+  transactions Transaction[]
+
+  @@unique([userId, normalizedName])
+  @@map("nv_expense_categories")
+}
+
+// Per-user archive state. Needed because system categories are shared rows,
+// so one user archiving a system category must not hide it from other users.
+model UserExpenseCategoryArchive {
+  userId            String   @map("user_id") @db.Uuid
+  expenseCategoryId String   @map("expense_category_id") @db.Uuid
+  archivedAt        DateTime @default(now()) @map("archived_at")
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenseCategory ExpenseCategory @relation(fields: [expenseCategoryId], references: [id], onDelete: Restrict)
+
+  @@id([userId, expenseCategoryId])
+  @@map("nv_user_expense_category_archives")
+}

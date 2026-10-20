@@ -17,7 +17,15 @@ describe('TransactionsController', () => {
     reverse: jest.Mock;
   };
 
-  const transactionDate = new Date('2026-09-01T00:00:00.000Z');
+  const transactionDate = '2026-09-01';
+  const fxFields = {
+    expenseCategoryId: null,
+    baseCurrency: 'INR',
+    baseAmount: '5000.0000',
+    exchangeRate: '100.00000000',
+    rateDate: '2026-09-01',
+    rateSource: 'PROVIDER' as const,
+  };
 
   const transaction = {
     id: 'transaction-1',
@@ -29,6 +37,7 @@ describe('TransactionsController', () => {
     transactionDate,
     reversalOfTransactionId: null,
     incomeCategoryId: null,
+    ...fxFields,
     createdAt: new Date('2026-09-01T10:00:00.000Z'),
     updatedAt: new Date('2026-09-01T10:00:00.000Z'),
   };
@@ -40,9 +49,10 @@ describe('TransactionsController', () => {
     amount: '50.0000',
     currency: 'MYR',
     description: 'Lunch',
-    transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+    transactionDate: '2026-09-01',
     reversalOfTransactionId: null,
     incomeCategoryId: null,
+    ...fxFields,
     createdAt: new Date('2026-09-01T10:00:00.000Z'),
     updatedAt: new Date('2026-09-01T10:00:00.000Z'),
   });
@@ -84,7 +94,7 @@ describe('TransactionsController', () => {
         amount: '50.00',
         currency: 'MYR',
         description: 'Lunch',
-        transactionDate: transactionDate.toISOString(),
+        transactionDate,
       };
 
       const result = await controller.create(dto, request as never);
@@ -98,6 +108,7 @@ describe('TransactionsController', () => {
         description: 'Lunch',
         transactionDate,
         incomeCategoryId: null,
+        expenseCategoryId: null,
       });
 
       expect(result).toEqual({
@@ -112,6 +123,7 @@ describe('TransactionsController', () => {
           transactionDate: transaction.transactionDate,
           incomeCategoryId: null,
           reversalOfTransactionId: null,
+          ...fxFields,
           createdAt: transaction.createdAt,
           updatedAt: transaction.updatedAt,
         },
@@ -134,7 +146,7 @@ describe('TransactionsController', () => {
         type: TransactionType.EXPENSE,
         amount: '50.00',
         currency: 'MYR',
-        transactionDate: transactionDate.toISOString(),
+        transactionDate,
       };
 
       await controller.create(dto, request as never);
@@ -148,6 +160,7 @@ describe('TransactionsController', () => {
         description: null,
         transactionDate,
         incomeCategoryId: null,
+        expenseCategoryId: null,
       });
     });
   });
@@ -170,8 +183,9 @@ describe('TransactionsController', () => {
           amount: '50.0000',
           currency: 'MYR',
           description: 'Lunch',
-          transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+          transactionDate: '2026-09-01',
           incomeCategoryId: null,
+          ...fxFields,
           reversalOfTransactionId: null,
           createdAt: new Date('2026-09-01T10:00:00.000Z'),
           updatedAt: new Date('2026-09-01T10:00:00.000Z'),
@@ -232,9 +246,10 @@ describe('TransactionsController', () => {
         amount: '50.0000',
         currency: 'MYR',
         description: 'Lunch',
-        transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+        transactionDate: '2026-09-01',
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        ...fxFields,
         createdAt: new Date('2026-09-01T10:00:00.000Z'),
         updatedAt: new Date('2026-09-01T10:00:00.000Z'),
       });
@@ -269,8 +284,9 @@ describe('TransactionsController', () => {
               amount: '50.0000',
               currency: 'MYR',
               description: 'Lunch',
-              transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+              transactionDate: '2026-09-01',
               incomeCategoryId: null,
+              ...fxFields,
               reversalOfTransactionId: null,
               createdAt: transaction.createdAt,
               updatedAt: transaction.updatedAt,
@@ -419,7 +435,7 @@ describe('TransactionsController', () => {
 
   describe('Reverse', () => {
     it('should create a reversal for the authenticated user', async () => {
-      const reversalDate = new Date('2026-09-02T00:00:00.000Z');
+      const reversalDate = '2026-09-02';
 
       const reversalTransaction = Transaction.create({
         id: 'reversal-1',
@@ -431,6 +447,7 @@ describe('TransactionsController', () => {
         transactionDate: reversalDate,
         reversalOfTransactionId: 'transaction-id',
         incomeCategoryId: null,
+        ...fxFields,
         createdAt: new Date('2026-09-02T10:00:00.000Z'),
         updatedAt: new Date('2026-09-02T10:00:00.000Z'),
       });
@@ -438,7 +455,7 @@ describe('TransactionsController', () => {
       transactionsService.reverse.mockResolvedValue(reversalTransaction);
 
       const dto = {
-        transactionDate: reversalDate.toISOString(),
+        transactionDate: reversalDate,
         description: 'Lunch reversal',
       };
 
@@ -467,6 +484,7 @@ describe('TransactionsController', () => {
           transactionDate: reversalDate,
           incomeCategoryId: null,
           reversalOfTransactionId: 'transaction-id',
+          ...fxFields,
           createdAt: new Date('2026-09-02T10:00:00.000Z'),
           updatedAt: new Date('2026-09-02T10:00:00.000Z'),
         },
@@ -475,12 +493,12 @@ describe('TransactionsController', () => {
     });
 
     it('should convert missing reversal description to null', async () => {
-      const reversalDate = new Date('2026-09-02T00:00:00.000Z');
+      const reversalDate = '2026-09-02';
 
       transactionsService.reverse.mockResolvedValue(transactionEntity);
 
       const dto = {
-        transactionDate: reversalDate.toISOString(),
+        transactionDate: reversalDate,
       };
 
       await controller.reverse('transaction-id', dto, authenticatedRequest);
@@ -494,14 +512,14 @@ describe('TransactionsController', () => {
     });
 
     it('should pass the authenticated user id to the reversal service', async () => {
-      const reversalDate = new Date('2026-09-02T00:00:00.000Z');
+      const reversalDate = '2026-09-02';
 
       transactionsService.reverse.mockResolvedValue(transactionEntity);
 
       await controller.reverse(
         'transaction-123',
         {
-          transactionDate: reversalDate.toISOString(),
+          transactionDate: reversalDate,
           description: 'Reversal',
         },
         authenticatedRequest,

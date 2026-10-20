@@ -5,6 +5,8 @@ export const TRANSACTION_AMOUNT_MAX_DECIMAL_PLACES = 4;
 export const TRANSACTION_AMOUNT_MAX_INTEGER_DIGITS = 15;
 export const TRANSACTION_DESCRIPTION_MAX_LENGTH = 255;
 
+const TRANSACTION_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+
 export const isTransactionType = (value: string): value is TransactionType => {
   return Object.values(TransactionType).includes(value as TransactionType);
 };
@@ -17,8 +19,25 @@ export const isValidTransactionAmount = (amount: string): boolean => {
   return /^(?=.*[1-9])\d{1,15}(?:\.\d{1,4})?$/.test(amount);
 };
 
-export const isValidTransactionDate = (date: Date): boolean => {
-  return !Number.isNaN(date.getTime());
+export const isValidTransactionDate = (date: string): boolean => {
+  const match = TRANSACTION_DATE_PATTERN.exec(date);
+
+  if (!match) {
+    return false;
+  }
+
+  const [year, month, day] = [
+    Number(match[1]),
+    Number(match[2]),
+    Number(match[3]),
+  ];
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day
+  );
 };
 
 export const isValidTransactionDescription = (

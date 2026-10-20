@@ -1,4 +1,8 @@
-import { Transaction, TransactionType } from '../entities/transaction.entity';
+import {
+  Transaction,
+  TransactionRateSource,
+  TransactionType,
+} from '../entities/transaction.entity';
 
 export interface CreateTransactionRepositoryInput {
   accountId: string;
@@ -6,9 +10,15 @@ export interface CreateTransactionRepositoryInput {
   amount: string;
   currency: string;
   description: string | null;
-  transactionDate: Date;
+  transactionDate: string;
   reversalOfTransactionId: string | null;
   incomeCategoryId: string | null;
+  expenseCategoryId: string | null;
+  baseCurrency: string;
+  baseAmount: string;
+  exchangeRate: string;
+  rateDate: string;
+  rateSource: TransactionRateSource;
 }
 
 export interface FindTransactionsRepositoryInput {

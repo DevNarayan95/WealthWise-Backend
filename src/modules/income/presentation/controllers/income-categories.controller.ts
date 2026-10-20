@@ -196,7 +196,7 @@ export class IncomeCategoriesController {
   @ApiOperation({
     summary: 'Archive an income category',
     description:
-      'Archives a custom income category owned by the authenticated user. Archived categories are hidden from lists. System categories are read-only. Requires the income:update permission.',
+      'Hides an income category for the authenticated user only. Custom categories are archived for everyone who can see them; system categories are hidden just for the requesting user and remain visible to others. Archived categories are hidden from lists. Requires the income:update permission.',
   })
   @ApiParam({ name: 'id', description: 'Income category identifier.' })
   @ApiResponse({
@@ -205,8 +205,7 @@ export class IncomeCategoriesController {
     type: IncomeCategoryResponseDto,
   })
   @ApiForbiddenResponse({
-    description:
-      'User lacks the income:update permission, or the category is a read-only system category.',
+    description: 'User lacks the income:update permission.',
   })
   @ApiNotFoundResponse({ description: 'Income category not found.' })
   async archive(

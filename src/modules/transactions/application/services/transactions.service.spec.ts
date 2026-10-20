@@ -2,6 +2,9 @@ import { AccountStatus } from '../../../accounts/domain/entities/account.entity'
 import { AccountsService } from '../../../accounts/application/services/accounts.service';
 import { IncomeCategoriesService } from '../../../income/application/services/income-categories.service';
 import { IncomeCategoryNotFoundException } from '../../../income/presentation/exceptions/income-category-not-found.exception';
+import { ExchangeRateService } from '../../../fx/application/services/exchange-rate.service';
+import { ExpenseCategoriesService } from '../../../expenses/application/services/expense-categories.service';
+import { ExpenseCategoryNotFoundException } from '../../../expenses/presentation/exceptions/expense-category-not-found.exception';
 
 import {
   Transaction,
@@ -24,6 +27,10 @@ describe('TransactionsService', () => {
     findAllByAccountForUser: jest.Mock;
   };
 
+  let expenseCategoriesService: {
+    findById: jest.Mock;
+  };
+
   let accountsService: {
     findById: jest.Mock;
   };
@@ -32,7 +39,19 @@ describe('TransactionsService', () => {
     findById: jest.Mock;
   };
 
-  const transactionDate = new Date('2026-09-01T00:00:00.000Z');
+  let exchangeRateService: {
+    convertToBaseCurrency: jest.Mock;
+  };
+
+  const transactionDate = '2026-09-01';
+
+  const baseConversion = {
+    baseCurrency: 'INR',
+    baseAmount: '1000.0000',
+    exchangeRate: '20.00000000',
+    rateDate: transactionDate,
+    rateSource: 'PROVIDER' as const,
+  };
 
   const activeAccount = {
     id: 'account-1',
@@ -65,6 +84,8 @@ describe('TransactionsService', () => {
     transactionDate,
     reversalOfTransactionId: null,
     incomeCategoryId: null,
+    expenseCategoryId: null,
+    ...baseConversion,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
@@ -85,10 +106,26 @@ describe('TransactionsService', () => {
       findById: jest.fn(),
     };
 
+    expenseCategoriesService = {
+      findById: jest.fn(),
+    };
+
+    exchangeRateService = {
+      convertToBaseCurrency: jest.fn().mockResolvedValue({
+        baseCurrency: baseConversion.baseCurrency,
+        baseAmount: baseConversion.baseAmount,
+        exchangeRate: baseConversion.exchangeRate,
+        rateDate: baseConversion.rateDate,
+        rateSource: baseConversion.rateSource,
+      }),
+    };
+
     service = new TransactionsService(
       transactionsRepository,
       accountsService as unknown as AccountsService,
       incomeCategoriesService as unknown as IncomeCategoriesService,
+      exchangeRateService as unknown as ExchangeRateService,
+      expenseCategoriesService as unknown as ExpenseCategoriesService,
     );
   });
 
@@ -120,6 +157,8 @@ describe('TransactionsService', () => {
         transactionDate,
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
       });
 
       expect(result).toBe(createdTransaction);
@@ -142,7 +181,34 @@ describe('TransactionsService', () => {
         transactionDate,
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
       });
+    });
+
+    it('should convert the amount to the base currency using the transaction date', async () => {
+      accountsService.findById.mockResolvedValue(activeAccount);
+      transactionsRepository.create.mockResolvedValue(createdTransaction);
+
+      await service.create(createTransactionInput);
+
+      expect(exchangeRateService.convertToBaseCurrency).toHaveBeenCalledWith({
+        amount: '50.00',
+        fromCurrency: 'MYR',
+        rateDate: transactionDate,
+      });
+    });
+
+    it('should propagate exchange rate unavailability without creating the transaction', async () => {
+      accountsService.findById.mockResolvedValue(activeAccount);
+      const unavailable = new Error('exchange rate unavailable');
+      exchangeRateService.convertToBaseCurrency.mockRejectedValue(unavailable);
+
+      await expect(service.create(createTransactionInput)).rejects.toBe(
+        unavailable,
+      );
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
     });
 
     it('should link an income transaction to an income category available to the user', async () => {
@@ -198,6 +264,77 @@ describe('TransactionsService', () => {
       ).rejects.toBeInstanceOf(IncomeCategoryNotFoundException);
 
       expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should link an expense transaction to an expense category available to the user', async () => {
+      const input = {
+        ...createTransactionInput,
+        type: TransactionType.EXPENSE,
+        expenseCategoryId: 'expense-category-1',
+      };
+
+      accountsService.findById.mockResolvedValue(activeAccount);
+      expenseCategoriesService.findById.mockResolvedValue({
+        id: 'expense-category-1',
+      });
+      transactionsRepository.create.mockResolvedValue(createdTransaction);
+
+      await service.create(input);
+
+      expect(expenseCategoriesService.findById).toHaveBeenCalledWith(
+        'expense-category-1',
+        input.userId,
+      );
+      expect(transactionsRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: TransactionType.EXPENSE,
+          expenseCategoryId: 'expense-category-1',
+          incomeCategoryId: null,
+        }),
+      );
+    });
+
+    it('should reject an expense category on an income transaction', async () => {
+      await expect(
+        service.create({
+          ...createTransactionInput,
+          type: TransactionType.INCOME,
+          expenseCategoryId: 'expense-category-1',
+        }),
+      ).rejects.toThrow(InvalidTransactionException);
+
+      expect(expenseCategoriesService.findById).not.toHaveBeenCalled();
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should not create an expense transaction when the expense category is not available to the user', async () => {
+      accountsService.findById.mockResolvedValue(activeAccount);
+      expenseCategoriesService.findById.mockRejectedValue(
+        new ExpenseCategoryNotFoundException(),
+      );
+
+      await expect(
+        service.create({
+          ...createTransactionInput,
+          type: TransactionType.EXPENSE,
+          expenseCategoryId: 'category-from-another-user',
+        }),
+      ).rejects.toBeInstanceOf(ExpenseCategoryNotFoundException);
+
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should not look up an expense category when none is supplied', async () => {
+      accountsService.findById.mockResolvedValue(activeAccount);
+      transactionsRepository.create.mockResolvedValue(createdTransaction);
+
+      await service.create({
+        ...createTransactionInput,
+        type: TransactionType.EXPENSE,
+        expenseCategoryId: null,
+      });
+
+      expect(expenseCategoriesService.findById).not.toHaveBeenCalled();
     });
 
     it('should reject transactions for archived accounts', async () => {
@@ -282,7 +419,7 @@ describe('TransactionsService', () => {
       await expect(
         service.create({
           ...createTransactionInput,
-          transactionDate: new Date('invalid'),
+          transactionDate: '2026-02-30',
         }),
       ).rejects.toThrow(InvalidTransactionException);
 
@@ -299,9 +436,11 @@ describe('TransactionsService', () => {
         amount: '5000.5000',
         currency: 'MYR',
         description: 'Salary',
-        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        transactionDate: '2026-09-20',
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -313,9 +452,11 @@ describe('TransactionsService', () => {
         amount: '5000.5000',
         currency: 'MYR',
         description: 'Salary reversal',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
         reversalOfTransactionId: 'transaction-1',
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -328,7 +469,7 @@ describe('TransactionsService', () => {
 
       transactionsRepository.create.mockResolvedValue(reversalTransaction);
 
-      const reversalDate = new Date('2026-09-21T00:00:00.000Z');
+      const reversalDate = '2026-09-21';
 
       const result = await service.reverse({
         transactionId: 'transaction-1',
@@ -357,6 +498,8 @@ describe('TransactionsService', () => {
         transactionDate: reversalDate,
         reversalOfTransactionId: 'transaction-1',
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
       });
     });
 
@@ -368,9 +511,11 @@ describe('TransactionsService', () => {
         amount: '100.0000',
         currency: 'MYR',
         description: 'Groceries',
-        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        transactionDate: '2026-09-20',
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -382,9 +527,11 @@ describe('TransactionsService', () => {
         amount: '100.0000',
         currency: 'MYR',
         description: 'Groceries reversal',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
         reversalOfTransactionId: 'transaction-1',
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -400,7 +547,7 @@ describe('TransactionsService', () => {
       const result = await service.reverse({
         transactionId: 'transaction-1',
         userId: 'user-1',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
         description: 'Groceries reversal',
       });
 
@@ -412,9 +559,11 @@ describe('TransactionsService', () => {
         amount: '100.0000',
         currency: 'MYR',
         description: 'Groceries reversal',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
         reversalOfTransactionId: 'transaction-1',
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
       });
     });
 
@@ -425,7 +574,7 @@ describe('TransactionsService', () => {
         service.reverse({
           transactionId: 'transaction-1',
           userId: 'user-1',
-          transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+          transactionDate: '2026-09-21',
           description: 'Reversal',
         }),
       ).rejects.toThrow(TransactionNotFoundException);
@@ -450,9 +599,11 @@ describe('TransactionsService', () => {
         amount: '100.0000',
         currency: 'MYR',
         description: 'Reversal',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
         reversalOfTransactionId: 'transaction-1',
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -465,7 +616,7 @@ describe('TransactionsService', () => {
         service.reverse({
           transactionId: 'reversal-1',
           userId: 'user-1',
-          transactionDate: new Date('2026-09-22T00:00:00.000Z'),
+          transactionDate: '2026-09-22',
           description: 'Invalid reversal',
         }),
       ).rejects.toThrow(InvalidTransactionException);
@@ -485,9 +636,11 @@ describe('TransactionsService', () => {
         amount: '100.0000',
         currency: 'MYR',
         description: 'Groceries',
-        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        transactionDate: '2026-09-20',
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -499,9 +652,11 @@ describe('TransactionsService', () => {
         amount: '100.0000',
         currency: 'MYR',
         description: 'Existing reversal',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
         reversalOfTransactionId: 'transaction-1',
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-21T10:00:00.000Z'),
         updatedAt: new Date('2026-09-21T10:00:00.000Z'),
       });
@@ -518,7 +673,7 @@ describe('TransactionsService', () => {
         service.reverse({
           transactionId: 'transaction-1',
           userId: 'user-1',
-          transactionDate: new Date('2026-09-22T00:00:00.000Z'),
+          transactionDate: '2026-09-22',
           description: 'Second reversal',
         }),
       ).rejects.toThrow(InvalidTransactionException);
@@ -535,7 +690,7 @@ describe('TransactionsService', () => {
         service.reverse({
           transactionId: 'transaction-1',
           userId: 'user-1',
-          transactionDate: new Date('invalid'),
+          transactionDate: 'invalid',
           description: 'Reversal',
         }),
       ).rejects.toThrow(InvalidTransactionException);
@@ -550,7 +705,7 @@ describe('TransactionsService', () => {
         service.reverse({
           transactionId: 'transaction-1',
           userId: 'user-1',
-          transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+          transactionDate: '2026-09-21',
           description: 'a'.repeat(256),
         }),
       ).rejects.toThrow(InvalidTransactionException);
@@ -568,9 +723,11 @@ describe('TransactionsService', () => {
         amount: '50.0000',
         currency: 'MYR',
         description: 'Lunch',
-        transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+        transactionDate: '2026-09-20',
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-20T10:00:00.000Z'),
         updatedAt: new Date('2026-09-20T10:00:00.000Z'),
       });
@@ -586,7 +743,7 @@ describe('TransactionsService', () => {
       await service.reverse({
         transactionId: 'transaction-1',
         userId: 'user-1',
-        transactionDate: new Date('2026-09-21T00:00:00.000Z'),
+        transactionDate: '2026-09-21',
         description: '  Lunch reversal  ',
       });
 
@@ -608,9 +765,11 @@ describe('TransactionsService', () => {
         amount: '50.0000',
         currency: 'MYR',
         description: 'Lunch',
-        transactionDate: new Date('2026-09-01T00:00:00.000Z'),
+        transactionDate: '2026-09-01',
         reversalOfTransactionId: null,
         incomeCategoryId: null,
+        expenseCategoryId: null,
+        ...baseConversion,
         createdAt: new Date('2026-09-01T10:00:00.000Z'),
         updatedAt: new Date('2026-09-01T10:00:00.000Z'),
       });

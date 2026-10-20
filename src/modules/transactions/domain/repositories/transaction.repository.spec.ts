@@ -16,9 +16,15 @@ class FakeTransactionRepository extends TransactionRepository {
       amount: '1000.000',
       currency: 'MYR',
       description: null,
-      transactionDate: new Date('2026-09-20T00:00:00.000Z'),
-      reversalOfTransactionId: null,
       incomeCategoryId: null,
+      expenseCategoryId: null,
+      transactionDate: '2026-09-20',
+      baseCurrency: 'INR',
+      baseAmount: '5250.0000',
+      exchangeRate: '5.25000000',
+      rateDate: '2026-09-20',
+      rateSource: 'PROVIDER',
+      reversalOfTransactionId: null,
       createdAt: new Date('2026-09-20T00:00:00.000Z'),
       updatedAt: new Date('2026-09-20T00:00:00.000Z'),
     });
@@ -59,8 +65,14 @@ describe('TransactionRepository', () => {
       currency: 'MYR',
       description: null,
       incomeCategoryId: null,
-      transactionDate: new Date('2026-09-20T00:00:00.000Z'),
+      expenseCategoryId: null,
+      transactionDate: '2026-09-20',
       reversalOfTransactionId: null,
+      baseCurrency: 'INR',
+      baseAmount: '5250.0000',
+      exchangeRate: '5.25000000',
+      rateDate: '2026-09-20',
+      rateSource: 'PROVIDER',
     });
 
     expect(transaction).toBeInstanceOf(Transaction);

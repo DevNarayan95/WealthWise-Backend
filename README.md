@@ -15,13 +15,15 @@ The API is consumed by the React web app and, later, by mobile apps. Every reque
 | Accounts     | Create, list, get, archive, and read the balance of an account                                        |
 | Transactions | Create, list, get, and reverse transactions. INCOME transactions can link to an income category       |
 | Income       | Create, list, get, rename, and archive custom income categories. Eight system categories are seeded   |
+| Expenses     | Create, list, get, rename, and archive custom expense categories. EXPENSE transactions can link to one |
+| FX           | Converts transactions to the base currency (INR by default) using stored, provider, or manual rates    |
 | Health       | Liveness, readiness, and combined health checks                                                       |
 
 Login is blocked until the email address is verified (`EMAIL_NOT_VERIFIED`).
 
 ### Planned
 
-Expenses, budgets, categories, investments, loans, savings goals, notifications, reports, dashboard, and financial insights. These modules have folders in `src/modules/` but no endpoints yet.
+Budgets, savings, goals, investments, loans, notifications, reports, dashboard, and financial insights. These modules have folders in `src/modules/` but no endpoints yet.
 
 ## Technology stack
 
@@ -148,6 +150,9 @@ $ openssl rand -hex 32      # API keys
 | `mail`       | From address and SMTP host, port, and timeouts.                          |
 | `database`   | Connection pool size, timeouts, SSL.                                     |
 | `logging`    | Level, pretty printing, log folder (`logs`), retention, redacted fields. |
+| `income`     | Maximum length of an income category name.                               |
+| `expenses`   | Maximum length of an expense category name.                              |
+| `exchangeRates` | Base currency (`INR`), rate provider and timeout, manual fallback rates. |
 | `monitoring` | API benchmark and slow query thresholds. Both are applied at runtime.    |
 | `thirdParty` | Reserved for the notification API. Validated, not yet used.              |
 | `swagger`    | Enabled flag, UI path (`docs`), title, version.                          |

@@ -87,6 +87,18 @@
   "income": {
     "categoryNameMaxLength": 100
   },
+  "expenses": {
+    "categoryNameMaxLength": 100
+  },
+  "exchangeRates": {
+    "baseCurrency": "INR",
+    "provider": {
+      "name": "frankfurter",
+      "baseUrl": "https://api.frankfurter.dev/v1",
+      "timeoutMs": 5000
+    },
+    "manualRates": {}
+  },
   "logging": {
     "level": "info",
     "pretty": false,

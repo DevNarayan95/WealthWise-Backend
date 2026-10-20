@@ -17,6 +17,16 @@ describe('rolePermissions', () => {
     );
   });
 
+  it('grants CUSTOMER the expense permissions', () => {
+    expect(rolePermissions.CUSTOMER).toEqual(
+      expect.arrayContaining([
+        'expense:create',
+        'expense:read',
+        'expense:update',
+      ]),
+    );
+  });
+
   it('grants ACCOUNT_MANAGER account create permission', () => {
     expect(rolePermissions.ACCOUNT_MANAGER).toContain('accounts:create');
   });

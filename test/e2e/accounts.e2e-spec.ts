@@ -11,6 +11,17 @@ import { AppModule } from '../../src/app.module';
 import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
 import { UserStatus } from '../../prisma/generated/prisma/client';
 
+// Seeds bypass the service, so FX fields use a labelled MANUAL rate instead of a provider lookup.
+const SEED_EXCHANGE_RATE = 20;
+
+const seedFxFields = (amount: string, rateDate: Date) => ({
+  baseCurrency: 'INR',
+  baseAmount: (Number(amount) * SEED_EXCHANGE_RATE).toFixed(4),
+  exchangeRate: SEED_EXCHANGE_RATE.toFixed(8),
+  rateDate,
+  rateSource: 'MANUAL' as const,
+});
+
 describe('Accounts (E2E)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -110,38 +121,19 @@ describe('Accounts (E2E)', () => {
     expect(superAdminPermissionNames).toContain('accounts:read');
 
     /**
-     * Find an existing seeded role that has both account permissions.
-     *
-     * We reuse the application's seeded RBAC model instead of
-     * creating a second permission system inside the E2E test.
+     * Use the seeded ACCOUNT_MANAGER role, which holds accounts:create,
+     * accounts:read and accounts:update. Selecting by name keeps the
+     * test deterministic; a permission-based lookup could match CUSTOMER
+     * or SUPER_ADMIN depending on row order.
      */
-    const accountsRole = await prisma.role.findFirst({
+    const accountsRole = await prisma.role.findUnique({
       where: {
-        permissions: {
-          some: {
-            permission: {
-              resource: 'accounts',
-              action: 'create',
-            },
-          },
-        },
-        AND: {
-          permissions: {
-            some: {
-              permission: {
-                resource: 'accounts',
-                action: 'read',
-              },
-            },
-          },
-        },
+        name: 'ACCOUNT_MANAGER',
       },
     });
 
     if (!accountsRole) {
-      throw new Error(
-        'No seeded role with accounts:create and accounts:read permissions was found.',
-      );
+      throw new Error('Seeded ACCOUNT_MANAGER role was not found.');
     }
 
     /**
@@ -182,6 +174,7 @@ describe('Accounts (E2E)', () => {
 
     expect(authorizedPermissionNames).toContain('accounts:create');
     expect(authorizedPermissionNames).toContain('accounts:read');
+    expect(authorizedPermissionNames).toContain('accounts:update');
 
     authorizedUserToken = await jwtService.signAsync({
       sub: authorizedUser.id,
@@ -358,6 +351,7 @@ describe('Accounts (E2E)', () => {
         amount,
         currency: 'MYR',
         transactionDate,
+        ...seedFxFields(amount, transactionDate),
       },
     });
   };

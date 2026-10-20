@@ -118,6 +118,23 @@ const permissions = [
     description: 'Update income categories',
   },
 
+  // Expense
+  {
+    resource: 'expense',
+    action: 'create',
+    description: 'Create expense categories',
+  },
+  {
+    resource: 'expense',
+    action: 'read',
+    description: 'View expense categories',
+  },
+  {
+    resource: 'expense',
+    action: 'update',
+    description: 'Update expense categories',
+  },
+
   // Transactions
   {
     resource: 'transactions',

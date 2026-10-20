@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TransactionType } from '../../domain/entities/transaction.entity';
 import {
-  IsDateString,
   IsEnum,
   IsOptional,
   IsString,
@@ -53,10 +52,15 @@ export class CreateTransactionDto {
   description?: string | null;
 
   @ApiProperty({
-    example: '2026-09-01T00:00:00.000Z',
-    description: 'Date and time when the financial transaction occurred.',
+    example: '2026-09-01',
+    format: 'date',
+    description:
+      'Calendar date (YYYY-MM-DD) in the user local date. Times and time zones are not accepted.',
   })
-  @IsDateString()
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'transactionDate must use the YYYY-MM-DD format',
+  })
   transactionDate!: string;
 
   @ApiPropertyOptional({
@@ -69,4 +73,15 @@ export class CreateTransactionDto {
   @IsOptional()
   @IsUUID()
   incomeCategoryId?: string | null;
+
+  @ApiPropertyOptional({
+    example: '3f2b9c1e-7d4a-4b8e-9f10-2a6c5d8e1b47',
+    format: 'uuid',
+    nullable: true,
+    description:
+      'Expense category for an EXPENSE transaction. Must be omitted or null for INCOME transactions.',
+  })
+  @IsOptional()
+  @IsUUID()
+  expenseCategoryId?: string | null;
 }

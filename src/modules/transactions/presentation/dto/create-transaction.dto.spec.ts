@@ -12,7 +12,7 @@ const validPayload = {
   amount: '2500.00',
   currency: 'MYR',
   description: 'Salary',
-  transactionDate: '2026-09-01T00:00:00.000Z',
+  transactionDate: '2026-09-01',
 };
 
 const toDto = (overrides: Record<string, unknown> = {}) =>

@@ -1,7 +1,7 @@
 {
   "item": [
     {
-      "id": "9e5485d3-7e90-44db-a650-6e24b9045794",
+      "id": "51fba4ea-c83b-4060-8eee-26e83b7d3959",
       "name": "Health",
       "description": {
         "content": "",
@@ -9,7 +9,7 @@
       },
       "item": [
         {
-          "id": "5ad2d34d-da23-457a-98b2-ff28b4e4e948",
+          "id": "b1059315-a77f-4d4f-b110-086cf3e842fe",
           "name": "Health Controller live",
           "request": {
             "name": "Health Controller live",
@@ -33,7 +33,7 @@
           },
           "response": [
             {
-              "id": "1a31b619-389a-480e-a1cc-b7be487ca207",
+              "id": "69bb534f-8ca3-4e81-9e99-b1d6e07f5858",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -68,7 +68,7 @@
           }
         },
         {
-          "id": "5004370f-7980-438c-8382-5e7fe8c4e3de",
+          "id": "2d85e1c8-3c02-4daf-a490-31ede1ea952f",
           "name": "Health Controller ready",
           "request": {
             "name": "Health Controller ready",
@@ -92,7 +92,7 @@
           },
           "response": [
             {
-              "id": "4218eb68-c018-4155-bba7-3aee598124c5",
+              "id": "4599e772-d895-4ffd-abb8-7c0431c721cb",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -130,7 +130,7 @@
       "event": []
     },
     {
-      "id": "a3b81db8-3c3c-4df0-b275-5cce43cc4b2d",
+      "id": "a90df555-db23-4518-8ed0-edf495b0952a",
       "name": "Users",
       "description": {
         "content": "",
@@ -138,7 +138,7 @@
       },
       "item": [
         {
-          "id": "91236492-7c2a-44b9-ad50-6e1e61fdc4be",
+          "id": "f0d1b080-5b5a-409f-9609-16c47cd9dfdd",
           "name": "Get current user",
           "request": {
             "name": "Get current user",
@@ -182,7 +182,7 @@
           },
           "response": [
             {
-              "id": "81ead5d7-5f53-4a9e-b213-05d1db5c500d",
+              "id": "11297731-4c61-4c0e-891f-b02664a6e3e3",
               "name": "Current user returned successfully.",
               "originalRequest": {
                 "url": {
@@ -228,7 +228,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "3ec181c0-5fb4-4453-9e51-281ed888fa24",
+              "id": "e1769d6a-10f7-4185-9c31-568fac7243d0",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -279,7 +279,7 @@
       "event": []
     },
     {
-      "id": "0d36929e-3410-491c-8aab-2152fdc354fb",
+      "id": "117bb2b2-7b3f-4a34-adf7-bb1f158b14c8",
       "name": "Authentication",
       "description": {
         "content": "",
@@ -287,7 +287,7 @@
       },
       "item": [
         {
-          "id": "45d271bf-b75c-4b56-ba58-6a66a4ff7271",
+          "id": "88537a75-eb98-4fef-bf8a-a4edcfa8a5ec",
           "name": "Authenticate a user",
           "request": {
             "name": "Authenticate a user",
@@ -339,7 +339,7 @@
           },
           "response": [
             {
-              "id": "1a99e904-93b9-4d2a-ae4b-1073bea0af51",
+              "id": "3e544822-71e8-4200-a225-ba4056be32b5",
               "name": "Authentication successful.",
               "originalRequest": {
                 "url": {
@@ -393,7 +393,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "940ea135-4af0-4d7f-b2ad-2c768fd1ca4f",
+              "id": "2030f316-613d-4b78-b777-a7c5713c9ece",
               "name": "Invalid request data.",
               "originalRequest": {
                 "url": {
@@ -443,7 +443,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "861cd3a4-3150-47c0-b4f2-52f503c0f3a8",
+              "id": "3f317747-bd8c-4e0c-a1d2-a0a2a16fa147",
               "name": "Invalid email or password.",
               "originalRequest": {
                 "url": {
@@ -493,7 +493,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "474a0903-f720-42bd-9899-0d4d47f27371",
+              "id": "b45628a9-875e-4fdb-b477-3b3deaff7894",
               "name": "Email address not verified (EMAIL_NOT_VERIFIED).",
               "originalRequest": {
                 "url": {
@@ -549,7 +549,7 @@
           }
         },
         {
-          "id": "c4f846d4-9578-48f4-8dac-7500fd877608",
+          "id": "1d8c0ef1-906c-428f-b693-b5a332d55f99",
           "name": "Register a new user",
           "request": {
             "name": "Register a new user",
@@ -601,7 +601,7 @@
           },
           "response": [
             {
-              "id": "2d675094-51bf-410e-a01e-582bd2545e67",
+              "id": "09abba56-7936-4065-ab40-b85d79c06cfb",
               "name": "Account created.",
               "originalRequest": {
                 "url": {
@@ -655,7 +655,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "56b5ca75-5c62-4876-870e-d06191481904",
+              "id": "b4fcf1f0-f8b8-42b2-88c0-bb4ce96900d1",
               "name": "Invalid request data.",
               "originalRequest": {
                 "url": {
@@ -705,7 +705,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "b98910ef-70bc-40c3-8392-1f9734920324",
+              "id": "9bb4961e-c20c-42e0-ab8e-9dda74eba520",
               "name": "An account with this email already exists (USER_ALREADY_EXISTS).",
               "originalRequest": {
                 "url": {
@@ -755,7 +755,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "231f4696-83af-4b5b-856c-88b713d4e462",
+              "id": "377a720a-9120-40ab-aef7-d7ce731c5aa7",
               "name": "The verification email could not be delivered (EMAIL_DELIVERY_FAILED). The account exists; use resend-verification.",
               "originalRequest": {
                 "url": {
@@ -811,7 +811,7 @@
           }
         },
         {
-          "id": "86ab0051-5529-4251-9e95-2ebb7ef29836",
+          "id": "0fd52d5c-1688-4720-914e-3c9fdd056c18",
           "name": "Verify an email address with the emailed code",
           "request": {
             "name": "Verify an email address with the emailed code",
@@ -863,7 +863,7 @@
           },
           "response": [
             {
-              "id": "9b98a28c-2955-4002-b53c-75fe98241c9f",
+              "id": "ee2307c8-b29b-411c-a8db-cfa9a18d675e",
               "name": "Email verified.",
               "originalRequest": {
                 "url": {
@@ -917,7 +917,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "6b6e517c-80fc-4416-8f10-b976d62c166d",
+              "id": "98b6bca5-60bd-4875-8d92-8307af318073",
               "name": "Code is invalid (OTP_INVALID) or expired (OTP_EXPIRED).",
               "originalRequest": {
                 "url": {
@@ -967,7 +967,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "136bca74-13c0-4099-b54d-795b64ea5b46",
+              "id": "f3aec19e-a84c-46e3-b640-21ba1a6180db",
               "name": "Too many wrong attempts (OTP_ATTEMPTS_EXCEEDED).",
               "originalRequest": {
                 "url": {
@@ -1023,7 +1023,7 @@
           }
         },
         {
-          "id": "c8735872-42f9-4bf2-9d8f-de731caa4b41",
+          "id": "7a48aeaa-d3cb-40c4-9b31-a4ad44280f4a",
           "name": "Resend the email verification code",
           "request": {
             "name": "Resend the email verification code",
@@ -1075,7 +1075,7 @@
           },
           "response": [
             {
-              "id": "8dd3828a-7dbd-413b-84e4-835bb4f20666",
+              "id": "b937ea16-a1b4-4169-b940-b8ae08948691",
               "name": "Request accepted.",
               "originalRequest": {
                 "url": {
@@ -1129,7 +1129,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "6eaf5597-be56-44ae-9dd2-e893fa482d77",
+              "id": "9f2cc5d1-9f3e-4e6d-bbeb-a47e5c9289f1",
               "name": "A code was requested too recently (OTP_RESEND_TOO_SOON).",
               "originalRequest": {
                 "url": {
@@ -1185,7 +1185,7 @@
           }
         },
         {
-          "id": "0ec3386b-9242-4990-9566-dfa52bb4eea4",
+          "id": "8b57fab7-470d-4093-bec8-c3718e801c34",
           "name": "Request a password reset code",
           "request": {
             "name": "Request a password reset code",
@@ -1237,7 +1237,7 @@
           },
           "response": [
             {
-              "id": "84336687-3dc7-4fed-a7d2-a9f0e911ec7c",
+              "id": "e608870c-ffca-429a-99e6-5a84deb08a68",
               "name": "Request accepted.",
               "originalRequest": {
                 "url": {
@@ -1297,7 +1297,7 @@
           }
         },
         {
-          "id": "4c641d4c-a09c-436d-a922-f26730dc63d0",
+          "id": "823864e5-59ae-434d-8ec5-3f1c5adaf1c1",
           "name": "Reset a password with the emailed code",
           "request": {
             "name": "Reset a password with the emailed code",
@@ -1349,7 +1349,7 @@
           },
           "response": [
             {
-              "id": "40e79732-ae02-4f92-a1c1-3f12f3730614",
+              "id": "e609bcfb-66ed-42dd-b0a2-5bc8e254f131",
               "name": "Password reset.",
               "originalRequest": {
                 "url": {
@@ -1403,7 +1403,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "8296c9db-856e-4f8b-9a29-1007668d4383",
+              "id": "3fba344e-8e2e-40ae-9108-0addf826f90d",
               "name": "Code is invalid (OTP_INVALID) or expired (OTP_EXPIRED).",
               "originalRequest": {
                 "url": {
@@ -1453,7 +1453,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "eee97fb7-2877-4417-bebe-346fde1282c5",
+              "id": "a1aa93e3-7cb8-49ba-8d2c-13ed211f9d96",
               "name": "Too many wrong attempts (OTP_ATTEMPTS_EXCEEDED).",
               "originalRequest": {
                 "url": {
@@ -1512,7 +1512,7 @@
       "event": []
     },
     {
-      "id": "2d169f9c-d0f2-40a8-b38e-7dac86109da1",
+      "id": "9c0e210b-bc76-42e8-8ffe-48f95d8da1a6",
       "name": "Accounts",
       "description": {
         "content": "",
@@ -1520,7 +1520,7 @@
       },
       "item": [
         {
-          "id": "cd50d4f5-570e-4995-a593-6fbc2ffb2e46",
+          "id": "812ff945-137c-49b3-9211-cee0cbfbc5cf",
           "name": "Create an account",
           "request": {
             "name": "Create an account",
@@ -1576,7 +1576,7 @@
           },
           "response": [
             {
-              "id": "684bec0e-fa66-4227-a210-4b5f751f46fb",
+              "id": "92eb0338-8df8-4b2a-acbd-3834230c95dd",
               "name": "Account created successfully.",
               "originalRequest": {
                 "url": {
@@ -1629,7 +1629,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "cd0bfa45-57a8-4704-a049-bb5c706b865b",
+              "id": "b5841493-cd08-4685-bfb5-6bc7c8434aec",
               "name": "Invalid account data.",
               "originalRequest": {
                 "url": {
@@ -1678,7 +1678,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "93854609-aa87-49c0-9447-e2a657d5518e",
+              "id": "36b46623-509a-4ca2-bf73-bde7d8b8522f",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -1727,7 +1727,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "5f40f81d-9c2d-4a39-a6d9-e33b55cd0b62",
+              "id": "95bc8bea-b60a-4ef6-b343-2025dc8c29d7",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -1782,7 +1782,7 @@
           }
         },
         {
-          "id": "47933179-d72a-48cf-b64c-ac3554aacb98",
+          "id": "e10ac5df-bb5e-4800-9c1c-86bc3b041d2d",
           "name": "List accounts",
           "request": {
             "name": "List accounts",
@@ -1838,7 +1838,7 @@
           },
           "response": [
             {
-              "id": "139852ed-917b-4ec3-a6ef-9b4546b530c7",
+              "id": "65df90a4-6633-4df7-bd2d-95b2eced57de",
               "name": "Accounts returned successfully.",
               "originalRequest": {
                 "url": {
@@ -1898,7 +1898,7 @@
           }
         },
         {
-          "id": "2eb1b08d-72d3-406c-bd81-361d191cd0fd",
+          "id": "057ccb7b-1e11-4fdb-bd88-0c001b159127",
           "name": "Get an account",
           "request": {
             "name": "Get an account",
@@ -1950,7 +1950,7 @@
           },
           "response": [
             {
-              "id": "48026800-27ca-40f2-9367-f6614d3148f0",
+              "id": "fafd7088-8e8f-4011-bbb5-f9fc28d67f52",
               "name": "Account returned successfully.",
               "originalRequest": {
                 "url": {
@@ -2004,7 +2004,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "6aeee19d-71c7-4278-9fe8-90595cce5b71",
+              "id": "dc689160-165e-4dba-a98d-0881689b7977",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2054,7 +2054,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "f283e089-0d5a-4035-9ec8-7c8df4e96251",
+              "id": "e7204ab8-3e57-4b80-8892-f939f22bfb3a",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -2104,7 +2104,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "6641efc4-42fb-4f2c-b9bc-d14933d92756",
+              "id": "7701a3c3-c6fe-4c17-a840-946b6d90a661",
               "name": "Account was not found.",
               "originalRequest": {
                 "url": {
@@ -2160,7 +2160,7 @@
           }
         },
         {
-          "id": "5151e465-427d-4a90-9f7f-ce5b22f91026",
+          "id": "91167d7f-7e9f-45fc-b986-f8ccae36df8e",
           "name": "Archive an account",
           "request": {
             "name": "Archive an account",
@@ -2184,7 +2184,7 @@
                 {
                   "disabled": false,
                   "type": "any",
-                  "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
+                  "value": "f746d558-2aef-f8fa-b305-9e1c6c7a1bd3",
                   "key": "id",
                   "description": "(Required) Account ID"
                 }
@@ -2213,7 +2213,7 @@
           },
           "response": [
             {
-              "id": "12486a64-ffea-42a7-91f3-ae0e943132cb",
+              "id": "9c66dc32-c3f4-474f-a091-e1174d0face1",
               "name": "Account archived successfully",
               "originalRequest": {
                 "url": {
@@ -2232,7 +2232,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
+                      "value": "f746d558-2aef-f8fa-b305-9e1c6c7a1bd3",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2268,7 +2268,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "8c69fe52-a483-4617-8287-168f984849d6",
+              "id": "af432c92-a333-4a53-9913-5923973627e5",
               "name": "Authentication is required",
               "originalRequest": {
                 "url": {
@@ -2287,7 +2287,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
+                      "value": "f746d558-2aef-f8fa-b305-9e1c6c7a1bd3",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2319,7 +2319,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "b25c02f9-d1f1-4d0c-811d-a42082d8818c",
+              "id": "874348c9-daf2-4055-8819-8edb59ebbcff",
               "name": "User does not have the accounts:update permission",
               "originalRequest": {
                 "url": {
@@ -2338,7 +2338,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
+                      "value": "f746d558-2aef-f8fa-b305-9e1c6c7a1bd3",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2370,7 +2370,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "4c898166-c3ea-4d36-9d5b-029a0a6e6009",
+              "id": "c2b0c065-430b-4ee0-9ae4-ef9c0b9fe730",
               "name": "Account was not found or does not belong to the authenticated user",
               "originalRequest": {
                 "url": {
@@ -2389,7 +2389,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
+                      "value": "f746d558-2aef-f8fa-b305-9e1c6c7a1bd3",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2421,7 +2421,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "af29a0be-49ce-426d-acfb-21238521504e",
+              "id": "8fe630c5-6983-4f31-80e3-bd9211c63adf",
               "name": "Account is already archived",
               "originalRequest": {
                 "url": {
@@ -2440,7 +2440,7 @@
                     {
                       "disabled": false,
                       "type": "any",
-                      "value": "12414ec7-b6b9-a152-9ff2-31b81655f9e7",
+                      "value": "f746d558-2aef-f8fa-b305-9e1c6c7a1bd3",
                       "key": "id",
                       "description": "(Required) Account ID"
                     }
@@ -2478,7 +2478,7 @@
           }
         },
         {
-          "id": "491b3a9e-e4e5-4c94-ab96-e4b3064ceb0c",
+          "id": "7b3d0f79-ae7c-4e56-97d1-a89326fe67be",
           "name": "Get account balance",
           "request": {
             "name": "Get account balance",
@@ -2531,7 +2531,7 @@
           },
           "response": [
             {
-              "id": "df126c81-6ee8-4adb-b6f9-916a441a9f4a",
+              "id": "aab60fdd-a43b-46c1-a741-b48632c94989",
               "name": "Account balance returned successfully.",
               "originalRequest": {
                 "url": {
@@ -2586,7 +2586,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "9c8a808b-eb15-47e8-b280-38a5ebb70eb2",
+              "id": "493f2a89-7db6-42ae-85c0-33bfc1b686a0",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2637,7 +2637,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "e228fdce-c9e0-4fce-b874-1e6382fe9f5c",
+              "id": "48b34caa-9d16-4e4b-a9d4-a149a6019900",
               "name": "User does not have the accounts:read permission.",
               "originalRequest": {
                 "url": {
@@ -2688,7 +2688,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "9cb526d1-59e0-4deb-a798-af5c4969178d",
+              "id": "7ebbbef2-ee13-4a08-97b1-3c99c89a3e15",
               "name": "Account was not found or does not belong to the authenticated user.",
               "originalRequest": {
                 "url": {
@@ -2748,7 +2748,7 @@
       "event": []
     },
     {
-      "id": "57524d8c-da56-4048-83ff-252dd5b4ca4b",
+      "id": "85240412-5e06-4830-bd53-6b17c43886b0",
       "name": "Income",
       "description": {
         "content": "",
@@ -2756,7 +2756,7 @@
       },
       "item": [
         {
-          "id": "4c02f6d0-759e-41b7-88dd-c2eda22808da",
+          "id": "a0c5b202-e8e0-4ffb-af43-1795f1943e33",
           "name": "Create an income category",
           "request": {
             "name": "Create an income category",
@@ -2813,7 +2813,7 @@
           },
           "response": [
             {
-              "id": "47430830-ccde-496b-b68a-f114937e4f09",
+              "id": "7aefc65b-4de1-4228-a7b1-ee8d8e9b21ed",
               "name": "Income category created successfully.",
               "originalRequest": {
                 "url": {
@@ -2867,7 +2867,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "53583432-5e1e-498d-bb33-1f35c883ce36",
+              "id": "830b4ce5-7747-4873-a4a1-4404fe86304b",
               "name": "Invalid income category data.",
               "originalRequest": {
                 "url": {
@@ -2917,7 +2917,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "d25bf2b2-1668-49c2-a66d-03fa0ce50ea9",
+              "id": "47c0e3f4-e6f8-4751-8a7f-6f538a2954dd",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -2967,7 +2967,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "4a79ee75-e7fd-4484-96fb-2f9c05267d32",
+              "id": "88dddb9c-3465-4514-91f9-2426a999a321",
               "name": "User does not have the required permission.",
               "originalRequest": {
                 "url": {
@@ -3023,7 +3023,7 @@
           }
         },
         {
-          "id": "0cddedf2-05c8-4afe-926c-c08cd782a879",
+          "id": "65480c54-df0f-4fad-aa46-383daf28771c",
           "name": "List income categories",
           "request": {
             "name": "List income categories",
@@ -3080,7 +3080,7 @@
           },
           "response": [
             {
-              "id": "222fc490-45f9-46df-a176-c443c44efed8",
+              "id": "ab95412f-47b9-4148-b623-767a5916d7a2",
               "name": "Income categories returned successfully.",
               "originalRequest": {
                 "url": {
@@ -3141,7 +3141,7 @@
           }
         },
         {
-          "id": "f892f661-e5ed-46b9-a99d-146870aff23b",
+          "id": "ac39e0d9-55a6-44e8-b636-63f7b81ca8b1",
           "name": "Get an income category",
           "request": {
             "name": "Get an income category",
@@ -3194,7 +3194,7 @@
           },
           "response": [
             {
-              "id": "26bc99b4-d38a-476b-806f-6e06b0920ba0",
+              "id": "a5bb0278-0d1d-4659-b91c-808ed48735c1",
               "name": "Income category returned successfully.",
               "originalRequest": {
                 "url": {
@@ -3249,7 +3249,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "17f5703c-a6ae-4884-a8c6-ce6a633672b1",
+              "id": "89be2d69-9a9a-4f16-8563-2480bb9eaa21",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -3306,7 +3306,7 @@
           }
         },
         {
-          "id": "a02ddb5b-26d4-4e7f-8034-d787a64b900a",
+          "id": "39815241-0dac-4154-a816-93b56255043e",
           "name": "Rename an income category",
           "request": {
             "name": "Rename an income category",
@@ -3372,7 +3372,7 @@
           },
           "response": [
             {
-              "id": "98a6c7ed-fbc1-4c86-8e8e-8fdeaddbd622",
+              "id": "35159e9f-af21-4655-92f1-040d6751a6a9",
               "name": "Income category updated successfully.",
               "originalRequest": {
                 "url": {
@@ -3435,7 +3435,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "ad10cb05-cd6a-4c33-a4d6-9f15e50ec9ea",
+              "id": "42175005-7037-4c7e-b9e1-771f078b7427",
               "name": "Invalid income category data.",
               "originalRequest": {
                 "url": {
@@ -3494,7 +3494,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "ea6ef1b6-11ca-4e24-8211-b5fbd60b6ebc",
+              "id": "191f6678-8c65-4f62-8601-fcfb95ff812e",
               "name": "User lacks the income:update permission, or the category is a read-only system category.",
               "originalRequest": {
                 "url": {
@@ -3553,7 +3553,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "85098765-698a-4067-941a-4fced4a985bc",
+              "id": "b2716676-67bf-45e9-8dc8-21e27af82f57",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -3618,12 +3618,12 @@
           }
         },
         {
-          "id": "dfb839d3-a319-490a-800d-b17cf8e0ad21",
+          "id": "fffba704-730c-4e6d-86c8-db172f0dc93f",
           "name": "Archive an income category",
           "request": {
             "name": "Archive an income category",
             "description": {
-              "content": "Archives a custom income category owned by the authenticated user. Archived categories are hidden from lists. System categories are read-only. Requires the income:update permission.",
+              "content": "Hides an income category for the authenticated user only. Custom categories are archived for everyone who can see them; system categories are hidden just for the requesting user and remain visible to others. Archived categories are hidden from lists. Requires the income:update permission.",
               "type": "text/plain"
             },
             "url": {
@@ -3672,7 +3672,7 @@
           },
           "response": [
             {
-              "id": "38eeea37-9eb4-47cb-a8e2-431ef908732b",
+              "id": "a59cc834-aa6b-4c74-b07a-255fa35aba4f",
               "name": "Income category archived successfully.",
               "originalRequest": {
                 "url": {
@@ -3728,8 +3728,8 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "dcf05305-c93c-496c-ab3d-471c95b82e97",
-              "name": "User lacks the income:update permission, or the category is a read-only system category.",
+              "id": "487d1a31-d13c-4abb-9ce0-39182a55035e",
+              "name": "User lacks the income:update permission.",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -3780,7 +3780,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "36b150aa-e43f-4eb8-ba4c-77a6cfd6b53e",
+              "id": "99011b02-1825-46d8-8a54-07f0506341b1",
               "name": "Income category not found.",
               "originalRequest": {
                 "url": {
@@ -3841,7 +3841,1100 @@
       "event": []
     },
     {
-      "id": "fe5deee3-844d-4298-b2ae-028bb5ef9d01",
+      "id": "3a02baa3-2747-4102-9744-8b00a222b20b",
+      "name": "Expenses",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "aa22e551-dced-4246-a83c-0764b6c19f44",
+          "name": "Create an expense category",
+          "request": {
+            "name": "Create an expense category",
+            "description": {
+              "content": "Creates a custom expense category for the authenticated user. Requires the expense:create permission.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "expenses",
+                "categories"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Coffee\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1e0873d6-35c0-4792-93ba-5a49a28f5f05",
+              "name": "Expense category created successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n  \"name\": \"Groceries\",\n  \"isSystem\": true,\n  \"isArchived\": false,\n  \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-01T00:00:00.000Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0fb917ba-f932-45d0-813e-b76b8047d9aa",
+              "name": "Invalid expense category data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "962c8f23-fc12-4193-828a-9fd4ac632f08",
+              "name": "Authentication is required.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "06c92713-1655-4d66-8a19-fbdbdc5eef86",
+              "name": "User does not have the required permission.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a420d36f-2e70-48cd-9ee7-962053102279",
+          "name": "List expense categories",
+          "request": {
+            "name": "List expense categories",
+            "description": {
+              "content": "Returns paginated system and custom expense categories available to the authenticated user, excluding categories the user has archived. Requires the expense:read permission.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "expenses",
+                "categories"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Number of categories per page. Maximum 100."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number. Starts from 1."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "8ac2c619-dee6-438a-83f3-e964d8142cbc",
+              "name": "Expense categories returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n        \"name\": \"Groceries\",\n        \"isSystem\": true,\n        \"isArchived\": false,\n        \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n        \"updatedAt\": \"2026-09-01T00:00:00.000Z\"\n      },\n      {\n        \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n        \"name\": \"Groceries\",\n        \"isSystem\": true,\n        \"isArchived\": false,\n        \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n        \"updatedAt\": \"2026-09-01T00:00:00.000Z\"\n      }\n    ]\n  },\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 42,\n    \"totalPages\": 3,\n    \"hasNextPage\": true,\n    \"hasPreviousPage\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9f7b5eb0-3f41-4bde-8288-c10be1cf1add",
+          "name": "Get an expense category",
+          "request": {
+            "name": "Get an expense category",
+            "description": {
+              "content": "Returns one expense category available to the authenticated user. Requires the expense:read permission.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "expenses",
+                "categories",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "string",
+                  "key": "id",
+                  "description": "(Required) Expense category identifier."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "7a8a79ad-d2ac-4078-a910-c83338775965",
+              "name": "Expense category returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n  \"name\": \"Groceries\",\n  \"isSystem\": true,\n  \"isArchived\": false,\n  \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-01T00:00:00.000Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d80ef164-759e-4537-8937-5e3305a11ae9",
+              "name": "Expense category not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "baeca7ac-85ac-414a-9d61-e24d89d96f6f",
+          "name": "Rename an expense category",
+          "request": {
+            "name": "Rename an expense category",
+            "description": {
+              "content": "Renames a custom expense category owned by the authenticated user. System categories are read-only. Requires the expense:update permission.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "expenses",
+                "categories",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "string",
+                  "key": "id",
+                  "description": "(Required) Expense category identifier."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Coffee\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4c036768-e0df-490a-bd23-09f5ec88a66a",
+              "name": "Expense category updated successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n  \"name\": \"Groceries\",\n  \"isSystem\": true,\n  \"isArchived\": false,\n  \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-01T00:00:00.000Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8b54269e-ea34-4f67-b1a4-a0202e604bae",
+              "name": "Invalid expense category data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "cc8cc122-bbac-4e81-a26b-a99aaba7919f",
+              "name": "User lacks the expense:update permission, or the category is a read-only system category.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "078d2b39-e955-49f2-8b1c-2f27b3bfff28",
+              "name": "Expense category not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Coffee\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3b3fb233-ca47-4729-bfe4-0b27b831362e",
+          "name": "Archive an expense category",
+          "request": {
+            "name": "Archive an expense category",
+            "description": {
+              "content": "Hides an expense category for the authenticated user only. This applies to both custom and system categories; other users are not affected. Archived categories are hidden from lists. Requires the expense:update permission.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "expenses",
+                "categories",
+                ":id",
+                "archive"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "string",
+                  "key": "id",
+                  "description": "(Required) Expense category identifier."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "id": "878f38a5-9c9f-4073-9384-17a339ce9902",
+              "name": "Expense category archived successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id",
+                    "archive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n  \"name\": \"Groceries\",\n  \"isSystem\": true,\n  \"isArchived\": false,\n  \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-01T00:00:00.000Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a94b45b0-0adc-41b7-8af2-d2885fccf747",
+              "name": "User lacks the expense:update permission.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id",
+                    "archive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "b3e8c464-ccab-40f7-8484-8e4fbebb01d7",
+              "name": "Expense category not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "expenses",
+                    "categories",
+                    ":id",
+                    "archive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "string",
+                      "key": "id",
+                      "description": "(Required) Expense category identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "8b717a7f-0191-441b-ace5-e33749697ee3",
       "name": "Transactions",
       "description": {
         "content": "",
@@ -3849,7 +4942,7 @@
       },
       "item": [
         {
-          "id": "00b0862f-7b81-4189-b9d5-7639846bcb24",
+          "id": "b4c59018-52ce-4f2d-8b64-5d5236a6f3ba",
           "name": "Create a transaction",
           "request": {
             "name": "Create a transaction",
@@ -3895,7 +4988,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n  \"description\": {},\n  \"incomeCategoryId\": {}\n}",
+              "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01\",\n  \"description\": {},\n  \"incomeCategoryId\": {},\n  \"expenseCategoryId\": {}\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3905,7 +4998,7 @@
           },
           "response": [
             {
-              "id": "32431bf5-1690-4cc7-a030-cd85a2baf0dc",
+              "id": "ed885624-0071-4396-b00a-2fba721ed8f2",
               "name": "Transaction created successfully",
               "originalRequest": {
                 "url": {
@@ -3937,7 +5030,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n  \"description\": {},\n  \"incomeCategoryId\": {}\n}",
+                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01\",\n  \"description\": {},\n  \"incomeCategoryId\": {},\n  \"expenseCategoryId\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -3958,7 +5051,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "e659e4df-1a8a-49a5-9314-0b9e268fe663",
+              "id": "d52c7a00-a155-4b1b-94e1-d31ad41e3ce3",
               "name": "Invalid transaction data.",
               "originalRequest": {
                 "url": {
@@ -3986,7 +5079,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n  \"description\": {},\n  \"incomeCategoryId\": {}\n}",
+                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01\",\n  \"description\": {},\n  \"incomeCategoryId\": {},\n  \"expenseCategoryId\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4007,7 +5100,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "dc6fdb81-7bc3-4ff1-a87a-f4240248cac0",
+              "id": "52aae37a-e046-4655-b8ef-ed375efe6c28",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4035,7 +5128,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n  \"description\": {},\n  \"incomeCategoryId\": {}\n}",
+                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01\",\n  \"description\": {},\n  \"incomeCategoryId\": {},\n  \"expenseCategoryId\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4056,7 +5149,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "fd662878-2d38-4507-a9a4-0d0aef401e54",
+              "id": "6f0f4d8a-84d7-4ca8-bfe4-3f4fd6734f7e",
               "name": "Account not found.",
               "originalRequest": {
                 "url": {
@@ -4084,7 +5177,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n  \"description\": {},\n  \"incomeCategoryId\": {}\n}",
+                  "raw": "{\n  \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n  \"type\": \"EXPENSE\",\n  \"amount\": \"50.00\",\n  \"currency\": \"MYR\",\n  \"transactionDate\": \"2026-09-01\",\n  \"description\": {},\n  \"incomeCategoryId\": {},\n  \"expenseCategoryId\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4111,7 +5204,7 @@
           }
         },
         {
-          "id": "14d74384-053f-4904-bd14-bdef5298cb44",
+          "id": "64bcf504-c7a3-46fd-bf77-0d381a67a88a",
           "name": "List transactions",
           "request": {
             "name": "List transactions",
@@ -4171,7 +5264,7 @@
           },
           "response": [
             {
-              "id": "5e995fd4-cd99-4a47-9dc0-33f1cf3f49c4",
+              "id": "1492f35c-f055-412d-907c-2c8c93dcb9f0",
               "name": "Transactions retrieved successfully.",
               "originalRequest": {
                 "url": {
@@ -4224,12 +5317,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n        \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n        \"type\": \"EXPENSE\",\n        \"amount\": \"50.00\",\n        \"currency\": \"MYR\",\n        \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n        \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n        \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n        \"description\": {},\n        \"reversalOfTransactionId\": {},\n        \"incomeCategoryId\": {}\n      },\n      {\n        \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n        \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n        \"type\": \"EXPENSE\",\n        \"amount\": \"50.00\",\n        \"currency\": \"MYR\",\n        \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n        \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n        \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n        \"description\": {},\n        \"reversalOfTransactionId\": {},\n        \"incomeCategoryId\": {}\n      }\n    ]\n  },\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 42,\n    \"totalPages\": 3,\n    \"hasNextPage\": true,\n    \"hasPreviousPage\": false\n  }\n}",
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n        \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n        \"type\": \"EXPENSE\",\n        \"amount\": \"50.00\",\n        \"currency\": \"MYR\",\n        \"transactionDate\": \"2026-09-01\",\n        \"baseCurrency\": \"INR\",\n        \"baseAmount\": \"4550.0000\",\n        \"exchangeRate\": \"23.50000000\",\n        \"rateDate\": \"2026-09-01\",\n        \"rateSource\": \"PROVIDER\",\n        \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n        \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n        \"description\": {},\n        \"reversalOfTransactionId\": {},\n        \"incomeCategoryId\": {},\n        \"expenseCategoryId\": {}\n      },\n      {\n        \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n        \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n        \"type\": \"EXPENSE\",\n        \"amount\": \"50.00\",\n        \"currency\": \"MYR\",\n        \"transactionDate\": \"2026-09-01\",\n        \"baseCurrency\": \"INR\",\n        \"baseAmount\": \"4550.0000\",\n        \"exchangeRate\": \"23.50000000\",\n        \"rateDate\": \"2026-09-01\",\n        \"rateSource\": \"PROVIDER\",\n        \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n        \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n        \"description\": {},\n        \"reversalOfTransactionId\": {},\n        \"incomeCategoryId\": {},\n        \"expenseCategoryId\": {}\n      }\n    ]\n  },\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 42,\n    \"totalPages\": 3,\n    \"hasNextPage\": true,\n    \"hasPreviousPage\": false\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "5d1aa1ea-0353-4d9a-8ec9-83328afd76a0",
+              "id": "68a2583e-0109-45a4-a0ee-9c3f774f0d7a",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4283,7 +5376,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "1a6abcaf-18e0-46df-a52e-17cdbb4a192c",
+              "id": "be242f79-c66e-4373-b23c-13adcd7248b8",
               "name": "Account not found.",
               "originalRequest": {
                 "url": {
@@ -4343,7 +5436,7 @@
           }
         },
         {
-          "id": "ba9edfc5-2afe-4b55-a06b-97036a0f6a79",
+          "id": "7375fce7-f831-4540-a766-15b9e9b54b01",
           "name": "Get a transaction",
           "request": {
             "name": "Get a transaction",
@@ -4395,7 +5488,7 @@
           },
           "response": [
             {
-              "id": "72cd5e54-5572-4232-bad8-0e34a569f1b8",
+              "id": "9e451794-7d7f-404f-950a-35e47e567ceb",
               "name": "Transaction retrieved successfully.",
               "originalRequest": {
                 "url": {
@@ -4444,12 +5537,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n    \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n    \"type\": \"EXPENSE\",\n    \"amount\": \"50.00\",\n    \"currency\": \"MYR\",\n    \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n    \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n    \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n    \"description\": {},\n    \"reversalOfTransactionId\": {},\n    \"incomeCategoryId\": {}\n  },\n  \"meta\": {}\n}",
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n    \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n    \"type\": \"EXPENSE\",\n    \"amount\": \"50.00\",\n    \"currency\": \"MYR\",\n    \"transactionDate\": \"2026-09-01\",\n    \"baseCurrency\": \"INR\",\n    \"baseAmount\": \"4550.0000\",\n    \"exchangeRate\": \"23.50000000\",\n    \"rateDate\": \"2026-09-01\",\n    \"rateSource\": \"PROVIDER\",\n    \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n    \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n    \"description\": {},\n    \"reversalOfTransactionId\": {},\n    \"incomeCategoryId\": {},\n    \"expenseCategoryId\": {}\n  },\n  \"meta\": {}\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "94389062-7823-4aaf-906a-71fa49c4f343",
+              "id": "aec8dad8-202a-468a-81fa-b685d7c3994a",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4499,7 +5592,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "ad10faf3-5b9e-4855-98ce-73a93ab8534d",
+              "id": "502c9faf-1cf2-4e83-ae29-a191ec2d074f",
               "name": "Transaction not found.",
               "originalRequest": {
                 "url": {
@@ -4555,7 +5648,7 @@
           }
         },
         {
-          "id": "095c274c-b919-4dbd-a632-d4e3ad973526",
+          "id": "6ad5a996-40a2-4391-b970-03035d783bba",
           "name": "Reverse a transaction",
           "request": {
             "name": "Reverse a transaction",
@@ -4611,7 +5704,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"transactionDate\": \"2026-09-21T00:00:00.000Z\",\n  \"description\": {}\n}",
+              "raw": "{\n  \"transactionDate\": \"2026-09-21\",\n  \"description\": {}\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -4621,7 +5714,7 @@
           },
           "response": [
             {
-              "id": "d8965215-49cd-43c4-80c8-29bac43b6f1b",
+              "id": "8b2a663f-af1f-4025-8452-cb88bb77f564",
               "name": "Transaction reversed successfully.",
               "originalRequest": {
                 "url": {
@@ -4663,7 +5756,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"transactionDate\": \"2026-09-21T00:00:00.000Z\",\n  \"description\": {}\n}",
+                  "raw": "{\n  \"transactionDate\": \"2026-09-21\",\n  \"description\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4679,12 +5772,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n    \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n    \"type\": \"EXPENSE\",\n    \"amount\": \"50.00\",\n    \"currency\": \"MYR\",\n    \"transactionDate\": \"2026-09-01T00:00:00.000Z\",\n    \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n    \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n    \"description\": {},\n    \"reversalOfTransactionId\": {},\n    \"incomeCategoryId\": {}\n  },\n  \"meta\": {}\n}",
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"8a6f0c8d-5f65-4e6e-8c9e-9d1e5e6b8a12\",\n    \"accountId\": \"b7c4a3d2-7e9f-4f3b-8e6a-1d2c3b4a5e6f\",\n    \"type\": \"EXPENSE\",\n    \"amount\": \"50.00\",\n    \"currency\": \"MYR\",\n    \"transactionDate\": \"2026-09-01\",\n    \"baseCurrency\": \"INR\",\n    \"baseAmount\": \"4550.0000\",\n    \"exchangeRate\": \"23.50000000\",\n    \"rateDate\": \"2026-09-01\",\n    \"rateSource\": \"PROVIDER\",\n    \"createdAt\": \"2026-09-01T00:00:00.000Z\",\n    \"updatedAt\": \"2026-09-01T00:00:00.000Z\",\n    \"description\": {},\n    \"reversalOfTransactionId\": {},\n    \"incomeCategoryId\": {},\n    \"expenseCategoryId\": {}\n  },\n  \"meta\": {}\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "752dbfb5-24bf-4f2d-b763-5da6cfb2262b",
+              "id": "e315bbff-dc5a-4b30-9e80-add191741607",
               "name": "Invalid reversal request or transaction cannot be reversed.",
               "originalRequest": {
                 "url": {
@@ -4722,7 +5815,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"transactionDate\": \"2026-09-21T00:00:00.000Z\",\n  \"description\": {}\n}",
+                  "raw": "{\n  \"transactionDate\": \"2026-09-21\",\n  \"description\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4743,7 +5836,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "ba900df3-fbf3-435d-9970-165f6ac9954d",
+              "id": "af61026e-f150-4176-8bcb-03d5500a3849",
               "name": "Authentication is required.",
               "originalRequest": {
                 "url": {
@@ -4781,7 +5874,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"transactionDate\": \"2026-09-21T00:00:00.000Z\",\n  \"description\": {}\n}",
+                  "raw": "{\n  \"transactionDate\": \"2026-09-21\",\n  \"description\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4802,7 +5895,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "b583a20b-a32f-4912-a9a7-1f8db90204a7",
+              "id": "28eeac95-a01b-49f2-85a9-d2163eef489b",
               "name": "Transaction not found.",
               "originalRequest": {
                 "url": {
@@ -4840,7 +5933,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"transactionDate\": \"2026-09-21T00:00:00.000Z\",\n  \"description\": {}\n}",
+                  "raw": "{\n  \"transactionDate\": \"2026-09-21\",\n  \"description\": {}\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4889,7 +5982,7 @@
     }
   ],
   "info": {
-    "_postman_id": "c9e5cac9-6ed4-47ca-b1fb-e32e54688609",
+    "_postman_id": "fc3c93fd-fd50-44da-aa83-facf4a6f11a7",
     "name": "NAVRO API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

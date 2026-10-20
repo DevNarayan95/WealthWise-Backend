@@ -184,6 +184,26 @@ The HTTP status on the response is always numeric. Only the body field `statusCo
 | `defaultPageSize` | `20`    | Page size when the client does not send one. |
 | `maxPageSize`     | `100`   | Largest page size a client may request.      |
 
+### `income` and `expenses`
+
+| Key                   | Default | Meaning                                                                   |
+| --------------------- | ------- | ------------------------------------------------------------------------- |
+| `categoryNameMaxLength` | `100` | Maximum length of a custom category name. Used by validation and Swagger. |
+
+Changing these values changes validation for new input only.
+
+### `exchangeRates`
+
+| Key                     | Default                          | Meaning                                                                                                                  |
+| ----------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `baseCurrency`          | `INR`                            | Reporting currency. Net worth, dashboard, and reports convert to it.                                                     |
+| `provider.name`         | `frankfurter`                    | Rate provider. Frankfurter publishes ECB reference rates and needs no API key.                                           |
+| `provider.baseUrl`      | `https://api.frankfurter.dev/v1` | Provider API root.                                                                                                       |
+| `provider.timeoutMs`    | `5000`                           | Request timeout. A slow provider is treated as unavailable.                                                              |
+| `manualRates`           | `{}`                             | Manual fallback rate per source currency (for example `"USD": 83.5`). Used only when converting to `baseCurrency` and both the provider and stored rates are unavailable. |
+
+Lookup order: same currency, then a stored rate for the exact date, then the provider, then the most recent stored rate on or before the date, then a manual rate. See [NFR-DATA-07](./BUSINESS_REQUIREMENTS.md).
+
 ### `logging`
 
 | Key             | Default  | Meaning                                                                              |

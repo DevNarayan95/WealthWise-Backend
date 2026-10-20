@@ -109,6 +109,27 @@ Setting the separator to `-` produces `NV-404`. Clients should not depend on eit
 
 Linking an EXPENSE transaction to an income category returns `INVALID_TRANSACTION` (400), not `INVALID_INCOME_CATEGORY`.
 
+### Expenses
+
+| `error.code`                        | HTTP status | `statusCode` (default) | When it is returned                                                                                                     |
+| ----------------------------------- | ----------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `INVALID_EXPENSE_CATEGORY`          | 400         | `NV400`                | Expense category input is not valid (for example, an empty or too-long name).                                           |
+| `EXPENSE_CATEGORY_NOT_FOUND`        | 404         | `NV404`                | The expense category does not exist, or it belongs to another user.                                                     |
+| `EXPENSE_CATEGORY_ALREADY_EXISTS`   | 409         | `NV409`                | An expense category with the same name (case-insensitive) already exists for the user, or it matches a system category. |
+| `SYSTEM_EXPENSE_CATEGORY_READ_ONLY` | 403         | `NV403`                | Renaming a system expense category. System categories cannot be renamed, but a user can archive one for themselves. |
+
+Linking an INCOME transaction to an expense category returns `INVALID_TRANSACTION` (400).
+
+### Exchange rates
+
+| `error.code`               | HTTP status | `statusCode` (default) | When it is returned                                                                                                                                                                 |
+| -------------------------- | ----------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EXCHANGE_RATE_UNAVAILABLE` | 503         | `NV503`                | The rate provider is down, no stored rate exists for the currency on or before the date, and no manual rate is configured. A transaction is otherwise never rejected for a rate problem (see [NFR-DATA-07](./BUSINESS_REQUIREMENTS.md)). |
+
+### Transaction dates
+
+`transactionDate` and `rateDate` accept only `YYYY-MM-DD`. An ISO timestamp such as `2026-09-01T00:00:00.000Z` is rejected with a 400 validation error.
+
 ## Client guidance
 
 - Branch on `error.code`, not on `message`.

@@ -3,14 +3,26 @@ model IncomeCategory {
   userId         String?  @map("user_id") @db.Uuid
   name           String   @db.VarChar(100)
   normalizedName String   @map("normalized_name") @db.VarChar(100)
-  isArchived     Boolean  @default(false) @map("is_archived")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
-  user         User?         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user         User?                       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  archives     UserIncomeCategoryArchive[]
   transactions Transaction[]
 
   @@unique([userId, normalizedName])
-  @@index([userId, isArchived])
   @@map("nv_income_categories")
+}
+
+// Per-user archive state. System categories are shared rows, so archiving one must only hide it for that user.
+model UserIncomeCategoryArchive {
+  userId           String   @map("user_id") @db.Uuid
+  incomeCategoryId String   @map("income_category_id") @db.Uuid
+  archivedAt       DateTime @default(now()) @map("archived_at")
+
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  incomeCategory IncomeCategory @relation(fields: [incomeCategoryId], references: [id], onDelete: Restrict)
+
+  @@id([userId, incomeCategoryId])
+  @@map("nv_user_income_category_archives")
 }

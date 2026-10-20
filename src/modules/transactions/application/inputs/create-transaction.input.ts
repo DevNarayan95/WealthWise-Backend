@@ -7,6 +7,7 @@ export interface CreateTransactionInput {
   amount: string;
   currency: string;
   description: string | null;
-  transactionDate: Date;
+  transactionDate: string;
   incomeCategoryId?: string | null;
+  expenseCategoryId?: string | null;
 }

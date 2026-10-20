@@ -57,7 +57,7 @@ export abstract class IncomeCategoryRepository {
     input: UpdateIncomeCategoryRepositoryInput,
   ): Promise<IncomeCategory | null>;
 
-  abstract archiveCustomCategory(
+  abstract archiveForUser(
     input: ArchiveIncomeCategoryRepositoryInput,
   ): Promise<IncomeCategory | null>;
 }

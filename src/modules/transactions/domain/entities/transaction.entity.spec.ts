@@ -1,7 +1,7 @@
 import { Transaction, TransactionType } from './transaction.entity';
 
 describe('Transaction', () => {
-  const transactionDate = new Date('2026-09-20T00:00:00.000Z');
+  const transactionDate = '2026-09-20';
   const createdAt = new Date('2026-09-20T10:00:00.000Z');
   const updatedAt = new Date('2026-09-20T10:00:00.000Z');
 
@@ -14,7 +14,13 @@ describe('Transaction', () => {
     description: 'September salary',
     reversalOfTransactionId: null,
     incomeCategoryId: null,
+    expenseCategoryId: null,
     transactionDate,
+    baseCurrency: 'INR',
+    baseAmount: '93750.0000',
+    exchangeRate: '18.75000000',
+    rateDate: transactionDate,
+    rateSource: 'PROVIDER' as const,
     createdAt,
     updatedAt,
   };
@@ -33,10 +39,28 @@ describe('Transaction', () => {
     expect(transaction.amount).toBe('5000.000');
     expect(transaction.currency).toBe('MYR');
     expect(transaction.description).toBe('September salary');
-    expect(transaction.transactionDate).toBe(transactionDate);
+    expect(transaction.transactionDate).toBe('2026-09-20');
     expect(transaction.reversalOfTransactionId).toBeNull();
+    expect(transaction.incomeCategoryId).toBeNull();
+    expect(transaction.expenseCategoryId).toBeNull();
+    expect(transaction.baseCurrency).toBe('INR');
+    expect(transaction.baseAmount).toBe('93750.0000');
+    expect(transaction.exchangeRate).toBe('18.75000000');
+    expect(transaction.rateDate).toBe('2026-09-20');
+    expect(transaction.rateSource).toBe('PROVIDER');
     expect(transaction.createdAt).toBe(createdAt);
     expect(transaction.updatedAt).toBe(updatedAt);
+  });
+
+  it('should expose the expense category for expense transactions', () => {
+    const transaction = Transaction.create({
+      ...props,
+      type: TransactionType.EXPENSE,
+      incomeCategoryId: null,
+      expenseCategoryId: 'expense-category-1',
+    });
+
+    expect(transaction.expenseCategoryId).toBe('expense-category-1');
   });
 
   it('should support expense transactions', () => {

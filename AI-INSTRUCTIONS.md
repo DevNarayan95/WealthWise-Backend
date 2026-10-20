@@ -109,17 +109,15 @@ The current seed has Salary, Business, Freelance, Interest, Dividends, Gifts, Re
 Example categories: Groceries, House Rent, Electricity, Medical Bills.
 
 ```text
-Expense categories (per-user unique, system, archive)  ⏳ NEXT
-EXPENSE transactions linked to an expense category     ⏳ NEXT
+Expense categories (per-user unique, system, archive)  ✅
+EXPENSE transactions linked to an expense category     ✅
 ```
 
-**Approved:** users can add their own expense categories, and system defaults are provided, as with income. `expenseCategoryId` is set only on EXPENSE transactions. `incomeCategoryId` stays INCOME-only.
-
-**Proposed system defaults (pending confirmation):** Groceries, House Rent, Electricity, Water, Internet, Mobile, Transport, Medical Bills, Education, Dining, Shopping, Entertainment, Insurance, Loan EMI, Other.
+Users add their own expense categories, and system defaults are provided, as with income. `expenseCategoryId` is set only on EXPENSE transactions. `incomeCategoryId` stays INCOME-only. System defaults are the approved list in [BUSINESS_REQUIREMENTS.md](./docs/BUSINESS_REQUIREMENTS.md) (`Loan EMI` is system-only, decision 18).
 
 ### R5. Transactions and History
 
-Every transaction is stored and never updated after creation. Corrections use reversal. History is queried by `transactionDate`.
+Every transaction is stored and never updated after creation. Corrections use reversal. History is queried by `transactionDate`, a calendar date (`YYYY-MM-DD`).
 
 ```text
 Immutable transactions, reversal workflow          ✅
@@ -281,6 +279,8 @@ Each decision must be answered before the related module is implemented. The AI 
 11. **Multi-currency.** Approved: each amount has a currency, with INR as the default. The user chooses the currency on income, expense, investment, loan, and other inputs. Net worth, reports, and the dashboard can show any selected currency (NFR-DATA-04).
 12. **Exchange rates.** Approved: Frankfurter (ECB reference rates, no API key). Income in RM converts to INR at that day's rate. Each transaction stores its rate. Coverage of INR, MYR, and AUD is verified before release (NFR-DATA-05, NFR-DATA-06).
 13. **Product name and prefixes.** Approved: product name NAVRO, error code prefix `NV`, database table prefix `nv_`.
+14. **Exchange-rate fallback.** Approved: provider rate for the date, then the most recent stored rate for that currency, then a manual rate in config. Transactions are never rejected (NFR-DATA-07).
+15. **Loan EMI category and transaction currency.** Approved: Loan EMI is a system category, and a transaction uses its account's currency (decisions 18 and 19 in BRD section 11).
 
 ---
 
@@ -690,6 +690,40 @@ Owns:
 - Transaction retrieval
 - Transaction listing
 - Transaction reversal workflow
+- Transaction base-currency conversion (`baseAmount`, `exchangeRate`, `rateDate`, `rateSource`)
+- Transaction date is a calendar date (`YYYY-MM-DD`), not a timestamp (decision 21)
+- Optional expense category link on EXPENSE transactions
+
+## Expenses Module
+
+Owns:
+
+- Expense category entity and validation
+- Expense category repository abstraction and Prisma implementation
+- Expense category service (create, list, get, rename, archive)
+- Expense category inputs, DTOs, controller, and response mapping
+- Expense-specific exceptions
+- System defaults (shared rows with `user_id` NULL) and the per-user archive table
+
+Rules:
+
+- Names are unique per user (case-insensitive) and must not match a system category.
+- System categories are read-only, but any user can archive them for themselves.
+- The category limit comes from `expenses.categoryNameMaxLength` in config. Do not hard-code it.
+
+## FX Module
+
+Owns:
+
+- Exchange rate entity and `nv_exchange_rates` persistence
+- Rate provider abstraction and the Frankfurter implementation
+- Exchange rate service (lookup order defined in [CONFIGURATION.md](./docs/CONFIGURATION.md#exchangerates))
+
+Rules:
+
+- Rates are per calendar date (NFR-DATA-05). Each transaction stores its rate and `rateSource`.
+- A transaction is never rejected because the provider is down (NFR-DATA-07). The only exception is `EXCHANGE_RATE_UNAVAILABLE` (503), which is returned when no fallback is available. See [ERROR_CODES.md](./docs/ERROR_CODES.md#exchange-rates).
+- Transaction currency equals account currency. Conversion to `exchangeRates.baseCurrency` is for reporting only (decision 19).
 
 ## Infrastructure
 
@@ -863,9 +897,16 @@ Current E2E coverage includes:
 
 ```text
 test/e2e/
-├── users.e2e-spec.ts
+├── accounts.e2e-spec.ts
+├── app.e2e-spec.ts
 ├── auth.e2e-spec.ts
 ├── authorization.e2e-spec.ts
+├── expense-categories.e2e-spec.ts
+├── global-setup.ts
+├── income-categories.e2e-spec.ts
+├── registration.e2e-spec.ts
+├── support/
+│   └── api-request.ts
 └── transactions.e2e-spec.ts
 ```
 
@@ -3209,27 +3250,38 @@ When continuing NAVRO development:
 
 ## Expenses — Domain Design
 
-The next session should begin with **Expenses domain design**, not implementation. Expenses mirror Income (section 39 onward), so the design should reuse the existing patterns.
+Expenses mirror Income (section 39 onward) and reuse its patterns. The decisions below were answered for this design. Implementation follows this design.
 
-We will first establish:
+**Approved decisions**
 
-```text
-Expense categories: per-user unique, system defaults (R4), archive behavior
+- Expense categories follow the income model: per-user unique names (normalized), archived names stay reserved, system defaults from R4 are provided.
+- Loan EMI is a system category. Users do not create it. (BRD decision 15 covers the category list; this decision covers its owner.)
+- `expenseCategoryId` is set only on EXPENSE transactions. `incomeCategoryId` is set only on INCOME transactions. A database CHECK constraint enforces this.
+- Transaction currency must equal its account currency (Option A). Accounts already store a currency (BR-ACC-02). Conversion is used only for base-currency reporting, net worth, and the dashboard.
+- Exchange rate fallback, so transactions are never rejected because a third party is unavailable:
+  1. Frankfurter rate for the transaction date. On weekends and holidays Frankfurter returns the last published rate, and `rate_date` stores the date it returns.
+  2. If Frankfurter is unavailable: the most recent rate already stored on an earlier transaction for the same currency.
+  3. If no stored rate exists yet: a manual rate per currency in `config/default.json` (operator-maintained).
+- `rate_source` is stored on each transaction (`PROVIDER`, `FALLBACK`, `MANUAL`, `IDENTITY`). Reports can flag approximate values.
+- Frankfurter supports INR, MYR, and AUD (verified against `/v1/currencies`).
+- `transaction_date` is a calendar date with no time. This follows the approved time-zone decision.
 
-How expenseCategoryId is stored on EXPENSE transactions only
+**Confirmed items**
 
-Whether incomeCategoryId and expenseCategoryId share one validation path
+- Shared system categories use `user_id` NULL, one row each. A partial unique index on `normalized_name WHERE user_id IS NULL` prevents duplicates. The same index fixes `nv_income_categories`.
+- Users can archive system categories for themselves. Because the rows are shared, each user's archive state is stored in a per-user table (`nv_user_category_archives`, with `user_id`, `category_id`, `archived_at`). Archiving hides the category from new transactions and keeps its name reserved.
+- New `nv_transactions` columns: `expense_category_id`, `base_amount` (DECIMAL 19,4, base currency INR), `exchange_rate` (DECIMAL 19,8), `rate_date` (DATE), `rate_source` (enum). Base-currency rows use rate 1 and source `IDENTITY`.
+- `transaction_date` changes from timestamp to DATE. This is development data only, so the migration can convert it directly.
+- Proposed error codes, all under the `NV` prefix: `EXPENSE_CATEGORY_NOT_FOUND`, `CATEGORY_TYPE_MISMATCH`, `CURRENCY_MISMATCH`.
 
-Whether the Loan EMI category is created by the system or the user
+**Reporting and filters**
 
-How expense reporting groups by category and transactionDate
+- Expense by category groups on `transaction_date` (month or year) and sums `base_amount`.
+- The transaction list (R5) filters by `type`, `expenseCategoryId` or `incomeCategoryId`, `accountId`, `from`, and `to`. It uses the standard paginated envelope.
 
-How the transaction list gains type and category filters (R5)
+**Status**
 
-Which items in [Open Decisions](#open-decisions) must be answered first
-```
-
-Only after these decisions are established should implementation begin.
+Design recorded. Implementation starts after the inferred items above are confirmed.
 
 **Current position:**
 
@@ -3248,5 +3300,5 @@ Income Module
 
 Expenses — Domain Design
       ↓
-      ⏳ NEXT
+      ✅ DESIGN RECORDED (implementation next)
 ```
