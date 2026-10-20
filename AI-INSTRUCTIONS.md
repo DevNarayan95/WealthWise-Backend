@@ -1196,11 +1196,14 @@ Expected API format:
 /api/v1/...
 ```
 
-Health endpoint remains unversioned:
+Health endpoints remain unversioned and are not under the API prefix:
 
 ```text
-/health
+/health/live
+/health/ready
 ```
+
+`/health/live` is a liveness probe (no dependency checks). `/health/ready` is a readiness probe (bounded database check). There is no plain `/health` route.
 
 Current endpoints include:
 
@@ -2018,6 +2021,8 @@ accounts:create
 accounts:read
 accounts:update
 ```
+
+CUSTOMER receives `accounts:create` and `accounts:read`. ACCOUNT_MANAGER receives all three.
 
 ## Archive Rules
 

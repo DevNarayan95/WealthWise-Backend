@@ -73,11 +73,6 @@ export class HealthController {
     };
   }
 
-  @Get()
-  async check() {
-    return this.ready();
-  }
-
   private async withTimeout<T>(
     promise: Promise<T>,
     timeoutMs: number,

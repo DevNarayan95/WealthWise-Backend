@@ -6,7 +6,13 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: [
+      'eslint.config.mjs',
+      'dist/**',
+      'coverage/**',
+      'logs/**',
+      'prisma/generated/**',
+    ],
   },
   eslint.configs.recommended,
   eslintPluginPrettierRecommended,

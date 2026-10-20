@@ -61,7 +61,7 @@ Setting the separator to `-` produces `WS-404`. Clients should not depend on eit
 | `RESOURCE_NOT_FOUND`    | 404         | `WS404`                | Route or generic resource not found.                                                         |
 | `CONFLICT`              | 409         | `WS409`                | Unique constraint violated (for example a duplicate email).                                  |
 | `TOO_MANY_REQUESTS`     | 429         | `WS429`                | Rate limit exceeded. Wait before retrying. Login is limited more strictly than other routes. |
-| `SERVICE_UNAVAILABLE`   | 503         | `WS503`                | A dependency such as the database is not reachable. Returned by `/health`.                   |
+| `SERVICE_UNAVAILABLE`   | 503         | `WS503`                | A dependency such as the database is not reachable. Returned by `/health/ready`.             |
 | `INTERNAL_SERVER_ERROR` | 500         | `WS500`                | Unexpected failure. Details are logged, never returned.                                      |
 
 ### Users

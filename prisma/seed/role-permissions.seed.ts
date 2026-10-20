@@ -1,6 +1,6 @@
 import { PrismaClient } from '../generated/prisma/client';
 
-const rolePermissions: Record<string, string[]> = {
+export const rolePermissions: Record<string, string[]> = {
   SUPER_ADMIN: ['*'],
 
   ADMIN: [
@@ -24,6 +24,7 @@ const rolePermissions: Record<string, string[]> = {
     'profile:read',
     'profile:update',
     'accounts:read',
+    'accounts:create',
     'income:create',
     'income:read',
     'income:update',

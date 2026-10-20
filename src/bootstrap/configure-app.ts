@@ -27,7 +27,7 @@ export const configureApp = (app: NestExpressApplication): void => {
    * load balancers) can reach them without a path rewrite.
    */
   app.setGlobalPrefix(appConfig.apiPrefix, {
-    exclude: ['health', 'health/live', 'health/ready'],
+    exclude: ['health/live', 'health/ready'],
   });
 
   app.enableVersioning({

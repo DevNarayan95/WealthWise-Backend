@@ -25,9 +25,9 @@ describe('AppController (e2e)', () => {
     expect(app).toBeDefined();
   });
 
-  it('GET /health should return 200', async () => {
+  it('GET /health/live should return 200 without touching the database', async () => {
     const response = await request(app.getHttpServer())
-      .get('/health')
+      .get('/health/live')
       .expect(200);
 
     expect(response.body).toEqual(
@@ -36,5 +36,22 @@ describe('AppController (e2e)', () => {
         service: 'wealthwise-backend',
       }),
     );
+  });
+
+  it('GET /health/ready should return 200 when the database is reachable', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/health/ready')
+      .expect(200);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        status: 'ok',
+        database: expect.objectContaining({ status: 'connected' }),
+      }),
+    );
+  });
+
+  it('GET /health should not exist (use /health/live or /health/ready)', async () => {
+    await request(app.getHttpServer()).get('/health').expect(404);
   });
 });
