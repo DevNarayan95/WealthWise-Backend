@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { PasswordResetService } from './password-reset.service';
 import { AuthEmailService } from './auth-email.service';
+import { AuthSessionService } from './auth-session.service';
 import { OtpService } from './otp.service';
 import { UserRepository } from '../../../users/domain/repositories/user.repository';
 import { User, UserProps } from '../../../users/domain/entities/user.entity';
@@ -23,6 +24,9 @@ describe('PasswordResetService', () => {
   let otpService: jest.Mocked<Pick<OtpService, 'verify'>>;
   let authEmailService: jest.Mocked<Pick<AuthEmailService, 'sendOtp'>>;
   let passwordHasher: jest.Mocked<Pick<PasswordHasherService, 'hash'>>;
+  let authSessionService: jest.Mocked<
+    Pick<AuthSessionService, 'revokeAllSessions'>
+  >;
 
   const createUser = (overrides: Partial<UserProps> = {}): User =>
     User.create({
@@ -47,6 +51,9 @@ describe('PasswordResetService', () => {
     otpService = { verify: jest.fn().mockResolvedValue(undefined) };
     authEmailService = { sendOtp: jest.fn().mockResolvedValue(undefined) };
     passwordHasher = { hash: jest.fn().mockResolvedValue('new-hash') };
+    authSessionService = {
+      revokeAllSessions: jest.fn().mockResolvedValue(undefined),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -55,6 +62,7 @@ describe('PasswordResetService', () => {
         { provide: OtpService, useValue: otpService },
         { provide: AuthEmailService, useValue: authEmailService },
         { provide: PasswordHasherService, useValue: passwordHasher },
+        { provide: AuthSessionService, useValue: authSessionService },
       ],
     }).compile();
 
@@ -137,6 +145,33 @@ describe('PasswordResetService', () => {
         user.id,
         expect.any(Date),
       );
+    });
+
+    it('revokes every existing session after the password changes', async () => {
+      const user = createUser();
+      userRepository.findByEmail.mockResolvedValue(user);
+
+      await service.resetPassword(
+        'jane@example.com',
+        '123456',
+        'NewPassword123!',
+      );
+
+      expect(authSessionService.revokeAllSessions).toHaveBeenCalledWith(
+        user.id,
+        'PASSWORD_RESET',
+      );
+    });
+
+    it('does not revoke sessions when the password is not changed', async () => {
+      userRepository.findByEmail.mockResolvedValue(createUser());
+      otpService.verify.mockRejectedValue(new OtpInvalidException());
+
+      await expect(
+        service.resetPassword('jane@example.com', '000000', 'NewPassword123!'),
+      ).rejects.toThrow(OtpInvalidException);
+
+      expect(authSessionService.revokeAllSessions).not.toHaveBeenCalled();
     });
 
     it('does not touch the verification timestamp for a verified user', async () => {

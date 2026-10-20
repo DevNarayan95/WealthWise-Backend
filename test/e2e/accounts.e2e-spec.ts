@@ -4,7 +4,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
+import { createAccessToken } from './support/access-token';
 import request from './support/api-request';
 
 import { AppModule } from '../../src/app.module';
@@ -25,7 +25,6 @@ const seedFxFields = (amount: string, rateDate: Date) => ({
 describe('Accounts (E2E)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  let jwtService: JwtService;
 
   let authorizedUserToken: string;
   let unauthorizedUserToken: string;
@@ -83,7 +82,6 @@ describe('Accounts (E2E)', () => {
     await app.init();
 
     prisma = app.get(PrismaService);
-    jwtService = app.get(JwtService);
 
     /**
      * Generate JWT for seeded Super Admin.
@@ -176,8 +174,8 @@ describe('Accounts (E2E)', () => {
     expect(authorizedPermissionNames).toContain('accounts:read');
     expect(authorizedPermissionNames).toContain('accounts:update');
 
-    authorizedUserToken = await jwtService.signAsync({
-      sub: authorizedUser.id,
+    authorizedUserToken = await createAccessToken(app, {
+      userId: authorizedUser.id,
       email: authorizedUser.email,
     });
 
@@ -201,8 +199,8 @@ describe('Accounts (E2E)', () => {
       },
     });
 
-    secondAuthorizedUserToken = await jwtService.signAsync({
-      sub: secondAuthorizedUser.id,
+    secondAuthorizedUserToken = await createAccessToken(app, {
+      userId: secondAuthorizedUser.id,
       email: secondAuthorizedUser.email,
     });
 
@@ -224,8 +222,8 @@ describe('Accounts (E2E)', () => {
 
     unauthorizedUserId = unauthorizedUser.id;
 
-    unauthorizedUserToken = await jwtService.signAsync({
-      sub: unauthorizedUser.id,
+    unauthorizedUserToken = await createAccessToken(app, {
+      userId: unauthorizedUser.id,
       email: unauthorizedUser.email,
     });
   });
@@ -482,6 +480,20 @@ describe('Accounts (E2E)', () => {
       }).expect(201);
 
       expect(response.body.data.openingBalance).toBe('-1250.5');
+    });
+
+    it.each([
+      'SAVINGS',
+      'CURRENT',
+      'WALLET',
+      'FIXED_DEPOSIT',
+      'RECURRING_DEPOSIT',
+    ])('should create an account of type %s', async (type) => {
+      const response = await createAccount(authorizedUserToken, {
+        type,
+      }).expect(201);
+
+      expect(response.body.data.type).toBe(type);
     });
 
     it('should reject a missing account name', async () => {

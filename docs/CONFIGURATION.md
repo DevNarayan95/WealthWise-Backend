@@ -133,6 +133,7 @@ The HTTP status on the response is always numeric. Only the body field `statusCo
 | -------------------- | ------- | --------------------------------------- |
 | `jwtExpiresIn`       | `15m`   | Access token lifetime.                  |
 | `passwordSaltRounds` | `12`    | bcrypt cost factor for password hashes. |
+| `refreshTokenTtlDays` | `30`   | Absolute lifetime of a login session. Refresh tokens and sessions expire at this age, regardless of activity. |
 
 ### `registration`
 

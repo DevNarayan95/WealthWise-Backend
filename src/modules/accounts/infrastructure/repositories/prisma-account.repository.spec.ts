@@ -77,6 +77,43 @@ describe('PrismaAccountRepository', () => {
     });
   });
 
+  describe('account type mapping', () => {
+    it.each([
+      AccountType.SAVINGS,
+      AccountType.CURRENT,
+      AccountType.WALLET,
+      AccountType.FIXED_DEPOSIT,
+      AccountType.RECURRING_DEPOSIT,
+    ])(
+      'should map the persisted %s account type to the domain entity',
+      async (type) => {
+        prisma.account.create.mockResolvedValue({
+          id: 'account-id',
+          userId: 'user-id',
+          name: 'Test Account',
+          type,
+          currency: 'INR',
+          openingBalance: {
+            toString: () => '0.0000',
+          },
+          status: AccountStatus.ACTIVE,
+          createdAt: new Date('2026-08-01T00:00:00.000Z'),
+          updatedAt: new Date('2026-08-01T00:00:00.000Z'),
+        });
+
+        const result = await repository.create({
+          userId: 'user-id',
+          name: 'Test Account',
+          type,
+          currency: 'INR',
+          openingBalance: '0.0000',
+        });
+
+        expect(result.type).toBe(type);
+      },
+    );
+  });
+
   describe('findByIdForUser', () => {
     it('should find an account using both account id and user id', async () => {
       const prismaAccount = {

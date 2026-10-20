@@ -4,7 +4,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
+import { createAccessToken } from './support/access-token';
 import bcrypt from 'bcrypt';
 import request from './support/api-request';
 
@@ -15,7 +15,6 @@ import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.s
 describe('Authorization (E2E)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  let jwtService: JwtService;
 
   const adminEmail = process.env.SEED_ADMIN_EMAIL!;
   const adminPassword = process.env.SEED_ADMIN_PASSWORD!;
@@ -67,7 +66,6 @@ describe('Authorization (E2E)', () => {
     await app.init();
 
     prisma = app.get(PrismaService);
-    jwtService = app.get(JwtService);
 
     normalUserEmail = `authorization-test-${Date.now()}@example.com`;
 
@@ -183,8 +181,8 @@ describe('Authorization (E2E)', () => {
 
   describe('JWT authentication and authorization', () => {
     it('should reject a valid JWT when the user lacks the required permission', async () => {
-      const token = await jwtService.signAsync({
-        sub: normalUserId,
+      const token = await createAccessToken(app, {
+        userId: normalUserId,
         email: normalUserEmail,
       });
 

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { AuthEmailService } from './auth-email.service';
+import { AuthSessionService } from './auth-session.service';
 import { OtpService } from './otp.service';
 import { UserRepository } from '../../../users/domain/repositories/user.repository';
 import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
@@ -19,6 +20,7 @@ export class PasswordResetService {
     private readonly otpService: OtpService,
     private readonly authEmailService: AuthEmailService,
     private readonly passwordHasher: PasswordHasherService,
+    private readonly authSessionService: AuthSessionService,
   ) {}
 
   /**
@@ -67,6 +69,8 @@ export class PasswordResetService {
 
     const passwordHash = await this.passwordHasher.hash(newPassword);
     await this.userRepository.updatePasswordHash(user.id, passwordHash);
+    // A password change must end every existing login, including stolen ones.
+    await this.authSessionService.revokeAllSessions(user.id, 'PASSWORD_RESET');
 
     if (!user.isEmailVerified) {
       await this.userRepository.markEmailVerified(user.id, new Date());

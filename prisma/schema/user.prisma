@@ -28,6 +28,7 @@ model User {
   expenseCategories ExpenseCategory[]
   expenseCategoryArchives UserExpenseCategoryArchive[]
   emailOtps               EmailOtp[]
+  authSessions            AuthSession[]
 
   @@index([status])
   @@index([createdAt])

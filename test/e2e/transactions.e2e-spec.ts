@@ -4,7 +4,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
+import { createAccessToken } from './support/access-token';
 import request from './support/api-request';
 
 import { AppModule } from '../../src/app.module';
@@ -24,7 +24,6 @@ const seedFxFields = (amount: string, rateDate: Date) => ({
 describe('Transactions E2E', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  let jwtService: JwtService;
 
   let accessToken: string;
   let secondAccessToken: string;
@@ -67,7 +66,6 @@ describe('Transactions E2E', () => {
 
     await app.init();
 
-    jwtService = app.get(JwtService);
     prisma = app.get(PrismaService);
 
     // Stored rates for the dates used below keep MYR conversions off the FX provider, so tests do not depend on network access.
@@ -108,8 +106,8 @@ describe('Transactions E2E', () => {
 
     superAdminId = superAdmin.id;
 
-    accessToken = await jwtService.signAsync({
-      sub: superAdmin.id,
+    accessToken = await createAccessToken(app, {
+      userId: superAdmin.id,
       email: superAdmin.email,
     });
 
@@ -229,8 +227,8 @@ describe('Transactions E2E', () => {
       data: { userId: secondUser.id, roleId: customerRole.id },
     });
 
-    secondAccessToken = await jwtService.signAsync({
-      sub: secondUser.id,
+    secondAccessToken = await createAccessToken(app, {
+      userId: secondUser.id,
       email: secondUser.email,
     });
   });

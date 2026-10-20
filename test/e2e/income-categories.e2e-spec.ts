@@ -3,7 +3,7 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { createAccessToken } from './support/access-token';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from './support/api-request';
 
@@ -14,7 +14,6 @@ import { AccountType, UserStatus } from '../../prisma/generated/prisma/client';
 describe('Income categories (E2E)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  let jwtService: JwtService;
 
   let ownerId: string;
   let ownerToken: string;
@@ -48,8 +47,8 @@ describe('Income categories (E2E)', () => {
       },
     });
 
-    const token = await jwtService.signAsync({
-      sub: user.id,
+    const token = await createAccessToken(app, {
+      userId: user.id,
       email: user.email,
     });
 
@@ -81,7 +80,6 @@ describe('Income categories (E2E)', () => {
     await app.init();
 
     prisma = app.get(PrismaService);
-    jwtService = app.get(JwtService);
 
     const customerRole = await prisma.role.findUnique({
       where: { name: 'CUSTOMER' },

@@ -78,6 +78,22 @@ describe('CreateAccountDto', () => {
     expect(errors).toHaveLength(1);
   });
 
+  it.each([
+    AccountType.SAVINGS,
+    AccountType.CURRENT,
+    AccountType.WALLET,
+    AccountType.FIXED_DEPOSIT,
+    AccountType.RECURRING_DEPOSIT,
+  ])('should accept the %s account type', async (type) => {
+    const dto = createDto({
+      type,
+    });
+
+    const errors = await validate(dto);
+
+    expect(errors).toHaveLength(0);
+  });
+
   it('should reject an invalid account type', async () => {
     const dto = createDto({
       type: 'INVALID_TYPE' as AccountType,

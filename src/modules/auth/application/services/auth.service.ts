@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 
 import { UserRepository } from '../../../users/domain/repositories/user.repository';
 import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
 import { EmailNotVerifiedException } from '../../presentation/exceptions/email-not-verified.exception';
+import { AuthSessionService } from './auth-session.service';
 
 import { LoginInput } from '../inputs/login.input';
 import { LoginOutput } from '../outputs/login.output';
@@ -14,7 +14,7 @@ export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly passwordHasher: PasswordHasherService,
-    private readonly jwtService: JwtService,
+    private readonly authSessionService: AuthSessionService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -46,14 +46,12 @@ export class AuthService {
       throw new EmailNotVerifiedException();
     }
 
-    const accessToken = await this.jwtService.signAsync({
-      sub: user.id,
-      email: user.email,
-    });
+    const tokens = await this.authSessionService.openSession(user);
 
     return {
       user,
-      accessToken,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
     };
   }
 }

@@ -479,4 +479,175 @@ describe('Authentication (E2E)', () => {
       expect(payload.exp).toBeGreaterThan(payload.iat);
     });
   });
+
+  describe('Refresh tokens and logout', () => {
+    type TokenPair = { accessToken: string; refreshToken: string };
+
+    const loginAsAdmin = async (): Promise<TokenPair> => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({ email: adminEmail, password: adminPassword })
+        .expect(200);
+      const body = response.body as { data: TokenPair };
+
+      return body.data;
+    };
+
+    const refreshWith = (refreshToken: string) =>
+      request(app.getHttpServer())
+        .post('/api/v1/auth/refresh')
+        .send({ refreshToken });
+
+    const getMe = (accessToken: string) =>
+      request(app.getHttpServer())
+        .get('/api/v1/users/me')
+        .set('Authorization', `Bearer ${accessToken}`);
+
+    const logoutWith = (accessToken: string) =>
+      request(app.getHttpServer())
+        .post('/api/v1/auth/logout')
+        .set('Authorization', `Bearer ${accessToken}`);
+
+    const sessionIdOf = (accessToken: string): string =>
+      jwtService.decode<{ sid: string }>(accessToken).sid;
+
+    describe('POST /api/v1/auth/refresh', () => {
+      it('should issue a new access token and a new refresh token', async () => {
+        const tokens = await loginAsAdmin();
+
+        const response = await refreshWith(tokens.refreshToken).expect(200);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data).toEqual({
+          accessToken: expect.any(String),
+          refreshToken: expect.any(String),
+        });
+        expect(response.body.data.refreshToken).not.toBe(tokens.refreshToken);
+
+        await getMe(response.body.data.accessToken).expect(200);
+      });
+
+      it('should revoke the whole session when a used refresh token is replayed', async () => {
+        const tokens = await loginAsAdmin();
+        const rotated = await refreshWith(tokens.refreshToken).expect(200);
+
+        const replay = await refreshWith(tokens.refreshToken).expect(401);
+        expect(replay.body.error).toEqual(
+          expect.objectContaining({ code: 'REFRESH_TOKEN_REUSED' }),
+        );
+
+        const latest = await refreshWith(rotated.body.data.refreshToken).expect(
+          401,
+        );
+        expect(latest.body.error).toEqual(
+          expect.objectContaining({ code: 'INVALID_REFRESH_TOKEN' }),
+        );
+
+        const access = await getMe(rotated.body.data.accessToken).expect(401);
+        expect(access.body.error).toEqual(
+          expect.objectContaining({ code: 'SESSION_REVOKED' }),
+        );
+
+        const session = await prisma.authSession.findUniqueOrThrow({
+          where: { id: sessionIdOf(tokens.accessToken) },
+        });
+        expect(session.revokeReason).toBe('REFRESH_TOKEN_REUSED');
+      });
+
+      it('should reject an unknown refresh token', async () => {
+        const response = await refreshWith('unknown-refresh-token').expect(401);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error).toEqual(
+          expect.objectContaining({ code: 'INVALID_REFRESH_TOKEN' }),
+        );
+      });
+
+      it('should reject a request without a refresh token', async () => {
+        await request(app.getHttpServer())
+          .post('/api/v1/auth/refresh')
+          .send({})
+          .expect(400);
+      });
+    });
+
+    describe('POST /api/v1/auth/logout', () => {
+      it('should revoke the current session', async () => {
+        const tokens = await loginAsAdmin();
+
+        const response = await logoutWith(tokens.accessToken).expect(200);
+        expect(response.body.data).toEqual({
+          message: 'Logged out successfully.',
+        });
+
+        const access = await getMe(tokens.accessToken).expect(401);
+        expect(access.body.error).toEqual(
+          expect.objectContaining({ code: 'SESSION_REVOKED' }),
+        );
+
+        const refresh = await refreshWith(tokens.refreshToken).expect(401);
+        expect(refresh.body.error).toEqual(
+          expect.objectContaining({ code: 'INVALID_REFRESH_TOKEN' }),
+        );
+
+        const session = await prisma.authSession.findUniqueOrThrow({
+          where: { id: sessionIdOf(tokens.accessToken) },
+        });
+        expect(session.revokeReason).toBe('LOGOUT');
+      });
+
+      it('should leave other sessions of the same user active', async () => {
+        const first = await loginAsAdmin();
+        const second = await loginAsAdmin();
+
+        await logoutWith(first.accessToken).expect(200);
+
+        await getMe(first.accessToken).expect(401);
+        await getMe(second.accessToken).expect(200);
+      });
+
+      it('should require an access token', async () => {
+        const response = await request(app.getHttpServer())
+          .post('/api/v1/auth/logout')
+          .expect(401);
+
+        expect(response.body.success).toBe(false);
+      });
+    });
+
+    describe('POST /api/v1/auth/logout-all', () => {
+      it('should revoke every session of the user', async () => {
+        const first = await loginAsAdmin();
+        const second = await loginAsAdmin();
+
+        const response = await request(app.getHttpServer())
+          .post('/api/v1/auth/logout-all')
+          .set('Authorization', `Bearer ${first.accessToken}`)
+          .expect(200);
+
+        expect(response.body.data).toEqual({
+          message: 'All sessions have been logged out.',
+        });
+
+        await getMe(first.accessToken).expect(401);
+        await getMe(second.accessToken).expect(401);
+
+        const refresh = await refreshWith(second.refreshToken).expect(401);
+        expect(refresh.body.error).toEqual(
+          expect.objectContaining({ code: 'INVALID_REFRESH_TOKEN' }),
+        );
+
+        const session = await prisma.authSession.findUniqueOrThrow({
+          where: { id: sessionIdOf(second.accessToken) },
+        });
+        expect(session.revokeReason).toBe('LOGOUT_ALL');
+      });
+
+      it('should require an access token', async () => {
+        await request(app.getHttpServer())
+          .post('/api/v1/auth/logout-all')
+          .expect(401);
+      });
+    });
+  });
 });

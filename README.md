@@ -201,6 +201,21 @@ Every request must send the client API key. Public routes (such as health) are t
 
 Missing or invalid keys return `API_KEY_MISSING` or `API_KEY_INVALID` (401).
 
+#### Token lifecycle
+
+| Endpoint                     | Auth                        | Purpose                                                                 |
+| ---------------------------- | --------------------------- | ----------------------------------------------------------------------- |
+| `POST /api/v1/auth/login`    | API key                     | Returns `accessToken` (15 min) and `refreshToken` (30 days).            |
+| `POST /api/v1/auth/refresh`  | API key                     | Exchanges the refresh token for a new pair. The old refresh token is single-use. |
+| `POST /api/v1/auth/logout`   | API key and access token    | Revokes the current session. Its access token stops working at once.    |
+| `POST /api/v1/auth/logout-all` | API key and access token  | Revokes every session of the user, on every device.                     |
+
+- Refresh tokens are random opaque strings. Only their SHA-256 hash is stored.
+- Presenting a refresh token that was already used revokes the whole session (`REFRESH_TOKEN_REUSED`).
+- Access tokens carry a session id (`sid`). Each request checks that the session is still active, so logout takes effect immediately.
+- Password reset revokes all sessions of the user.
+- Lifetimes: `auth.jwtExpiresIn` and `auth.refreshTokenTtlDays` in `config/default.json`.
+
 ### Response format
 
 Successful responses:
@@ -255,7 +270,7 @@ The HTTP status is the normal numeric code. `statusCode` adds the configured pre
 ## Security
 
 - Each client has its own API key, compared with a timing-safe SHA-256 check. Keys are read from the environment, never from committed files.
-- Access tokens are JWTs. Passwords are hashed with bcrypt.
+- Access tokens are short-lived JWTs bound to a database session. Refresh tokens rotate on every use and are stored only as hashes. Passwords are hashed with bcrypt.
 - Email OTPs are stored as HMAC-SHA256 hashes, expire after `otp.expiresInSeconds`, and lock after `otp.maxAttempts` wrong attempts.
 - Rate limits apply to all routes. Login and sensitive routes (password reset, OTP) have stricter limits.
 - `helmet` sets security headers. CORS allows only `security.cors.allowedOrigins`.

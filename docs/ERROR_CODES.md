@@ -58,6 +58,9 @@ Setting the separator to `-` produces `NV-404`. Clients should not depend on eit
 | `FORBIDDEN`             | 403         | `NV403`                | Authenticated, but the user lacks the required permission.                                   |
 | `API_KEY_MISSING`       | 401         | `NV401`                | The `x-api-key` header is missing. Only web and mobile clients can call the API.             |
 | `API_KEY_INVALID`       | 401         | `NV401`                | The `x-api-key` header does not match a registered client.                                   |
+| `INVALID_REFRESH_TOKEN` | 401         | `NV401`                | The refresh token is unknown, expired, or belongs to a logged-out session. Log in again.     |
+| `REFRESH_TOKEN_REUSED`  | 401         | `NV401`                | An already used refresh token was presented. The whole session is revoked (possible theft).  |
+| `SESSION_REVOKED`       | 401         | `NV401`                | The access token's session was logged out or revoked. Refresh or log in again.               |
 | `RESOURCE_NOT_FOUND`    | 404         | `NV404`                | Route or generic resource not found.                                                         |
 | `CONFLICT`              | 409         | `NV409`                | Unique constraint violated (for example a duplicate email).                                  |
 | `TOO_MANY_REQUESTS`     | 429         | `NV429`                | Rate limit exceeded. Wait before retrying. Login is limited more strictly than other routes. |

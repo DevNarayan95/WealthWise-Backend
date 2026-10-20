@@ -72,10 +72,12 @@ Self-registration with email OTP verification      ✅
 Resend verification OTP                            ✅
 Reset password by email OTP                        ✅
 Login (blocked until email is verified)            ✅
-Logout                                             ❌
+Logout (current session)                           ✅
+Logout all sessions                                ✅
+Refresh access token (rotating refresh token)      ✅
 ```
 
-There is no logout endpoint. JWT access tokens are stateless, so logout needs a session model.
+Logout uses a database-backed session. Each access token carries a session id (`sid`), and every request checks that session, so logout takes effect immediately.
 **Approved (best practice):** short-lived access tokens, single-use rotating refresh tokens stored as hashes, logout that revokes the session immediately, logout-all, and reuse detection. Full rules: `docs/BUSINESS_REQUIREMENTS.md`, BR-AUTH-06 to BR-AUTH-13.
 
 ### R2. Accounts
@@ -87,7 +89,7 @@ Account creation, listing, archive, ownership      ✅
 Types BANK_ACCOUNT, CASH, CREDIT_CARD,
   INVESTMENT, OTHER                                ✅
 Types SAVINGS, CURRENT, WALLET,
-  FIXED_DEPOSIT, RECURRING_DEPOSIT                 ❌
+  FIXED_DEPOSIT, RECURRING_DEPOSIT                 ✅
 ```
 
 **Approved:** add the five missing types to `AccountType` with a migration. Existing values stay, so current data is unchanged.
@@ -2269,6 +2271,11 @@ CASH
 CREDIT_CARD
 INVESTMENT
 OTHER
+SAVINGS
+CURRENT
+WALLET
+FIXED_DEPOSIT
+RECURRING_DEPOSIT
 ```
 
 ## Account Status
@@ -3006,11 +3013,11 @@ Financial Domain
 │
 ├── Income                             ✅ COMPLETE
 │
-├── Expenses                           ⏳ NEXT
+├── Expenses                           ✅ COMPLETE
 │
 ├── Transaction History Filters        ⏳
 │
-├── Auth Session (Logout)              ⏳
+├── Auth Session (Logout)              ✅ COMPLETE
 │
 ├── Transfers                          ⏳
 │
@@ -3104,11 +3111,11 @@ Account Balance                    ✅ COMPLETE
 
 Income                             ✅ COMPLETE
 
-Expenses                           ⏳ NEXT
+Expenses                           ✅ COMPLETE
 
 Transaction History Filters        ⏳
 
-Auth Session (Logout)              ⏳
+Auth Session (Logout)              ✅ COMPLETE
 
 Transfers                          ⏳
 

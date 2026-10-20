@@ -193,6 +193,16 @@ export class PrismaAccountRepository implements AccountRepository {
         return AccountType.INVESTMENT;
       case 'OTHER':
         return AccountType.OTHER;
+      case 'SAVINGS':
+        return AccountType.SAVINGS;
+      case 'CURRENT':
+        return AccountType.CURRENT;
+      case 'WALLET':
+        return AccountType.WALLET;
+      case 'FIXED_DEPOSIT':
+        return AccountType.FIXED_DEPOSIT;
+      case 'RECURRING_DEPOSIT':
+        return AccountType.RECURRING_DEPOSIT;
       default:
         throw new Error(`Unsupported account type: ${type}`);
     }

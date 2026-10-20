@@ -8,8 +8,11 @@ import { AuthEmailService } from './application/services/auth-email.service';
 import { OtpService } from './application/services/otp.service';
 import { PasswordResetService } from './application/services/password-reset.service';
 import { RegistrationService } from './application/services/registration.service';
+import { AuthSessionService } from './application/services/auth-session.service';
 import { EmailOtpRepository } from './domain/repositories/email-otp.repository';
 import { PrismaEmailOtpRepository } from './infrastructure/repositories/prisma-email-otp.repository';
+import { AuthSessionRepository } from './domain/repositories/auth-session.repository';
+import { PrismaAuthSessionRepository } from './infrastructure/repositories/prisma-auth-session.repository';
 import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 import type { SignOptions } from 'jsonwebtoken';
@@ -33,6 +36,7 @@ import type { SignOptions } from 'jsonwebtoken';
   controllers: [AuthController],
   providers: [
     AuthService,
+    AuthSessionService,
     JwtStrategy,
     OtpService,
     AuthEmailService,
@@ -42,6 +46,11 @@ import type { SignOptions } from 'jsonwebtoken';
     {
       provide: EmailOtpRepository,
       useExisting: PrismaEmailOtpRepository,
+    },
+    PrismaAuthSessionRepository,
+    {
+      provide: AuthSessionRepository,
+      useExisting: PrismaAuthSessionRepository,
     },
   ],
 })

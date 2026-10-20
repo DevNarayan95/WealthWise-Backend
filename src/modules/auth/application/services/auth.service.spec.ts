@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthService } from './auth.service';
+import { AuthSessionService } from './auth-session.service';
 import { UserRepository } from '../../../users/domain/repositories/user.repository';
 import { User, UserProps } from '../../../users/domain/entities/user.entity';
 import { PasswordHasherService } from '../../../../infrastructure/security/password-hasher.service';
 import { EmailNotVerifiedException } from '../../presentation/exceptions/email-not-verified.exception';
-import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -16,7 +16,7 @@ describe('AuthService', () => {
     hash: jest.MockedFunction<PasswordHasherService['hash']>;
     verify: jest.MockedFunction<PasswordHasherService['verify']>;
   };
-  let jwtService: jest.Mocked<JwtService>;
+  let authSessionService: { openSession: jest.Mock };
   let configService: { getOrThrow: jest.Mock };
 
   const createUser = (overrides: Partial<UserProps> = {}): User =>
@@ -48,9 +48,12 @@ describe('AuthService', () => {
       verify: jest.fn(),
     };
 
-    jwtService = {
-      signAsync: jest.fn(),
-    } as any;
+    authSessionService = {
+      openSession: jest.fn().mockResolvedValue({
+        accessToken: 'test-access-token',
+        refreshToken: 'test-refresh-token',
+      }),
+    };
 
     configService = {
       getOrThrow: jest.fn().mockReturnValue(true),
@@ -68,8 +71,8 @@ describe('AuthService', () => {
           useValue: passwordHasher,
         },
         {
-          provide: JwtService,
-          useValue: jwtService,
+          provide: AuthSessionService,
+          useValue: authSessionService,
         },
         {
           provide: ConfigService,
@@ -91,7 +94,6 @@ describe('AuthService', () => {
 
       userRepository.findByEmail.mockResolvedValue(user);
       passwordHasher.verify.mockResolvedValue(true);
-      jwtService.signAsync.mockResolvedValue('test-access-token');
 
       const result = await service.login({
         email: 'test@example.com',
@@ -107,18 +109,15 @@ describe('AuthService', () => {
         'hashed-password',
       );
 
-      expect(jwtService.signAsync).toHaveBeenCalledWith({
-        sub: user.id,
-        email: user.email,
-      });
+      expect(authSessionService.openSession).toHaveBeenCalledWith(user);
 
       expect(result.user).toEqual(user);
       expect(result.accessToken).toBe('test-access-token');
+      expect(result.refreshToken).toBe('test-refresh-token');
     });
 
     it('should reject an unknown email', async () => {
       userRepository.findByEmail.mockResolvedValue(null);
-      jwtService.signAsync.mockResolvedValue('test-access-token');
 
       await expect(
         service.login({
@@ -128,7 +127,7 @@ describe('AuthService', () => {
       ).rejects.toThrow(UnauthorizedException);
 
       expect(passwordHasher.verify).not.toHaveBeenCalled();
-      expect(jwtService.signAsync).not.toHaveBeenCalled();
+      expect(authSessionService.openSession).not.toHaveBeenCalled();
     });
 
     it('should reject an invalid password', async () => {
@@ -136,8 +135,6 @@ describe('AuthService', () => {
 
       userRepository.findByEmail.mockResolvedValue(user);
       passwordHasher.verify.mockResolvedValue(false);
-
-      jwtService.signAsync.mockResolvedValue('test-access-token');
 
       await expect(
         service.login({
@@ -150,31 +147,7 @@ describe('AuthService', () => {
         'WrongPassword!',
         'hashed-password',
       );
-      expect(jwtService.signAsync).not.toHaveBeenCalled();
-    });
-
-    it('should never include the password hash in the JWT payload', async () => {
-      const user = createUser();
-
-      userRepository.findByEmail.mockResolvedValue(user);
-      passwordHasher.verify.mockResolvedValue(true);
-      jwtService.signAsync.mockResolvedValue('test-access-token');
-
-      await service.login({
-        email: 'test@example.com',
-        password: 'Password123!',
-      });
-
-      expect(jwtService.signAsync).toHaveBeenCalledWith({
-        sub: user.id,
-        email: user.email,
-      });
-
-      expect(jwtService.signAsync).not.toHaveBeenCalledWith(
-        expect.objectContaining({
-          passwordHash: expect.anything(),
-        }),
-      );
+      expect(authSessionService.openSession).not.toHaveBeenCalled();
     });
 
     it('should use the same error message for unknown email', async () => {
@@ -208,7 +181,7 @@ describe('AuthService', () => {
         'hashed-password',
       );
 
-      expect(jwtService.signAsync).not.toHaveBeenCalled();
+      expect(authSessionService.openSession).not.toHaveBeenCalled();
     });
 
     it('should reject login for a suspended user', async () => {
@@ -231,7 +204,7 @@ describe('AuthService', () => {
         'hashed-password',
       );
 
-      expect(jwtService.signAsync).not.toHaveBeenCalled();
+      expect(authSessionService.openSession).not.toHaveBeenCalled();
     });
 
     it('should block login for an unverified user when verification is required', async () => {
@@ -247,7 +220,7 @@ describe('AuthService', () => {
         }),
       ).rejects.toThrow(EmailNotVerifiedException);
 
-      expect(jwtService.signAsync).not.toHaveBeenCalled();
+      expect(authSessionService.openSession).not.toHaveBeenCalled();
     });
 
     it('should allow login for an unverified user when verification is disabled', async () => {
@@ -256,7 +229,6 @@ describe('AuthService', () => {
       configService.getOrThrow.mockReturnValue(false);
       userRepository.findByEmail.mockResolvedValue(user);
       passwordHasher.verify.mockResolvedValue(true);
-      jwtService.signAsync.mockResolvedValue('test-access-token');
 
       const result = await service.login({
         email: user.email,
@@ -279,7 +251,7 @@ describe('AuthService', () => {
         }),
       ).rejects.toThrow(UnauthorizedException);
 
-      expect(jwtService.signAsync).not.toHaveBeenCalled();
+      expect(authSessionService.openSession).not.toHaveBeenCalled();
     });
   });
 });

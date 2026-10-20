@@ -10,6 +10,7 @@ const createAuthenticatedRequest = (): AuthenticatedRequest =>
     user: {
       userId: 'user-1',
       email: 'user@example.com',
+      sessionId: 'session-1',
     },
   });
 

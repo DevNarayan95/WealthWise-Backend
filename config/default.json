@@ -48,7 +48,8 @@
   },
   "auth": {
     "jwtExpiresIn": "15m",
-    "passwordSaltRounds": 12
+    "passwordSaltRounds": 12,
+    "refreshTokenTtlDays": 30
   },
   "registration": {
     "emailVerificationRequired": true

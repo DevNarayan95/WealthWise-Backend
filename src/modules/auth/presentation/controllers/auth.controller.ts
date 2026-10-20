@@ -4,15 +4,22 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 
 import { LoginInput } from '../../application/inputs/login.input';
 import { AuthService } from '../../application/services/auth.service';
+import { AuthSessionService } from '../../application/services/auth-session.service';
 import { RegistrationService } from '../../application/services/registration.service';
 import { PasswordResetService } from '../../application/services/password-reset.service';
 
+import { JwtAuthGuard } from '../../infrastructure/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../../infrastructure/interfaces/authenticated-request.interface';
+
 import { LoginDto } from '../dto/login.dto';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { TokenResponseDto } from '../dto/token-response.dto';
 import { RegisterDto } from '../dto/register.dto';
 import { VerifyEmailDto } from '../dto/verify-email.dto';
 import { EmailDto } from '../dto/email.dto';
@@ -23,7 +30,10 @@ import { RegisterResponseDto } from '../dto/register-response.dto';
 import { UserResponseMapper } from '../../../users/presentation/mappers/user-response.mapper';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { RequiresApiKey } from '../../../../common/decorators/api-security.decorator';
+import {
+  RequiresApiKey,
+  RequiresApiKeyAndJwt,
+} from '../../../../common/decorators/api-security.decorator';
 import { LoginResponseDto } from '../dto/login-response.dto';
 
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -57,6 +67,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly registrationService: RegistrationService,
     private readonly passwordResetService: PasswordResetService,
+    private readonly authSessionService: AuthSessionService,
   ) {}
 
   @Post('login')
@@ -66,7 +77,7 @@ export class AuthController {
   @ApiOperation({
     summary: 'Authenticate a user',
     description:
-      'Authenticates a user using email and password and returns a JWT access token. Accounts whose email is not verified are refused with EMAIL_NOT_VERIFIED when verification is required.',
+      'Authenticates a user using email and password and returns a short-lived JWT access token and a single-use refresh token. Accounts whose email is not verified are refused with EMAIL_NOT_VERIFIED when verification is required.',
   })
   @ApiResponse({
     status: 200,
@@ -97,10 +108,104 @@ export class AuthController {
       success: true,
       data: {
         accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
         user: UserResponseMapper.toDto(result.user),
       },
       meta: {},
     };
+  }
+
+  @Post('refresh')
+  @UseGuards(ThrottlerGuard)
+  @Throttle(loginThrottle)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Rotate the refresh token and issue a new access token',
+    description:
+      'Exchanges a refresh token for a new access token and a new refresh token. The submitted refresh token is consumed. Presenting an already-used token revokes the whole session (REFRESH_TOKEN_REUSED).',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'New access token and refresh token issued.',
+    type: TokenResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid request data.',
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      'Refresh token is unknown, expired, or its session was revoked (INVALID_REFRESH_TOKEN). A reused token also revokes the session (REFRESH_TOKEN_REUSED).',
+  })
+  async refresh(@Body() dto: RefreshTokenDto): Promise<TokenResponseDto> {
+    const tokens = await this.authSessionService.refresh(dto.refreshToken);
+
+    return {
+      success: true,
+      data: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      },
+      meta: {},
+    };
+  }
+
+  @Post('logout')
+  @RequiresApiKeyAndJwt()
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Log out the current session',
+    description:
+      'Revokes the session that issued the access token. Its refresh token stops working and the access token is rejected from now on (SESSION_REVOKED). Other sessions stay active.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Session revoked.',
+    type: MessageResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      'Access token missing, invalid, or its session is revoked or expired.',
+  })
+  async logout(
+    @Req() request: AuthenticatedRequest,
+  ): Promise<MessageResponseDto> {
+    await this.authSessionService.logout(request.user.sessionId);
+
+    return this.message('Logged out successfully.');
+  }
+
+  @Post('logout-all')
+  @RequiresApiKeyAndJwt()
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Log out of all sessions',
+    description:
+      'Revokes every active session of the current user on all devices. All refresh tokens and access tokens stop working immediately.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'All sessions revoked.',
+    type: MessageResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      'Access token missing, invalid, or its session is revoked or expired.',
+  })
+  async logoutAll(
+    @Req() request: AuthenticatedRequest,
+  ): Promise<MessageResponseDto> {
+    await this.authSessionService.revokeAllSessions(
+      request.user.userId,
+      'LOGOUT_ALL',
+    );
+
+    return this.message('All sessions have been logged out.');
   }
 
   @Post('register')

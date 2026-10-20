@@ -4,6 +4,11 @@ enum AccountType {
   CREDIT_CARD
   INVESTMENT
   OTHER
+  SAVINGS
+  CURRENT
+  WALLET
+  FIXED_DEPOSIT
+  RECURRING_DEPOSIT
 }
 
 enum AccountStatus {
