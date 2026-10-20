@@ -218,6 +218,9 @@ describe('Income categories (E2E)', () => {
       );
 
       expect(names).toContain('Salary');
+      expect(names).toContain('Rental');
+      expect(names).toContain('Capital Gains');
+      expect(names).toContain('Interest from FD');
       expect(names).toContain(`${testPrefix}-freelance`);
       expect(response.body.meta).toEqual(
         expect.objectContaining({

@@ -180,7 +180,7 @@ Income and expense categories work the same way. The only difference is which tr
 | BR-CAT-05 | A category is archived, never deleted, once it has transactions.                                                  | M        |
 | BR-CAT-06 | Income categories are used only on income transactions. Expense categories are used only on expense transactions. | M        |
 
-**Default income categories** (already implemented): Salary, Business, Freelance, Interest, Dividends, Gifts, Refunds, Other.
+**Default income categories** (already implemented, R3 adds the last three): Salary, Business, Freelance, Interest, Interest from FD, Dividends, Capital Gains, Rental, Gifts, Refunds, Other.
 
 **Additional income defaults** (Phase 1, item 3): Rental income and Capital gains.
 

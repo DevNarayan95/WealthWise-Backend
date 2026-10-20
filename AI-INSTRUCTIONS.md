@@ -101,10 +101,10 @@ Example categories: Salary, Freelance, Rental, Interest from FD, stock gains.
 ```text
 Per-user income categories, unique names, archive  ✅
 System income categories                           ✅
-Rental and stock-gain system categories            ❌
+Rental and stock-gain system categories            ✅
 ```
 
-The current seed has Salary, Business, Freelance, Interest, Dividends, Gifts, Refunds, and Other. Rental and a stock-gain category (**Proposed:** Capital Gains) are missing.
+The seed has Salary, Business, Freelance, Interest, Interest from FD, Dividends, Capital Gains, Rental, Gifts, Refunds, and Other. Approved: add Rental, Capital Gains (stock gains), and Interest from FD.
 
 ### R4. Expenses
 

@@ -30,7 +30,7 @@ describe('seedIncomeCategories', () => {
 
     await seedIncomeCategories(prisma as unknown as PrismaClient);
 
-    expect(prisma.incomeCategory.create).toHaveBeenCalledTimes(8);
+    expect(prisma.incomeCategory.create).toHaveBeenCalledTimes(11);
     expect(prisma.incomeCategory.create).toHaveBeenCalledWith({
       data: {
         userId: null,
@@ -38,6 +38,22 @@ describe('seedIncomeCategories', () => {
         normalizedName: 'salary',
       },
     });
+  });
+
+  it('should seed the rental, capital gains, and FD interest system categories', async () => {
+    prisma.incomeCategory.findFirst.mockResolvedValue(null);
+
+    await seedIncomeCategories(prisma as unknown as PrismaClient);
+
+    for (const name of ['Rental', 'Capital Gains', 'Interest from FD']) {
+      expect(prisma.incomeCategory.create).toHaveBeenCalledWith({
+        data: {
+          userId: null,
+          name,
+          normalizedName: name.toLowerCase(),
+        },
+      });
+    }
   });
 
   it('should look up each system category by name before creating it', async () => {
@@ -61,7 +77,7 @@ describe('seedIncomeCategories', () => {
 
     await seedIncomeCategories(prisma as unknown as PrismaClient);
 
-    expect(prisma.incomeCategory.create).toHaveBeenCalledTimes(7);
+    expect(prisma.incomeCategory.create).toHaveBeenCalledTimes(10);
     expect(prisma.incomeCategory.create).not.toHaveBeenCalledWith({
       data: expect.objectContaining({ name: 'Salary' }),
     });
