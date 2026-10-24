@@ -59,4 +59,7 @@ export abstract class AuthSessionRepository {
     userId: string,
     reason: SessionRevokeReason,
   ): Promise<void>;
+
+  /** Hard-deletes sessions expired at or before `now`. Their refresh tokens cascade. */
+  abstract deleteExpiredSessions(now: Date): Promise<number>;
 }

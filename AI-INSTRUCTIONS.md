@@ -273,16 +273,17 @@ Each decision must be answered before the related module is implemented. The AI 
 3. **FD and RD.** Approved: account types hold the balance. All maturity details are stored (BR-DEP-01 to BR-DEP-06).
 4. **Dashboard configuration (conflict).** Sections 1, 26, and 29 say configuration comes from files and secrets come only from environment variables. The requirement asks the Super Admin to manage mail and data configuration from the dashboard. **Deferred:** configuration stays in files for now. The Phase 2 admin-panel design decides whether non-secret settings move to the database. Secrets stay environment-only in all cases. Changing sections 1 and 26 needs your approval at that time.
 5. **Goal progress.** Approved: current amount = balances of the accounts plus current values of the investments the user explicitly attaches to the goal. Nothing is linked automatically (BR-GOAL-02, BR-GOAL-03).
-6. **Report export.** Approved: CSV and PDF, printable, generated on request. Applies to every list, not only transactions. Implemented for accounts, transactions, income categories, and expense categories.
+6. **Report export.** Approved: CSV and PDF, printable, generated on request. Applies to every list, not only transactions. Implemented for accounts, transactions, income categories, and expense categories. The accounts export includes a live `Current Balance` column, in the account's own currency (approved).
 7. **Savings as a module.** Approved: savings is a separate module. The user attaches accounts to it and sees its transactions and progress. The `SAVINGS` account type (R2) is still available for individual accounts. Rules: BR-SAV-01 to BR-SAV-05.
 8. **Expense category defaults.** Approved: the 15 default expense categories in BRD section 6.3, as with income. Users can add their own.
 9. **Time zone for financial dates.** Approved: each user has a time zone. Financial dates use the user's local date (BRD decision 11, NFR-DATA-03).
-10. **Savings target.** Pending: the target amount is optional, and progress is shown only when a target is set (BRD decision 15).
+10. **Savings target.** Approved: the target is set per month, as a monthly budget line. The target is optional, and progress is shown only when a target is set (BRD decision 15, BR-SAV-04). Implementation waits for the Budgets module.
 11. **Multi-currency.** Approved: each amount has a currency, with INR as the default. The user chooses the currency on income, expense, investment, loan, and other inputs. Net worth, reports, and the dashboard can show any selected currency (NFR-DATA-04).
 12. **Exchange rates.** Approved: Frankfurter (ECB reference rates, no API key). Income in RM converts to INR at that day's rate. Each transaction stores its rate. Coverage of INR, MYR, and AUD is verified before release (NFR-DATA-05, NFR-DATA-06).
 13. **Product name and prefixes.** Approved: product name NAVRO, error code prefix `NV`, database table prefix `nv_`.
 14. **Exchange-rate fallback.** Approved: provider rate for the date, then the most recent stored rate on or before the date, then the most recent stored rate of any date (last given rate), then a manual rate in config. Transactions are never rejected (NFR-DATA-07).
 15. **Loan EMI category and transaction currency.** Approved: Loan EMI is a system category, and a transaction uses its account's currency (decisions 18 and 19 in BRD section 11).
+16. **Expired session cleanup.** Approved: expired auth sessions are deleted on a configurable schedule (`auth.sessionCleanup`, default every 60 minutes, enabled). Only sessions past `expiresAt` are deleted.
 
 ---
 
@@ -1304,6 +1305,8 @@ The JWT contains only the required identity claims, currently:
 
 The password or password hash must never be included in the JWT.
 
+**Expired session cleanup.** `AuthSessionCleanupScheduler` deletes sessions whose `expiresAt` has passed, on the interval set in `auth.sessionCleanup`. Refresh tokens are removed by the database cascade. Revoked sessions are kept until they expire. The scheduler uses `setInterval` with `unref()`, not a scheduler package, and does nothing when `auth.sessionCleanup.enabled` is `false`.
+
 ---
 
 # 21. Password Security
@@ -2125,6 +2128,7 @@ Authentication Hardening
 ├── Account status enforcement             ✅
 ├── Sensitive data / logging review       ✅
 ├── Security-focused tests                ✅
+├── Expired session cleanup               ✅
 └── Production authentication review      ✅
 ```
 
@@ -3343,6 +3347,7 @@ Every list endpoint can be exported as CSV or PDF. This covers accounts, transac
 - Rows are fetched with `maxRows + 1`. If more rows exist than `export.maxRows`, the request returns `EXPORT_LIMIT_EXCEEDED` (422, `NV422`). Exports are never truncated silently.
 - Archived categories are excluded, matching the list endpoint.
 - Exports are generated on request and never stored.
+- The accounts export has a `Current Balance` column after `Opening Balance`. It is the opening balance plus income minus expense, in the account's own currency. No FX conversion is applied. It is computed with one account read and one grouped transaction read (`getBalancesForAccounts`), never one query per account.
 - CSV cells starting with `=`, `+`, `-`, or `@` are neutralized when `export.csv.neutralizeFormulas` is `true`.
 
 **Structure**

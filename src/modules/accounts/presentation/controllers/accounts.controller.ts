@@ -206,12 +206,12 @@ export class AccountsController {
     @Req() request: AuthenticatedRequest,
     @Query() query: ExportQueryDto,
   ): Promise<StreamableFile> {
-    const accounts = await this.accountsService.findAllForExport(
+    const records = await this.accountsService.findAllForExport(
       request.user.userId,
     );
 
     const rendered = await renderExport({
-      table: AccountExportMapper.toExportTable(accounts, new Date()),
+      table: AccountExportMapper.toExportTable(records, new Date()),
       format: query.format,
       resource: 'accounts',
     });

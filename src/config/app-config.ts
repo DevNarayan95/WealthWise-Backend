@@ -72,6 +72,10 @@ export interface AppConfigFile {
     jwtExpiresIn: string;
     passwordSaltRounds: number;
     refreshTokenTtlDays: number;
+    sessionCleanup: {
+      enabled: boolean;
+      intervalMinutes: number;
+    };
   };
   registration: {
     emailVerificationRequired: boolean;
@@ -299,6 +303,12 @@ const appConfigFileSchema = joi
         jwtExpiresIn: joi.string().min(1).required(),
         passwordSaltRounds: joi.number().integer().min(10).max(15).required(),
         refreshTokenTtlDays: joi.number().integer().min(1).max(365).required(),
+        sessionCleanup: joi
+          .object({
+            enabled: joi.boolean().required(),
+            intervalMinutes: joi.number().integer().min(1).max(1440).required(),
+          })
+          .required(),
       })
       .required(),
     registration: joi

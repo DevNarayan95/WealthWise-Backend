@@ -107,4 +107,12 @@ export class PrismaAuthSessionRepository extends AuthSessionRepository {
       data: { revokedAt: new Date(), revokeReason: reason },
     });
   }
+
+  async deleteExpiredSessions(now: Date): Promise<number> {
+    const result = await this.prisma.authSession.deleteMany({
+      where: { expiresAt: { lte: now } },
+    });
+
+    return result.count;
+  }
 }

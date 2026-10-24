@@ -17,6 +17,7 @@ describe('AccountsService', () => {
     findAllByUserId: jest.fn(),
     update: jest.fn(),
     getBalanceForUser: jest.fn(),
+    getBalancesForAccounts: jest.fn(),
   };
 
   let service: AccountsService;
@@ -408,6 +409,10 @@ describe('AccountsService', () => {
         accounts,
         total: 2,
       });
+      accountRepository.getBalancesForAccounts.mockResolvedValue([
+        { accountId: 'account-1', currency: 'MYR', balance: '1500.2500' },
+        { accountId: 'account-2', currency: 'MYR', balance: '900.0000' },
+      ]);
 
       const result = await service.findAllForExport('user-id');
 
@@ -416,7 +421,56 @@ describe('AccountsService', () => {
         skip: 0,
         take: getExportRowLimit() + 1,
       });
-      expect(result).toEqual(accounts);
+      expect(result).toEqual([
+        { account: accounts[0], currentBalance: '1500.2500' },
+        { account: accounts[1], currentBalance: '900.0000' },
+      ]);
+    });
+
+    it('should read every balance in one bulk query for the exported accounts', async () => {
+      const accounts = [buildAccount('account-1'), buildAccount('account-2')];
+      accountRepository.findAllByUserId.mockResolvedValue({
+        accounts,
+        total: 2,
+      });
+      accountRepository.getBalancesForAccounts.mockResolvedValue([]);
+
+      await service.findAllForExport('user-id');
+
+      expect(accountRepository.getBalancesForAccounts).toHaveBeenCalledTimes(1);
+      expect(accountRepository.getBalancesForAccounts).toHaveBeenCalledWith({
+        userId: 'user-id',
+        accountIds: ['account-1', 'account-2'],
+      });
+    });
+
+    it('should skip the balance query when the user has no accounts', async () => {
+      accountRepository.findAllByUserId.mockResolvedValue({
+        accounts: [],
+        total: 0,
+      });
+
+      const result = await service.findAllForExport('user-id');
+
+      expect(accountRepository.getBalancesForAccounts).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+
+    it('should omit an account that was removed between the account read and the balance read', async () => {
+      const accounts = [buildAccount('account-1'), buildAccount('account-2')];
+      accountRepository.findAllByUserId.mockResolvedValue({
+        accounts,
+        total: 2,
+      });
+      accountRepository.getBalancesForAccounts.mockResolvedValue([
+        { accountId: 'account-2', currency: 'MYR', balance: '900.0000' },
+      ]);
+
+      const result = await service.findAllForExport('user-id');
+
+      expect(result).toEqual([
+        { account: accounts[1], currentBalance: '900.0000' },
+      ]);
     });
 
     it('should reject the export when the user has more accounts than the export limit', async () => {

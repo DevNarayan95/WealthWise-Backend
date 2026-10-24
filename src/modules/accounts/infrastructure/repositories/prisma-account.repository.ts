@@ -12,10 +12,16 @@ import {
   FindAccountsRepositoryOutput,
   GetAccountBalanceRepositoryInput,
   GetAccountBalanceRepositoryOutput,
+  GetAccountBalancesRepositoryInput,
   UpdateAccountRepositoryInput,
 } from '../../domain/repositories/account.repository';
 
 import { Prisma } from '../../../../../prisma/generated/prisma/client';
+
+interface BalanceTotal {
+  type: string;
+  amount: Prisma.Decimal | null;
+}
 
 @Injectable()
 export class PrismaAccountRepository implements AccountRepository {
@@ -133,11 +139,80 @@ export class PrismaAccountRepository implements AccountRepository {
       },
     });
 
+    const balance = this.calculateBalance(
+      account.openingBalance,
+      transactionTotals.map((total) => ({
+        type: total.type,
+        amount: total._sum.amount,
+      })),
+    );
+
+    return {
+      accountId: account.id,
+      currency: account.currency.trim(),
+      balance: balance.toFixed(4),
+    };
+  }
+
+  async getBalancesForAccounts(
+    input: GetAccountBalancesRepositoryInput,
+  ): Promise<GetAccountBalanceRepositoryOutput[]> {
+    if (input.accountIds.length === 0) {
+      return [];
+    }
+
+    const accounts = await this.prisma.account.findMany({
+      where: {
+        id: { in: input.accountIds },
+        userId: input.userId,
+      },
+      select: {
+        id: true,
+        currency: true,
+        openingBalance: true,
+      },
+    });
+
+    if (accounts.length === 0) {
+      return [];
+    }
+
+    const transactionTotals = await this.prisma.transaction.groupBy({
+      by: ['accountId', 'type'],
+      where: { accountId: { in: accounts.map((account) => account.id) } },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const totalsByAccountId = new Map<string, BalanceTotal[]>();
+
+    for (const total of transactionTotals) {
+      const totals = totalsByAccountId.get(total.accountId) ?? [];
+
+      totals.push({ type: total.type, amount: total._sum.amount });
+      totalsByAccountId.set(total.accountId, totals);
+    }
+
+    return accounts.map((account) => ({
+      accountId: account.id,
+      currency: account.currency.trim(),
+      balance: this.calculateBalance(
+        account.openingBalance,
+        totalsByAccountId.get(account.id) ?? [],
+      ).toFixed(4),
+    }));
+  }
+
+  private calculateBalance(
+    openingBalance: Prisma.Decimal,
+    totals: BalanceTotal[],
+  ): Prisma.Decimal {
     let income = new Prisma.Decimal(0);
     let expense = new Prisma.Decimal(0);
 
-    for (const total of transactionTotals) {
-      const amount = total._sum.amount?.toString() ?? new Prisma.Decimal(0);
+    for (const total of totals) {
+      const amount = total.amount ?? new Prisma.Decimal(0);
 
       if (total.type === 'INCOME') {
         income = income.plus(amount);
@@ -148,13 +223,7 @@ export class PrismaAccountRepository implements AccountRepository {
       }
     }
 
-    const balance = account.openingBalance.plus(income).minus(expense);
-
-    return {
-      accountId: account.id,
-      currency: account.currency.trim(),
-      balance: balance.toFixed(4),
-    };
+    return openingBalance.plus(income).minus(expense);
   }
 
   private toDomain(account: {

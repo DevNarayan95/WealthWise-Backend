@@ -49,7 +49,11 @@
   "auth": {
     "jwtExpiresIn": "15m",
     "passwordSaltRounds": 12,
-    "refreshTokenTtlDays": 30
+    "refreshTokenTtlDays": 30,
+    "sessionCleanup": {
+      "enabled": true,
+      "intervalMinutes": 60
+    }
   },
   "registration": {
     "emailVerificationRequired": true

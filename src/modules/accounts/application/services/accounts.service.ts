@@ -24,6 +24,7 @@ import {
 import { CreateAccountInput } from '../inputs/create-account.input';
 import { PaginatedAccountsOutput } from '../outputs/paginated-accounts.output';
 import { AccountBalanceOutput } from '../outputs/account-balance.output';
+import { AccountExportRecord } from '../outputs/account-export-record.output';
 
 @Injectable()
 export class AccountsService {
@@ -82,7 +83,7 @@ export class AccountsService {
     };
   }
 
-  async findAllForExport(userId: string): Promise<Account[]> {
+  async findAllForExport(userId: string): Promise<AccountExportRecord[]> {
     const maxRows = getExportRowLimit();
 
     const result = await this.accountRepository.findAllByUserId({
@@ -93,7 +94,24 @@ export class AccountsService {
 
     assertWithinExportLimit(result.accounts.length, maxRows);
 
-    return result.accounts;
+    if (result.accounts.length === 0) {
+      return [];
+    }
+
+    const balances = await this.accountRepository.getBalancesForAccounts({
+      userId,
+      accountIds: result.accounts.map((account) => account.id),
+    });
+
+    const balanceByAccountId = new Map(
+      balances.map((balance) => [balance.accountId, balance.balance]),
+    );
+
+    return result.accounts.flatMap((account) => {
+      const currentBalance = balanceByAccountId.get(account.id);
+
+      return currentBalance === undefined ? [] : [{ account, currentBalance }];
+    });
   }
 
   private validateAccountName(name: string): void {

@@ -13,6 +13,8 @@ import { EmailOtpRepository } from './domain/repositories/email-otp.repository';
 import { PrismaEmailOtpRepository } from './infrastructure/repositories/prisma-email-otp.repository';
 import { AuthSessionRepository } from './domain/repositories/auth-session.repository';
 import { PrismaAuthSessionRepository } from './infrastructure/repositories/prisma-auth-session.repository';
+import { AuthSessionCleanupService } from './application/services/auth-session-cleanup.service';
+import { AuthSessionCleanupScheduler } from './infrastructure/scheduling/auth-session-cleanup.scheduler';
 import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 import type { SignOptions } from 'jsonwebtoken';
@@ -52,6 +54,8 @@ import type { SignOptions } from 'jsonwebtoken';
       provide: AuthSessionRepository,
       useExisting: PrismaAuthSessionRepository,
     },
+    AuthSessionCleanupService,
+    AuthSessionCleanupScheduler,
   ],
 })
 export class AuthModule {}

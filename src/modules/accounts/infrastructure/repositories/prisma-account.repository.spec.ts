@@ -364,6 +364,92 @@ describe('PrismaAccountRepository', () => {
     });
   });
 
+  describe('getBalancesForAccounts', () => {
+    beforeEach(() => {
+      prisma.account.findMany.mockResolvedValue([
+        {
+          id: 'account-1',
+          currency: 'MYR',
+          openingBalance: new Prisma.Decimal('1000.0000'),
+        },
+        {
+          id: 'account-2',
+          currency: 'INR',
+          openingBalance: new Prisma.Decimal('50.0000'),
+        },
+      ]);
+      prisma.transaction.groupBy.mockResolvedValue([
+        {
+          accountId: 'account-1',
+          type: 'INCOME',
+          _sum: { amount: new Prisma.Decimal('500.0000') },
+        },
+        {
+          accountId: 'account-1',
+          type: 'EXPENSE',
+          _sum: { amount: new Prisma.Decimal('200.2500') },
+        },
+        {
+          accountId: 'account-2',
+          type: 'EXPENSE',
+          _sum: { amount: new Prisma.Decimal('10.0000') },
+        },
+      ]);
+    });
+
+    it('should return the balance of each requested account from one account read and one grouped transaction read', async () => {
+      const result = await repository.getBalancesForAccounts({
+        userId: 'user-id',
+        accountIds: ['account-1', 'account-2'],
+      });
+
+      expect(prisma.account.findMany).toHaveBeenCalledWith({
+        where: { id: { in: ['account-1', 'account-2'] }, userId: 'user-id' },
+        select: { id: true, currency: true, openingBalance: true },
+      });
+      expect(prisma.transaction.groupBy).toHaveBeenCalledTimes(1);
+      expect(prisma.transaction.groupBy).toHaveBeenCalledWith({
+        by: ['accountId', 'type'],
+        where: { accountId: { in: ['account-1', 'account-2'] } },
+        _sum: { amount: true },
+      });
+      expect(result).toEqual([
+        { accountId: 'account-1', currency: 'MYR', balance: '1299.7500' },
+        { accountId: 'account-2', currency: 'INR', balance: '40.0000' },
+      ]);
+    });
+
+    it('should return an empty list without querying when no account ids are given', async () => {
+      const result = await repository.getBalancesForAccounts({
+        userId: 'user-id',
+        accountIds: [],
+      });
+
+      expect(result).toEqual([]);
+      expect(prisma.account.findMany).not.toHaveBeenCalled();
+      expect(prisma.transaction.groupBy).not.toHaveBeenCalled();
+    });
+
+    it('should omit accounts that do not belong to the user', async () => {
+      prisma.account.findMany.mockResolvedValue([
+        {
+          id: 'account-1',
+          currency: 'MYR',
+          openingBalance: new Prisma.Decimal('1000.0000'),
+        },
+      ]);
+
+      const result = await repository.getBalancesForAccounts({
+        userId: 'user-id',
+        accountIds: ['account-1', 'account-2'],
+      });
+
+      expect(result).toEqual([
+        { accountId: 'account-1', currency: 'MYR', balance: '1299.7500' },
+      ]);
+    });
+  });
+
   describe('getBalanceForUser', () => {
     it('should calculate balance from opening balance, income, and expenses', async () => {
       prisma.account.findFirst.mockResolvedValue({

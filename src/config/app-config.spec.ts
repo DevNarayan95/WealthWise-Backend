@@ -87,6 +87,34 @@ describe('app-config', () => {
       );
     });
 
+    it('rejects a session cleanup interval below 1 minute', () => {
+      const raw = loadRawDefaults();
+      (
+        (raw.auth as Record<string, unknown>).sessionCleanup as Record<
+          string,
+          unknown
+        >
+      ).intervalMinutes = 0;
+
+      expect(() => validateAppConfigFile(raw)).toThrow(
+        'auth.sessionCleanup.intervalMinutes',
+      );
+    });
+
+    it('rejects a session cleanup flag that is not a boolean', () => {
+      const raw = loadRawDefaults();
+      (
+        (raw.auth as Record<string, unknown>).sessionCleanup as Record<
+          string,
+          unknown
+        >
+      ).enabled = 'yes';
+
+      expect(() => validateAppConfigFile(raw)).toThrow(
+        'auth.sessionCleanup.enabled',
+      );
+    });
+
     it('rejects an OTP length below 4', () => {
       const raw = loadRawDefaults();
       (raw.otp as Record<string, unknown>).length = 3;

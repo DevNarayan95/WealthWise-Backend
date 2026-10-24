@@ -775,7 +775,7 @@ describe('Accounts (E2E)', () => {
       const csv = (response.body as Buffer).toString('utf8');
 
       expect(csv).toContain(
-        'Name,Type,Currency,Opening Balance,Status,Created At,Updated At',
+        'Name,Type,Currency,Opening Balance,Current Balance,Status,Created At,Updated At',
       );
       expect(csv).toContain(`${testPrefix}-csv-account`);
     });

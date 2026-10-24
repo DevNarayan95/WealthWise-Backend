@@ -270,7 +270,7 @@ A fixed deposit (FD) or recurring deposit (RD) is an account type that holds mon
 | BR-SAV-01 | A user creates a savings plan with a name. An optional target amount can be set.                        | M        |
 | BR-SAV-02 | A savings plan links only to the accounts the user explicitly attaches.                                 | M        |
 | BR-SAV-03 | A savings plan shows the transactions of its attached accounts and their combined balance.              | M        |
-| BR-SAV-04 | When a target amount is set, the savings plan shows progress as a percentage.                           | M        |
+| BR-SAV-04 | When a monthly target amount is set, the savings plan shows progress for that month as a percentage. Implementation waits for the Budgets module. | M |
 | BR-SAV-05 | Savings plans are separate from Financial Goals (section 6.10). Changing one does not change the other. | M        |
 
 ### 6.11 Net Worth and Dashboard Data
@@ -435,7 +435,7 @@ These rules apply to every Phase 1 API. They are summarized here for business re
 | 12  | Mobile app                  | Uses the same APIs as the web frontend. Mobile design is out of scope until Phase 2 is complete.                                                                                                                 | Approved |
 | 13  | Multi-currency              | Each amount has a currency, with INR as the default. The user chooses the currency on income, expense, investment, loan, and other inputs. Net worth, reports, and the dashboard can show any selected currency. | Approved |
 | 14  | Exchange rates              | Source: Frankfurter (ECB reference rates, no API key). Income in RM converts to INR at that day's rate. Each transaction stores the rate for its date. Coverage of INR, MYR, and AUD is verified before release. | Approved |
-| 15  | Savings target              | Proposed: the target amount is optional. Progress is shown only when a target is set.                                                                                                                            | Pending  |
+| 15  | Savings target              | The savings target is set per month, as a monthly budget line. The target is optional. Progress is shown only when a target is set. Implementation waits for the Budgets module.                                   | Approved |
 | 16  | Product name and prefixes   | Product name NAVRO. Error code prefix `NV`. Database table prefix `nv_`.                                                                                                                                         | Approved |
 | 17  | Exchange-rate fallback      | Provider rate for the date, then the most recent stored rate on or before the date, then the most recent stored rate of any date (last given rate), then a manual rate in config. Transactions are never rejected. The rate source is stored. (NFR-DATA-07)                          | Approved |
 | 18  | Loan EMI category           | Loan EMI is a system category. Users do not create it.                                                                                                                                                           | Approved |

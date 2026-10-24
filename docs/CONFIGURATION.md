@@ -129,11 +129,13 @@ The HTTP status on the response is always numeric. Only the body field `statusCo
 
 ### `auth`
 
-| Key                  | Default | Meaning                                 |
-| -------------------- | ------- | --------------------------------------- |
-| `jwtExpiresIn`       | `15m`   | Access token lifetime.                  |
-| `passwordSaltRounds` | `12`    | bcrypt cost factor for password hashes. |
-| `refreshTokenTtlDays` | `30`   | Absolute lifetime of a login session. Refresh tokens and sessions expire at this age, regardless of activity. |
+| Key                         | Default | Meaning                                                                                                                                   |
+| --------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `jwtExpiresIn`              | `15m`   | Access token lifetime.                                                                                                                    |
+| `passwordSaltRounds`        | `12`    | bcrypt cost factor for password hashes.                                                                                                   |
+| `refreshTokenTtlDays`       | `30`    | Absolute lifetime of a login session. Refresh tokens and sessions expire at this age, regardless of activity.                             |
+| `sessionCleanup.enabled`    | `true`  | Delete expired auth sessions on a schedule. Set `false` to turn the cleanup off.                                                          |
+| `sessionCleanup.intervalMinutes` | `60` | How often the cleanup runs. Allowed range: 1 to 1440 minutes. Only sessions that have already expired are deleted.                      |
 
 ### `registration`
 

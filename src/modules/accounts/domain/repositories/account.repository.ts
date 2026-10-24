@@ -41,6 +41,11 @@ export interface GetAccountBalanceRepositoryOutput {
   balance: string;
 }
 
+export interface GetAccountBalancesRepositoryInput {
+  userId: string;
+  accountIds: string[];
+}
+
 export abstract class AccountRepository {
   abstract create(input: CreateAccountRepositoryInput): Promise<Account>;
 
@@ -58,4 +63,8 @@ export abstract class AccountRepository {
   abstract getBalanceForUser(
     input: GetAccountBalanceRepositoryInput,
   ): Promise<GetAccountBalanceRepositoryOutput | null>;
+
+  abstract getBalancesForAccounts(
+    input: GetAccountBalancesRepositoryInput,
+  ): Promise<GetAccountBalanceRepositoryOutput[]>;
 }

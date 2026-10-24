@@ -184,7 +184,9 @@ describe('AccountsController', () => {
         updatedAt: new Date('2026-08-01T00:00:00.000Z'),
       });
 
-      accountsService.findAllForExport.mockResolvedValue([account]);
+      accountsService.findAllForExport.mockResolvedValue([
+        { account, currentBalance: '1500.2500' },
+      ]);
 
       const file = await controller.exportAccounts(
         createAuthenticatedRequest(),
