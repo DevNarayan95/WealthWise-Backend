@@ -3167,7 +3167,7 @@ CURRENT PHASE
 
 CURRENT TOPIC
 
-└── Transfers chunk 2 (service and API) — red specs first  ⏳ NEXT
+└── Transfers chunk 2 (service and API) — implemented, unit green; e2e pending AC power  ⏳ VERIFYING
 ```
 
 ---
@@ -3285,8 +3285,11 @@ A transfer moves money between two of the user's own accounts. It is stored as t
 - Each leg also gets its normal base-currency conversion (`base_amount`, `exchange_rate`, `rate_date`, `rate_source`). Income and expense reports filter by `INCOME` and `EXPENSE` only, so transfers never count as income or spending.
 - Balance: `TRANSFER_IN` adds to the account balance and `TRANSFER_OUT` subtracts from it (BR-BAL-01).
 - Reversal: reversing either leg reverses the whole pair in one database transaction. Each leg gets its own reversal row. Reversal types map `TRANSFER_OUT` ↔ `TRANSFER_IN`. The two reversal rows share a new `transfer_group_id`, because the unique index on `(transfer_group_id, type)` forbids reusing the original group. The CHECK constraint requires a group ID on every transfer-type row, so the reversal pair always has one.
-- Chunk 1 (model, migration `20261105090000_add_transfers`, balance, and the create and reverse guards) is complete and green. Chunk 2 covers `TransfersService`, `POST /transfers`, pair reversal, and e2e tests.
-- The generic `POST /transactions` rejects `TRANSFER_IN` and `TRANSFER_OUT`. Transfers are created only through `POST /transfers`.
+- Chunk 1 (model, migration `20261105090000_add_transfers`, balance, and the create and reverse guards) is complete and green. Chunk 2 is implemented and unit-green: `TransfersService` (`create`, `reverse`), `POST /api/v1/transfers`, `POST /api/v1/transfers/:transactionId/reversal`, the request and response DTOs, the response mapper, and the repository methods `createTransferLegs` and `findTransferLegsByGroupForUser`. The e2e suite `test/e2e/transfers.e2e-spec.ts` is written and lint-clean, and it runs once the machine is on AC power.
+- Permissions: create uses `transactions:create`. Reversal uses `transactions:update`. These reuse the existing transaction permissions and add no new permission codes.
+- Already-reversed transfers raise `InvalidTransactionException` (`INVALID_TRANSACTION`), matching generic reverse.
+- Known follow-ups: the mapper's `transferGroupId ?? ''` fallback should throw instead, because the database CHECK makes null impossible for transfer legs. The generic and transfer reverse paths both check-then-create without a transaction or a unique index on `reversal_of_transaction_id`, so two concurrent reversals can race. Both are tracked here and not yet fixed.
+- The generic `POST /transactions` rejects `TRANSFER_IN` and `TRANSFER_OUT`, and the generic `POST /transactions/:id/reversal` rejects transfer legs with `TRANSACTION_CANNOT_BE_REVERSED`. Transfers are created and reversed only through `/transfers`.
 - Database CHECK: `transfer_group_id` is set only on transfer types, and it is NULL on income and expense rows.
 
 ## Expenses — Domain Design (complete)

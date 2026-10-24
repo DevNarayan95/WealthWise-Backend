@@ -6,6 +6,7 @@ import { PrismaTransactionRepository } from './prisma-transaction.repository';
 
 describe('PrismaTransactionRepository', () => {
   const prisma = {
+    $transaction: jest.fn(),
     transaction: {
       create: jest.fn(),
       findFirst: jest.fn(),
@@ -654,6 +655,145 @@ describe('PrismaTransactionRepository', () => {
             userId: 'user-456',
           },
         },
+      });
+    });
+  });
+
+  describe('transfer legs', () => {
+    const transferGroupId = '6f1c2a8e-3b4d-4c5e-8f9a-0b1c2d3e4f50';
+
+    const createTransferRow = (
+      overrides: Partial<{
+        id: string;
+        accountId: string;
+        type: string;
+        transferGroupId: string | null;
+      }>,
+    ) =>
+      createPrismaTransaction({
+        transferGroupId,
+        transferExchangeRate: {
+          toFixed: () => '20.00000000',
+        },
+        transferRateSource: 'PROVIDER',
+        ...overrides,
+      });
+
+    const transferLegInput = (type: TransactionType, accountId: string) =>
+      createTransactionInput({
+        accountId,
+        type,
+        amount: '50.0000',
+        currency: 'MYR',
+        transferGroupId,
+        transferExchangeRate: '20.00000000',
+        transferRateSource: 'PROVIDER',
+      });
+
+    beforeEach(() => {
+      prisma.$transaction.mockImplementation(
+        async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+          callback(prisma),
+      );
+    });
+
+    describe('createTransferLegs', () => {
+      it('writes both legs inside one database transaction, in order', async () => {
+        prisma.transaction.create
+          .mockResolvedValueOnce(
+            createTransferRow({
+              id: 'out-leg',
+              accountId: 'source-account',
+              type: 'TRANSFER_OUT',
+            }),
+          )
+          .mockResolvedValueOnce(
+            createTransferRow({
+              id: 'in-leg',
+              accountId: 'destination-account',
+              type: 'TRANSFER_IN',
+            }),
+          );
+
+        const [outLeg, inLeg] = await repository.createTransferLegs([
+          transferLegInput(TransactionType.TRANSFER_OUT, 'source-account'),
+          transferLegInput(TransactionType.TRANSFER_IN, 'destination-account'),
+        ]);
+
+        expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+        expect(prisma.transaction.create).toHaveBeenNthCalledWith(1, {
+          data: expect.objectContaining({
+            accountId: 'source-account',
+            type: TransactionType.TRANSFER_OUT,
+            transferGroupId,
+            transferExchangeRate: '20.00000000',
+            transferRateSource: 'PROVIDER',
+          }),
+        });
+        expect(prisma.transaction.create).toHaveBeenNthCalledWith(2, {
+          data: expect.objectContaining({
+            accountId: 'destination-account',
+            type: TransactionType.TRANSFER_IN,
+            transferGroupId,
+          }),
+        });
+        expect(outLeg.id).toBe('out-leg');
+        expect(outLeg.type).toBe(TransactionType.TRANSFER_OUT);
+        expect(inLeg.id).toBe('in-leg');
+        expect(inLeg.type).toBe(TransactionType.TRANSFER_IN);
+      });
+
+      it('propagates a failed second write so the database can roll back the batch', async () => {
+        prisma.transaction.create
+          .mockResolvedValueOnce(
+            createTransferRow({ id: 'out-leg', type: 'TRANSFER_OUT' }),
+          )
+          .mockRejectedValueOnce(new Error('constraint violated'));
+
+        await expect(
+          repository.createTransferLegs([
+            transferLegInput(TransactionType.TRANSFER_OUT, 'source-account'),
+            transferLegInput(
+              TransactionType.TRANSFER_IN,
+              'destination-account',
+            ),
+          ]),
+        ).rejects.toThrow('constraint violated');
+
+        expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('findTransferLegsByGroupForUser', () => {
+      it('returns the legs of a group scoped to the owning user', async () => {
+        prisma.transaction.findMany.mockResolvedValue([
+          createTransferRow({
+            id: 'out-leg',
+            type: 'TRANSFER_OUT',
+          }),
+          createTransferRow({
+            id: 'in-leg',
+            type: 'TRANSFER_IN',
+          }),
+        ]);
+
+        const legs = await repository.findTransferLegsByGroupForUser(
+          transferGroupId,
+          'user-456',
+        );
+
+        expect(prisma.transaction.findMany).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: {
+              transferGroupId,
+              account: {
+                userId: 'user-456',
+              },
+            },
+          }),
+        );
+        expect(legs.map((leg) => leg.id)).toEqual(['out-leg', 'in-leg']);
+        expect(legs[0].transferGroupId).toBe(transferGroupId);
       });
     });
   });

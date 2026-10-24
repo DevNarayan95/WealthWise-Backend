@@ -25,8 +25,10 @@ describe('TransactionsService', () => {
 
   let transactionsRepository: {
     create: jest.Mock;
+    createTransferLegs: jest.Mock;
     findByIdForUser: jest.Mock;
     findReversalForTransaction: jest.Mock;
+    findTransferLegsByGroupForUser: jest.Mock;
     findAllByAccountForUser: jest.Mock;
     findAllForExportByUser: jest.Mock;
   };
@@ -97,8 +99,10 @@ describe('TransactionsService', () => {
   beforeEach(() => {
     transactionsRepository = {
       create: jest.fn(),
+      createTransferLegs: jest.fn(),
       findByIdForUser: jest.fn(),
       findReversalForTransaction: jest.fn(),
+      findTransferLegsByGroupForUser: jest.fn(),
       findAllByAccountForUser: jest.fn(),
       findAllForExportByUser: jest.fn(),
     };

@@ -46,6 +46,22 @@ class FakeTransactionRepository extends TransactionRepository {
     return null;
   }
 
+  async createTransferLegs(
+    _inputs: [
+      CreateTransactionRepositoryInput,
+      CreateTransactionRepositoryInput,
+    ],
+  ): Promise<[Transaction, Transaction]> {
+    throw new Error('Not used by this contract test');
+  }
+
+  async findTransferLegsByGroupForUser(
+    _transferGroupId: string,
+    _userId: string,
+  ): Promise<Transaction[]> {
+    return [];
+  }
+
   async findAllByAccountForUser(
     _input: FindTransactionsRepositoryInput,
   ): Promise<FindTransactionsRepositoryOutput> {

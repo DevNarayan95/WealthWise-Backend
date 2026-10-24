@@ -73,6 +73,19 @@ export abstract class TransactionRepository {
     userId: string,
   ): Promise<Transaction | null>;
 
+  /** Writes both legs of a transfer atomically. */
+  abstract createTransferLegs(
+    inputs: [
+      CreateTransactionRepositoryInput,
+      CreateTransactionRepositoryInput,
+    ],
+  ): Promise<[Transaction, Transaction]>;
+
+  abstract findTransferLegsByGroupForUser(
+    transferGroupId: string,
+    userId: string,
+  ): Promise<Transaction[]>;
+
   abstract findAllByAccountForUser(
     input: FindTransactionsRepositoryInput,
   ): Promise<FindTransactionsRepositoryOutput>;

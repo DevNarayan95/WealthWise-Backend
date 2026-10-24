@@ -33,28 +33,44 @@ export class PrismaTransactionRepository extends TransactionRepository {
 
   async create(input: CreateTransactionRepositoryInput): Promise<Transaction> {
     const transaction = await this.prisma.transaction.create({
-      data: {
-        accountId: input.accountId,
-        type: input.type,
-        amount: input.amount,
-        currency: input.currency,
-        description: input.description,
-        transactionDate: toDateColumnValue(input.transactionDate),
-        reversalOfTransactionId: input.reversalOfTransactionId,
-        incomeCategoryId: input.incomeCategoryId,
-        expenseCategoryId: input.expenseCategoryId,
-        baseCurrency: input.baseCurrency,
-        baseAmount: input.baseAmount,
-        exchangeRate: input.exchangeRate,
-        rateDate: toDateColumnValue(input.rateDate),
-        rateSource: input.rateSource,
-        transferGroupId: input.transferGroupId,
-        transferExchangeRate: input.transferExchangeRate,
-        transferRateSource: input.transferRateSource,
-      },
+      data: this.toCreateData(input),
     });
 
     return this.toDomain(transaction);
+  }
+
+  async createTransferLegs(
+    inputs: [
+      CreateTransactionRepositoryInput,
+      CreateTransactionRepositoryInput,
+    ],
+  ): Promise<[Transaction, Transaction]> {
+    return this.prisma.$transaction(async (tx) => {
+      const outLeg = await tx.transaction.create({
+        data: this.toCreateData(inputs[0]),
+      });
+      const inLeg = await tx.transaction.create({
+        data: this.toCreateData(inputs[1]),
+      });
+
+      return [this.toDomain(outLeg), this.toDomain(inLeg)];
+    });
+  }
+
+  async findTransferLegsByGroupForUser(
+    transferGroupId: string,
+    userId: string,
+  ): Promise<Transaction[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        transferGroupId,
+        account: {
+          userId,
+        },
+      },
+    });
+
+    return transactions.map((transaction) => this.toDomain(transaction));
   }
 
   async findByIdForUser(
@@ -197,6 +213,28 @@ export class PrismaTransactionRepository extends TransactionRepository {
     }
 
     return where;
+  }
+
+  private toCreateData(input: CreateTransactionRepositoryInput) {
+    return {
+      accountId: input.accountId,
+      type: input.type,
+      amount: input.amount,
+      currency: input.currency,
+      description: input.description,
+      transactionDate: toDateColumnValue(input.transactionDate),
+      reversalOfTransactionId: input.reversalOfTransactionId,
+      incomeCategoryId: input.incomeCategoryId,
+      expenseCategoryId: input.expenseCategoryId,
+      baseCurrency: input.baseCurrency,
+      baseAmount: input.baseAmount,
+      exchangeRate: input.exchangeRate,
+      rateDate: toDateColumnValue(input.rateDate),
+      rateSource: input.rateSource,
+      transferGroupId: input.transferGroupId,
+      transferExchangeRate: input.transferExchangeRate,
+      transferRateSource: input.transferRateSource,
+    };
   }
 
   private toDomain(transaction: {
