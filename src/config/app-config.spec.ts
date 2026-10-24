@@ -157,6 +157,55 @@ describe('app-config', () => {
     });
   });
 
+  describe('export config', () => {
+    it('loads export defaults from default.json', () => {
+      const file = loadAppConfigFile({
+        configDir: REPO_CONFIG_DIR,
+        appEnv: 'local',
+      });
+
+      expect(file.export.maxRows).toBeGreaterThan(0);
+      expect(file.export.fileNamePrefix).toBe('navro');
+      expect(file.export.csv.delimiter).toBe(',');
+      expect(file.export.pdf.pageSize).toBe('A4');
+    });
+
+    it('rejects a zero export row limit', () => {
+      const raw = loadRawDefaults();
+      (raw.export as Record<string, unknown>).maxRows = 0;
+
+      expect(() => validateAppConfigFile(raw)).toThrow('export.maxRows');
+    });
+
+    it('rejects a file name prefix with spaces or symbols', () => {
+      const raw = loadRawDefaults();
+      (raw.export as Record<string, unknown>).fileNamePrefix = 'my file!';
+
+      expect(() => validateAppConfigFile(raw)).toThrow('export.fileNamePrefix');
+    });
+
+    it('rejects a CSV delimiter longer than one character', () => {
+      const raw = loadRawDefaults();
+      (raw.export as { csv: Record<string, unknown> }).csv.delimiter = ';;';
+
+      expect(() => validateAppConfigFile(raw)).toThrow('export.csv.delimiter');
+    });
+
+    it('rejects an unsupported PDF page size', () => {
+      const raw = loadRawDefaults();
+      (raw.export as { pdf: Record<string, unknown> }).pdf.pageSize = 'A7';
+
+      expect(() => validateAppConfigFile(raw)).toThrow('export.pdf.pageSize');
+    });
+
+    it('rejects a PDF font size below 6 points', () => {
+      const raw = loadRawDefaults();
+      (raw.export as { pdf: Record<string, unknown> }).pdf.fontSize = 5;
+
+      expect(() => validateAppConfigFile(raw)).toThrow('export.pdf.fontSize');
+    });
+  });
+
   describe('assertSslFilesExist', () => {
     it('does nothing when SSL is disabled', () => {
       const file = validateAppConfigFile(loadRawDefaults());

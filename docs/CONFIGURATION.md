@@ -205,6 +205,25 @@ Changing these values changes validation for new input only.
 
 Lookup order: same currency, then a stored rate for the exact date, then the provider, then the most recent stored rate on or before the date, then the most recent stored rate of any date, then a manual rate. See [NFR-DATA-07](./BUSINESS_REQUIREMENTS.md).
 
+### `export`
+
+| Key                          | Default  | Meaning                                                                                                     |
+| ---------------------------- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| `maxRows`                    | `5000`   | Largest number of rows one export may contain. Larger lists return `EXPORT_LIMIT_EXCEEDED` (422).           |
+| `fileNamePrefix`             | `navro`  | Prefix of the download file name, for example `navro-transactions-2026-10-20.csv`.                          |
+| `csv.delimiter`              | `,`      | Field separator.                                                                                            |
+| `csv.includeUtf8Bom`         | `true`   | Write a UTF-8 byte-order mark so Excel opens non-ASCII text correctly.                                      |
+| `csv.neutralizeFormulas`     | `true`   | Prefix cells that start with `=`, `+`, `-`, or `@` so spreadsheets do not run them as formulas.             |
+| `pdf.pageSize`               | `A4`     | PDF page size.                                                                                              |
+| `pdf.orientation`            | `portrait` | `portrait` or `landscape`.                                                                                |
+| `pdf.marginPt`               | `36`     | Page margin in points.                                                                                      |
+| `pdf.fontSize`               | `9`      | Body text size in points.                                                                                   |
+| `pdf.titleFontSize`          | `16`     | Title text size in points.                                                                                  |
+| `pdf.fontPath`               | `""`     | Optional path to a Unicode `.ttf` font. The built-in Helvetica font cannot render non-Latin text.          |
+| `pdf.showPageNumbers`        | `true`   | Print "Page x of y" in the footer.                                                                          |
+
+Exports are generated on request and never stored. Each list has its own export route, for example `GET /api/v1/transactions/export?format=pdf`. Changing these values changes new exports only.
+
 ### `logging`
 
 | Key             | Default  | Meaning                                                                              |

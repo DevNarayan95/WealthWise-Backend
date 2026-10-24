@@ -2,8 +2,10 @@ import { Transaction, TransactionType } from '../entities/transaction.entity';
 
 import {
   CreateTransactionRepositoryInput,
+  FindTransactionsForExportRepositoryInput,
   FindTransactionsRepositoryInput,
   FindTransactionsRepositoryOutput,
+  TransactionExportRecord,
   TransactionRepository,
 } from './transaction.repository';
 
@@ -51,6 +53,12 @@ class FakeTransactionRepository extends TransactionRepository {
       transactions: [],
       total: 0,
     };
+  }
+
+  async findAllForExportByUser(
+    _input: FindTransactionsForExportRepositoryInput,
+  ): Promise<TransactionExportRecord[]> {
+    return [];
   }
 }
 

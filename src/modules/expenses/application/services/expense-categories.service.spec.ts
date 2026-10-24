@@ -3,6 +3,8 @@ import { EXPENSE_CATEGORY_NAME_MAX_LENGTH } from '../../domain/validations/expen
 
 import { ExpenseCategoriesService } from './expense-categories.service';
 
+import { ExportLimitExceededException } from '../../../../common/export/exceptions/export-limit-exceeded.exception';
+import { getExportRowLimit } from '../../../../common/export/export-limit';
 import { ExpenseCategoryAlreadyExistsException } from '../../presentation/exceptions/expense-category-already-exists.exception';
 import { ExpenseCategoryNotFoundException } from '../../presentation/exceptions/expense-category-not-found.exception';
 import { InvalidExpenseCategoryException } from '../../presentation/exceptions/invalid-expense-category.exception';
@@ -137,6 +139,39 @@ describe('ExpenseCategoriesService', () => {
         limit: 5,
         total: 17,
       });
+    });
+  });
+
+  describe('findAllForExport', () => {
+    it('should load all categories available to the user up to the export limit plus one', async () => {
+      repository.findAllAvailableToUser.mockResolvedValue({
+        categories: [customCategory, systemCategory],
+        total: 2,
+      });
+
+      const result = await service.findAllForExport('user-1');
+
+      expect(result).toEqual([customCategory, systemCategory]);
+      expect(repository.findAllAvailableToUser).toHaveBeenCalledWith({
+        userId: 'user-1',
+        skip: 0,
+        take: getExportRowLimit() + 1,
+      });
+    });
+
+    it('should reject an export that exceeds the row limit', async () => {
+      const categories = Array.from(
+        { length: getExportRowLimit() + 1 },
+        () => customCategory,
+      );
+      repository.findAllAvailableToUser.mockResolvedValue({
+        categories,
+        total: categories.length,
+      });
+
+      await expect(service.findAllForExport('user-1')).rejects.toThrow(
+        ExportLimitExceededException,
+      );
     });
   });
 

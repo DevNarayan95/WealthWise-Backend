@@ -14,6 +14,11 @@ import { InvalidIncomeCategoryException } from '../../presentation/exceptions/in
 import { SystemIncomeCategoryReadOnlyException } from '../../presentation/exceptions/system-income-category-read-only.exception';
 
 import {
+  assertWithinExportLimit,
+  getExportRowLimit,
+} from '../../../../common/export/export-limit';
+
+import {
   CreateIncomeCategoryInput,
   UpdateIncomeCategoryInput,
 } from '../inputs/income-category.input';
@@ -60,6 +65,20 @@ export class IncomeCategoriesService {
       limit,
       total: result.total,
     };
+  }
+
+  async findAllForExport(userId: string): Promise<IncomeCategory[]> {
+    const maxRows = getExportRowLimit();
+
+    const result = await this.incomeCategoryRepository.findAllAvailableToUser({
+      userId,
+      skip: 0,
+      take: maxRows + 1,
+    });
+
+    assertWithinExportLimit(result.categories.length, maxRows);
+
+    return result.categories;
   }
 
   async findById(categoryId: string, userId: string): Promise<IncomeCategory> {

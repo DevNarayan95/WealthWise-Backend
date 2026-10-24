@@ -4,6 +4,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { createAccessToken } from './support/access-token';
+import { binaryParser } from './support/binary-parser';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from './support/api-request';
 
@@ -249,6 +250,118 @@ describe('Expense categories (E2E)', () => {
       );
 
       expect(names).not.toContain(`${testPrefix}-gym`);
+    });
+  });
+
+  describe('GET /api/v1/expenses/categories/export', () => {
+    const exportRequest = (token: string, format?: string) => {
+      const url = format
+        ? `/api/v1/expenses/categories/export?format=${format}`
+        : '/api/v1/expenses/categories/export';
+
+      return request(app.getHttpServer())
+        .get(url)
+        .set('Authorization', `Bearer ${token}`);
+    };
+
+    it('should export the available expense categories as a CSV attachment', async () => {
+      await createCategory(ownerToken, `${testPrefix}-csv-category`).expect(
+        201,
+      );
+
+      const response = await exportRequest(ownerToken, 'csv')
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      expect(response.headers['content-type']).toBe('text/csv; charset=utf-8');
+      expect(response.headers['content-disposition']).toMatch(
+        /^attachment; filename="navro-expense-categories-\d{4}-\d{2}-\d{2}\.csv"$/,
+      );
+      expect(response.headers['cache-control']).toBe('no-store');
+
+      const csv = (response.body as Buffer).toString('utf8');
+
+      expect(csv).toContain('Name,Source,Created At,Updated At');
+      expect(csv).toContain(`${testPrefix}-csv-category,Custom,`);
+      expect(csv).toContain('Groceries,System,');
+    });
+
+    it('should export the available expense categories as a PDF attachment', async () => {
+      const response = await exportRequest(ownerToken, 'pdf')
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      expect(response.headers['content-type']).toBe('application/pdf');
+      expect(response.headers['content-disposition']).toMatch(
+        /^attachment; filename="navro-expense-categories-\d{4}-\d{2}-\d{2}\.pdf"$/,
+      );
+
+      const pdf = response.body as Buffer;
+
+      expect(pdf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+    });
+
+    it('should not include custom categories belonging to other users', async () => {
+      await createCategory(
+        otherUserToken,
+        `${testPrefix}-other-user-category`,
+      ).expect(201);
+
+      const response = await exportRequest(ownerToken, 'csv')
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      const csv = (response.body as Buffer).toString('utf8');
+
+      expect(csv).not.toContain(`${testPrefix}-other-user-category`);
+    });
+
+    it('should not include categories the user has archived', async () => {
+      const created = await createCategory(
+        ownerToken,
+        `${testPrefix}-exported-then-archived`,
+      ).expect(201);
+
+      await request(app.getHttpServer())
+        .patch(`/api/v1/expenses/categories/${created.body.data.id}/archive`)
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .expect(200);
+
+      const response = await exportRequest(ownerToken, 'csv')
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      const csv = (response.body as Buffer).toString('utf8');
+
+      expect(csv).not.toContain(`${testPrefix}-exported-then-archived`);
+    });
+
+    it('should reject export without a format', async () => {
+      const response = await exportRequest(ownerToken).expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject an unsupported export format', async () => {
+      const response = await exportRequest(ownerToken, 'xlsx').expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject export without authentication', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/expenses/categories/export?format=csv')
+        .expect(401);
+    });
+
+    it('should reject export without expense:read permission', async () => {
+      const response = await exportRequest(noRoleUserToken, 'csv').expect(403);
+
+      expect(response.body.success).toBe(false);
     });
   });
 

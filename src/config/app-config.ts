@@ -107,6 +107,24 @@ export interface AppConfigFile {
     defaultPageSize: number;
     maxPageSize: number;
   };
+  export: {
+    maxRows: number;
+    fileNamePrefix: string;
+    csv: {
+      delimiter: string;
+      includeUtf8Bom: boolean;
+      neutralizeFormulas: boolean;
+    };
+    pdf: {
+      pageSize: 'A4' | 'LETTER';
+      orientation: 'portrait' | 'landscape';
+      marginPt: number;
+      fontSize: number;
+      titleFontSize: number;
+      fontPath: string;
+      showPageNumbers: boolean;
+    };
+  };
   income: {
     categoryNameMaxLength: number;
   };
@@ -347,6 +365,33 @@ const appConfigFileSchema = joi
               })
             : value,
       ),
+    export: joi
+      .object({
+        maxRows: joi.number().integer().min(1).required(),
+        fileNamePrefix: joi
+          .string()
+          .pattern(/^[a-z0-9-]+$/i)
+          .required(),
+        csv: joi
+          .object({
+            delimiter: joi.string().length(1).required(),
+            includeUtf8Bom: joi.boolean().required(),
+            neutralizeFormulas: joi.boolean().required(),
+          })
+          .required(),
+        pdf: joi
+          .object({
+            pageSize: joi.string().valid('A4', 'LETTER').required(),
+            orientation: joi.string().valid('portrait', 'landscape').required(),
+            marginPt: joi.number().integer().min(0).max(200).required(),
+            fontSize: joi.number().integer().min(6).max(72).required(),
+            titleFontSize: joi.number().integer().min(6).max(72).required(),
+            fontPath: joi.string().allow('').required(),
+            showPageNumbers: joi.boolean().required(),
+          })
+          .required(),
+      })
+      .required(),
     income: joi
       .object({
         categoryNameMaxLength: joi.number().integer().min(1).required(),

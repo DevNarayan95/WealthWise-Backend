@@ -46,7 +46,7 @@ The product must answer these questions:
 - Monthly budgets with comparison.
 - Financial goals with progress tracking.
 - Net worth and dashboard data (APIs only).
-- Monthly, yearly, and custom-range reports, exported as CSV and PDF, and printable.
+- Monthly, yearly, and custom-range reports, exported as CSV and PDF, and printable. Every list (accounts, transactions, income categories, expense categories) can also be exported as CSV or PDF.
 - Forecasting: runway, extra-month check, next-loan timing, and maximum affordable loan.
 
 ### 2.2 In scope for Phase 2 (Super Admin)
@@ -426,7 +426,7 @@ These rules apply to every Phase 1 API. They are summarized here for business re
 | 3   | FD and RD                   | Account types that hold the balance. All maturity details are stored. Maturity and installments are recorded as transactions.                                                                                    | Approved |
 | 4   | Expense categories          | Users can add their own categories, as with income. System defaults are provided, as with income.                                                                                                                | Approved |
 | 5   | Default expense list        | The 15 default expense categories in section 6.3 are approved. Users can add their own.                                                                                                                          | Approved |
-| 6   | Report export               | CSV and PDF. Reports can be printed. Reports are generated on request.                                                                                                                                           | Approved |
+| 6   | Report export               | CSV and PDF for every list (accounts, transactions, income categories, expense categories). Reports can be printed. Exports are generated on request and never stored. | Approved |
 | 7   | Phase order                 | Phase 1 (core application) first. The Super Admin panel follows.                                                                                                                                                 | Approved |
 | 8   | Admin config from dashboard | Changing configuration from the admin panel conflicts with the rule that configuration comes from files. Deferred. Configuration stays in files until the admin panel phase is designed.                         | Deferred |
 | 9   | Goal progress               | Current amount = balances of the accounts plus current values of the investments the user explicitly attaches to the goal. Nothing is linked automatically.                                                      | Approved |

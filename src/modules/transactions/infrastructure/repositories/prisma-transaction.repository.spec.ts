@@ -306,6 +306,126 @@ describe('PrismaTransactionRepository', () => {
     });
   });
 
+  describe('findAllForExportByUser', () => {
+    it('should apply every filter, keep the user scope, and skip pagination', async () => {
+      prisma.transaction.findMany.mockResolvedValue([]);
+
+      await repository.findAllForExportByUser({
+        userId: 'user-1',
+        accountId: 'account-1',
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.EXPENSE,
+        expenseCategoryId: 'expense-category-1',
+        take: 501,
+      });
+
+      expect(prisma.transaction.findMany).toHaveBeenCalledWith({
+        where: {
+          account: {
+            userId: 'user-1',
+          },
+          accountId: 'account-1',
+          transactionDate: {
+            gte: new Date('2026-01-01T00:00:00.000Z'),
+            lte: new Date('2026-01-31T00:00:00.000Z'),
+          },
+          type: TransactionType.EXPENSE,
+          expenseCategoryId: 'expense-category-1',
+        },
+        take: 501,
+        orderBy: [{ transactionDate: 'desc' }, { createdAt: 'desc' }],
+        include: {
+          account: { select: { name: true } },
+          incomeCategory: { select: { name: true } },
+          expenseCategory: { select: { name: true } },
+        },
+      });
+
+      expect(prisma.transaction.findMany.mock.calls[0][0]).not.toHaveProperty(
+        'skip',
+      );
+      expect(prisma.transaction.count).not.toHaveBeenCalled();
+    });
+
+    it('should map each transaction with its account and category name', async () => {
+      prisma.transaction.findMany.mockResolvedValue([
+        {
+          ...createPrismaTransaction({
+            id: 'income-1',
+            type: 'INCOME',
+            incomeCategoryId: 'income-category-1',
+          }),
+          account: { name: 'Maybank Savings' },
+          incomeCategory: { name: 'Salary' },
+          expenseCategory: null,
+        },
+        {
+          ...createPrismaTransaction({
+            id: 'expense-1',
+            type: 'EXPENSE',
+            expenseCategoryId: 'expense-category-1',
+            description: null,
+          }),
+          account: { name: 'Credit Card' },
+          incomeCategory: null,
+          expenseCategory: { name: 'Groceries' },
+        },
+        {
+          ...createPrismaTransaction({
+            id: 'income-2',
+            type: 'INCOME',
+            incomeCategoryId: null,
+          }),
+          account: { name: 'Maybank Savings' },
+          incomeCategory: null,
+          expenseCategory: null,
+        },
+      ]);
+
+      const records = await repository.findAllForExportByUser({
+        userId: 'user-1',
+        take: 501,
+      });
+
+      expect(records.map((record) => record.transaction.id)).toEqual([
+        'income-1',
+        'expense-1',
+        'income-2',
+      ]);
+      expect(records.map((record) => record.accountName)).toEqual([
+        'Maybank Savings',
+        'Credit Card',
+        'Maybank Savings',
+      ]);
+      expect(records.map((record) => record.categoryName)).toEqual([
+        'Salary',
+        'Groceries',
+        null,
+      ]);
+      expect(records[1].transaction.description).toBeNull();
+    });
+
+    it('should not expose the account or category relations on the domain transaction', async () => {
+      prisma.transaction.findMany.mockResolvedValue([
+        {
+          ...createPrismaTransaction(),
+          account: { name: 'Maybank Savings' },
+          incomeCategory: { name: 'Salary' },
+          expenseCategory: null,
+        },
+      ]);
+
+      const [record] = await repository.findAllForExportByUser({
+        userId: 'user-1',
+        take: 501,
+      });
+
+      expect(record.transaction).not.toHaveProperty('account');
+      expect(record.transaction).not.toHaveProperty('incomeCategory');
+    });
+  });
+
   describe('findAllByAccountForUser', () => {
     it('should apply date, type, and category filters while keeping the user scope', async () => {
       prisma.transaction.findMany.mockResolvedValue([]);

@@ -6,6 +6,8 @@ import {
 import { AccountAlreadyArchivedApplicationException } from '../../presentation/exceptions/account-already-archived.exception';
 import { AccountNotFoundException } from '../../presentation/exceptions/account-not-found.exception';
 import { InvalidAccountException } from '../../presentation/exceptions/invalid-account.exception';
+import { ExportLimitExceededException } from '../../../../common/export/exceptions/export-limit-exceeded.exception';
+import { getExportRowLimit } from '../../../../common/export/export-limit';
 import { AccountsService } from './accounts.service';
 
 describe('AccountsService', () => {
@@ -383,6 +385,53 @@ describe('AccountsService', () => {
       expect(result.page).toBe(1);
       expect(result.limit).toBe(10);
       expect(result.total).toBe(1);
+    });
+  });
+
+  describe('findAllForExport', () => {
+    const buildAccount = (id: string) =>
+      Account.create({
+        id,
+        userId: 'user-id',
+        name: `Account ${id}`,
+        type: AccountType.BANK_ACCOUNT,
+        currency: 'MYR',
+        openingBalance: '0.0000',
+        status: AccountStatus.ACTIVE,
+        createdAt: new Date('2026-08-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-08-01T00:00:00.000Z'),
+      });
+
+    it('should load the user accounts without pagination, up to the export limit plus one', async () => {
+      const accounts = [buildAccount('account-1'), buildAccount('account-2')];
+      accountRepository.findAllByUserId.mockResolvedValue({
+        accounts,
+        total: 2,
+      });
+
+      const result = await service.findAllForExport('user-id');
+
+      expect(accountRepository.findAllByUserId).toHaveBeenCalledWith({
+        userId: 'user-id',
+        skip: 0,
+        take: getExportRowLimit() + 1,
+      });
+      expect(result).toEqual(accounts);
+    });
+
+    it('should reject the export when the user has more accounts than the export limit', async () => {
+      const accounts = Array.from(
+        { length: getExportRowLimit() + 1 },
+        (_, index) => buildAccount(`account-${index}`),
+      );
+      accountRepository.findAllByUserId.mockResolvedValue({
+        accounts,
+        total: accounts.length,
+      });
+
+      await expect(service.findAllForExport('user-id')).rejects.toThrow(
+        ExportLimitExceededException,
+      );
     });
   });
 

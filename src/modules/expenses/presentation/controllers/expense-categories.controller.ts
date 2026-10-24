@@ -2,19 +2,23 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   Param,
   Patch,
   Post,
   Query,
   Req,
+  StreamableFile,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiProduces,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -22,6 +26,12 @@ import {
 } from '@nestjs/swagger';
 
 import { RequiresApiKeyAndJwt } from '../../../../common/decorators/api-security.decorator';
+import { ExportQueryDto } from '../../../../common/export/dto/export-query.dto';
+import { ExportFormat } from '../../../../common/export/export-table';
+import {
+  renderExport,
+  toStreamableFile,
+} from '../../../../common/export/export-renderer';
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
 import { buildPaginatedResponse } from '../../../../common/pagination/paginated-response';
 import { PAGINATION } from '../../../../common/pagination/pagination-config';
@@ -39,6 +49,7 @@ import {
   PaginatedExpenseCategoriesResponseDto,
 } from '../dto/paginated-expense-categories-response.dto';
 import { UpdateExpenseCategoryDto } from '../dto/update-expense-category.dto';
+import { ExpenseCategoryExportMapper } from '../mappers/expense-category-export.mapper';
 import { ExpenseCategoryResponseMapper } from '../mappers/expense-category-response.mapper';
 
 @ApiTags('Expenses')
@@ -126,6 +137,60 @@ export class ExpenseCategoriesController {
       limit: result.limit,
       total: result.total,
     });
+  }
+
+  @Get('export')
+  @Header('Cache-Control', 'no-store')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('expense:read')
+  @ApiOperation({
+    summary: 'Export expense categories',
+    description:
+      'Downloads all expense categories available to the authenticated user, including system categories, as a CSV or PDF attachment. Requires the expense:read permission. Returns 422 when the category count exceeds the configured export limit.',
+  })
+  @ApiQuery({
+    name: 'format',
+    required: true,
+    enum: ExportFormat,
+    description: 'Export file format.',
+  })
+  @ApiProduces('text/csv', 'application/pdf')
+  @ApiOkResponse({
+    description: 'Expense categories exported as a file attachment.',
+    content: {
+      'text/csv': { schema: { type: 'string', format: 'binary' } },
+      'application/pdf': { schema: { type: 'string', format: 'binary' } },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Unsupported export format.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Authentication is required.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have the required permission.',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'The export exceeds the configured row limit.',
+  })
+  async exportExpenseCategories(
+    @Req() request: AuthenticatedRequest,
+    @Query() query: ExportQueryDto,
+  ): Promise<StreamableFile> {
+    const categories = await this.expenseCategoriesService.findAllForExport(
+      request.user.userId,
+    );
+
+    const rendered = await renderExport({
+      table: ExpenseCategoryExportMapper.toExportTable(categories, new Date()),
+      format: query.format,
+      resource: 'expense-categories',
+    });
+
+    return toStreamableFile(rendered);
   }
 
   @Get(':id')

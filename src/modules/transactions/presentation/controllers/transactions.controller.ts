@@ -2,19 +2,35 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   Param,
   Post,
   Query,
   Req,
+  StreamableFile,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiProduces,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { RequiresApiKeyAndJwt } from '../../../../common/decorators/api-security.decorator';
 
 import { ApiResponse as ApiSuccessResponse } from '../../../../common/interfaces/api-response.interface';
 import { buildPaginatedResponse } from '../../../../common/pagination/paginated-response';
+import { ExportFormat } from '../../../../common/export/export-table';
+import {
+  renderExport,
+  toStreamableFile,
+} from '../../../../common/export/export-renderer';
 import { TransactionsService } from '../../application/services/transactions.service';
+import { TransactionExportMapper } from '../mappers/transaction-export.mapper';
+import { ExportTransactionsQueryDto } from '../dto/export-transactions-query.dto';
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../../../auth/infrastructure/guards/permissions.guard';
 import { Permissions } from '../../../auth/infrastructure/decorators/permissions.decorator';
@@ -82,6 +98,76 @@ export class TransactionsController {
     });
 
     return successResponse(TransactionResponseMapper.toDto(transaction));
+  }
+
+  @Get('export')
+  @Header('Cache-Control', 'no-store')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('transactions:read')
+  @ApiOperation({
+    summary: 'Export transactions',
+    description:
+      'Downloads the transactions of the authenticated user as a CSV or PDF attachment. Accepts the same filters as the list endpoint, except pagination. Requires the transactions:read permission. Returns 422 when the match count exceeds the configured export limit.',
+  })
+  @ApiQuery({
+    name: 'format',
+    required: true,
+    enum: ExportFormat,
+    description: 'Export file format.',
+  })
+  @ApiProduces('text/csv', 'application/pdf')
+  @ApiOkResponse({
+    description: 'Transactions exported as a file attachment.',
+    content: {
+      'text/csv': { schema: { type: 'string', format: 'binary' } },
+      'application/pdf': { schema: { type: 'string', format: 'binary' } },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid filters or unsupported export format.',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Authentication is required.',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'User does not have the required permission.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Account not found.',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'The export exceeds the configured row limit.',
+  })
+  async exportTransactions(
+    @Query() query: ExportTransactionsQueryDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<StreamableFile> {
+    const records = await this.transactionsService.findAllForExport({
+      userId: request.user.userId,
+      accountId: query.accountId,
+      from: query.from,
+      to: query.to,
+      type: query.type,
+      incomeCategoryId: query.incomeCategoryId,
+      expenseCategoryId: query.expenseCategoryId,
+    });
+
+    const rendered = await renderExport({
+      table: TransactionExportMapper.toExportTable(
+        records,
+        new Date(),
+        TransactionExportMapper.toFilterLabels(query),
+      ),
+      format: query.format,
+      resource: 'transactions',
+    });
+
+    return toStreamableFile(rendered);
   }
 
   @Get(':id')

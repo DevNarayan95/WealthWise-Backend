@@ -38,6 +38,23 @@ export interface FindTransactionsRepositoryOutput {
   total: number;
 }
 
+export type FindTransactionsForExportRepositoryInput = Omit<
+  FindTransactionsRepositoryInput,
+  'offset' | 'limit'
+> & {
+  take: number;
+};
+
+/**
+ * Read model for exports: the transaction plus the display names that the
+ * domain entity intentionally does not carry.
+ */
+export interface TransactionExportRecord {
+  transaction: Transaction;
+  accountName: string;
+  categoryName: string | null;
+}
+
 export abstract class TransactionRepository {
   abstract create(
     input: CreateTransactionRepositoryInput,
@@ -56,4 +73,8 @@ export abstract class TransactionRepository {
   abstract findAllByAccountForUser(
     input: FindTransactionsRepositoryInput,
   ): Promise<FindTransactionsRepositoryOutput>;
+
+  abstract findAllForExportByUser(
+    input: FindTransactionsForExportRepositoryInput,
+  ): Promise<TransactionExportRecord[]>;
 }

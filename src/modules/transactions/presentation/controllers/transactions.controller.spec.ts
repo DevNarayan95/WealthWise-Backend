@@ -6,6 +6,7 @@ import {
 } from '../../domain/entities/transaction.entity';
 import { TransactionNotFoundException } from '../exceptions/transaction-not-found.exception';
 import type { AuthenticatedRequest } from '../../../auth/infrastructure/interfaces/authenticated-request.interface';
+import { ExportFormat } from '../../../../common/export/export-table';
 
 describe('TransactionsController', () => {
   let controller: TransactionsController;
@@ -14,6 +15,7 @@ describe('TransactionsController', () => {
     create: jest.Mock;
     findById: jest.Mock;
     findAll: jest.Mock;
+    findAllForExport: jest.Mock;
     reverse: jest.Mock;
   };
 
@@ -69,6 +71,7 @@ describe('TransactionsController', () => {
       create: jest.fn(),
       findById: jest.fn(),
       findAll: jest.fn(),
+      findAllForExport: jest.fn(),
       reverse: jest.fn(),
     };
 
@@ -464,6 +467,75 @@ describe('TransactionsController', () => {
       await expect(controller.findAll(query, request)).rejects.toThrow(
         'Account not found',
       );
+    });
+  });
+
+  describe('ExportTransactions', () => {
+    const exportRequest = {
+      user: {
+        userId: 'user-id',
+        email: 'user@example.com',
+        sessionId: 'session-id',
+      },
+    } as unknown as AuthenticatedRequest;
+
+    const exportRecord = {
+      transaction: Transaction.create({
+        id: 'transaction-id',
+        accountId: 'account-id',
+        type: TransactionType.EXPENSE,
+        amount: '50.0000',
+        currency: 'MYR',
+        description: 'Lunch',
+        transactionDate: '2026-09-01',
+        reversalOfTransactionId: null,
+        incomeCategoryId: null,
+        ...fxFields,
+        createdAt: new Date('2026-09-01T10:00:00.000Z'),
+        updatedAt: new Date('2026-09-01T10:00:00.000Z'),
+      }),
+      accountName: 'Credit Card',
+      categoryName: 'Groceries',
+    };
+
+    it('should export the filtered transactions of the authenticated user as CSV', async () => {
+      transactionsService.findAllForExport.mockResolvedValue([exportRecord]);
+
+      const file = await controller.exportTransactions(
+        {
+          format: ExportFormat.CSV,
+          from: '2026-01-01',
+          to: '2026-01-31',
+          type: TransactionType.EXPENSE,
+        },
+        exportRequest,
+      );
+      const headers = file.getHeaders();
+
+      expect(transactionsService.findAllForExport).toHaveBeenCalledWith({
+        userId: 'user-id',
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.EXPENSE,
+        accountId: undefined,
+        incomeCategoryId: undefined,
+        expenseCategoryId: undefined,
+      });
+      expect(headers.type).toBe('text/csv; charset=utf-8');
+      expect(headers.disposition).toMatch(
+        /^attachment; filename="navro-transactions-\d{4}-\d{2}-\d{2}\.csv"$/,
+      );
+    });
+
+    it('should export the transactions as a PDF attachment', async () => {
+      transactionsService.findAllForExport.mockResolvedValue([]);
+
+      const file = await controller.exportTransactions(
+        { format: ExportFormat.PDF },
+        exportRequest,
+      );
+
+      expect(file.getHeaders().type).toBe('application/pdf');
     });
   });
 

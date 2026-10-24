@@ -22,9 +22,17 @@ import {
   TRANSACTION_DESCRIPTION_MAX_LENGTH,
 } from '../../domain/validation/transaction-validation';
 
-import { TransactionRepository } from '../../domain/repositories/transaction.repository';
+import {
+  TransactionExportRecord,
+  TransactionRepository,
+} from '../../domain/repositories/transaction.repository';
 
 import { CreateTransactionInput } from '../inputs/create-transaction.input';
+import type { ExportTransactionsInput } from '../inputs/export-transactions.input';
+import {
+  assertWithinExportLimit,
+  getExportRowLimit,
+} from '../../../../common/export/export-limit';
 
 import { InvalidTransactionException } from '../../presentation/exceptions/invalid-transaction.exception';
 import { TransactionNotFoundException } from '../../presentation/exceptions/transaction-not-found.exception';
@@ -226,26 +234,53 @@ export class TransactionsService {
     transactions: Transaction[];
     total: number;
   }> {
-    if (input.from !== undefined && !isValidTransactionDate(input.from)) {
-      throw new InvalidTransactionException('From date must be a valid date');
-    }
-
-    if (input.to !== undefined && !isValidTransactionDate(input.to)) {
-      throw new InvalidTransactionException('To date must be a valid date');
-    }
-
-    if (input.from !== undefined && input.to !== undefined) {
-      if (input.from > input.to) {
-        throw new InvalidTransactionException(
-          'From date must not be after to date',
-        );
-      }
-    }
+    this.assertValidDateRange(input.from, input.to);
 
     if (input.accountId !== undefined) {
       await this.accountsService.findById(input.accountId, input.userId);
     }
 
     return this.transactionsRepository.findAllByAccountForUser(input);
+  }
+
+  async findAllForExport(
+    input: ExportTransactionsInput,
+  ): Promise<TransactionExportRecord[]> {
+    this.assertValidDateRange(input.from, input.to);
+
+    if (input.accountId !== undefined) {
+      await this.accountsService.findById(input.accountId, input.userId);
+    }
+
+    const records = await this.transactionsRepository.findAllForExportByUser({
+      userId: input.userId,
+      accountId: input.accountId,
+      from: input.from,
+      to: input.to,
+      type: input.type,
+      incomeCategoryId: input.incomeCategoryId,
+      expenseCategoryId: input.expenseCategoryId,
+      take: getExportRowLimit() + 1,
+    });
+
+    assertWithinExportLimit(records.length);
+
+    return records;
+  }
+
+  private assertValidDateRange(from?: string, to?: string): void {
+    if (from !== undefined && !isValidTransactionDate(from)) {
+      throw new InvalidTransactionException('From date must be a valid date');
+    }
+
+    if (to !== undefined && !isValidTransactionDate(to)) {
+      throw new InvalidTransactionException('To date must be a valid date');
+    }
+
+    if (from !== undefined && to !== undefined && from > to) {
+      throw new InvalidTransactionException(
+        'From date must not be after to date',
+      );
+    }
   }
 }

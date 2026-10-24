@@ -5,6 +5,8 @@ import { IncomeCategoryNotFoundException } from '../../../income/presentation/ex
 import { ExchangeRateService } from '../../../fx/application/services/exchange-rate.service';
 import { ExpenseCategoriesService } from '../../../expenses/application/services/expense-categories.service';
 import { ExpenseCategoryNotFoundException } from '../../../expenses/presentation/exceptions/expense-category-not-found.exception';
+import { ExportLimitExceededException } from '../../../../common/export/exceptions/export-limit-exceeded.exception';
+import { getExportRowLimit } from '../../../../common/export/export-limit';
 
 import {
   Transaction,
@@ -25,6 +27,7 @@ describe('TransactionsService', () => {
     findByIdForUser: jest.Mock;
     findReversalForTransaction: jest.Mock;
     findAllByAccountForUser: jest.Mock;
+    findAllForExportByUser: jest.Mock;
   };
 
   let expenseCategoriesService: {
@@ -96,6 +99,7 @@ describe('TransactionsService', () => {
       findByIdForUser: jest.fn(),
       findReversalForTransaction: jest.fn(),
       findAllByAccountForUser: jest.fn(),
+      findAllForExportByUser: jest.fn(),
     };
 
     accountsService = {
@@ -797,6 +801,108 @@ describe('TransactionsService', () => {
         'transaction-id',
         'user-id',
       );
+    });
+  });
+
+  describe('FindAllForExport', () => {
+    const exportRecord = {
+      transaction: createdTransaction,
+      accountName: 'Maybank Savings',
+      categoryName: 'Groceries',
+    };
+
+    it('should load matching transactions up to the export limit plus one', async () => {
+      accountsService.findById.mockResolvedValue(activeAccount);
+      transactionsRepository.findAllForExportByUser.mockResolvedValue([
+        exportRecord,
+      ]);
+
+      const result = await service.findAllForExport({
+        userId: 'user-1',
+        accountId: activeAccount.id,
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.EXPENSE,
+      });
+
+      expect(result).toEqual([exportRecord]);
+      expect(
+        transactionsRepository.findAllForExportByUser,
+      ).toHaveBeenCalledWith({
+        userId: 'user-1',
+        accountId: activeAccount.id,
+        from: '2026-01-01',
+        to: '2026-01-31',
+        type: TransactionType.EXPENSE,
+        take: getExportRowLimit() + 1,
+      });
+    });
+
+    it('should verify account ownership when an account is given', async () => {
+      accountsService.findById.mockResolvedValue(activeAccount);
+      transactionsRepository.findAllForExportByUser.mockResolvedValue([]);
+
+      await service.findAllForExport({
+        userId: 'user-1',
+        accountId: activeAccount.id,
+      });
+
+      expect(accountsService.findById).toHaveBeenCalledWith(
+        activeAccount.id,
+        'user-1',
+      );
+    });
+
+    it('should not check an account when none is given', async () => {
+      transactionsRepository.findAllForExportByUser.mockResolvedValue([]);
+
+      await service.findAllForExport({ userId: 'user-1' });
+
+      expect(accountsService.findById).not.toHaveBeenCalled();
+    });
+
+    it('should reject an invalid from date', async () => {
+      await expect(
+        service.findAllForExport({ userId: 'user-1', from: '2026-02-30' }),
+      ).rejects.toThrow(
+        new InvalidTransactionException('From date must be a valid date'),
+      );
+
+      expect(
+        transactionsRepository.findAllForExportByUser,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should reject an invalid to date', async () => {
+      await expect(
+        service.findAllForExport({ userId: 'user-1', to: '2026-13-01' }),
+      ).rejects.toThrow(
+        new InvalidTransactionException('To date must be a valid date'),
+      );
+    });
+
+    it('should reject a from date after the to date', async () => {
+      await expect(
+        service.findAllForExport({
+          userId: 'user-1',
+          from: '2026-02-01',
+          to: '2026-01-01',
+        }),
+      ).rejects.toThrow(
+        new InvalidTransactionException('From date must not be after to date'),
+      );
+    });
+
+    it('should reject the export when matching rows exceed the export limit', async () => {
+      const rows = Array.from(
+        { length: getExportRowLimit() + 1 },
+        () => exportRecord,
+      );
+      transactionsRepository.findAllForExportByUser.mockResolvedValue(rows);
+
+      await expect(
+        service.findAllForExport({ userId: 'user-1' }),
+      ).rejects.toThrow(ExportLimitExceededException);
     });
   });
 

@@ -5,10 +5,12 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { createAccessToken } from './support/access-token';
+import { binaryParser } from './support/binary-parser';
 import request from './support/api-request';
 
 import { AppModule } from '../../src/app.module';
 import { PrismaService } from '../../src/infrastructure/database/prisma/prisma.service';
+import { UserStatus } from '../../prisma/generated/prisma/client';
 
 // Seeds bypass the service, so FX fields use a labelled MANUAL rate instead of a provider lookup.
 const SEED_EXCHANGE_RATE = 20;
@@ -602,9 +604,13 @@ describe('Transactions E2E', () => {
           currency: 'myr',
           description: 'Lowercase currency',
           transactionDate: '2026-09-03',
-        })
-        .expect(201);
+        });
 
+      // Surfaces the status and body on failure, to diagnose an intermittent 400.
+      expect({ status: response.status, body: response.body }).toMatchObject({
+        status: 201,
+        body: { success: true },
+      });
       expect(response.body.success).toBe(true);
       expect(response.body.data.currency).toBe('MYR');
 
@@ -1307,6 +1313,321 @@ describe('Transactions E2E', () => {
         page: 1,
         limit: 20,
       }).expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
+  });
+
+  describe('GET /api/v1/transactions/export', () => {
+    const exportWindowFrom = '2032-05-01';
+    const exportWindowTo = '2032-05-31';
+    const exportAccountName = 'Transaction Export Account';
+    const secondUserAccountName = 'Transaction Export Second User Account';
+
+    let exportAccountId: string;
+    let secondUserExportAccountId: string;
+    let exportSystemIncomeCategoryId: string;
+    let exportSystemExpenseCategoryId: string;
+    let noPermissionUserId: string;
+    let noPermissionUserToken: string;
+
+    const cleanupExportData = async (): Promise<void> => {
+      const accountNames = [exportAccountName, secondUserAccountName];
+
+      await prisma.transaction.deleteMany({
+        where: { account: { name: { in: accountNames } } },
+      });
+      await prisma.account.deleteMany({
+        where: { name: { in: accountNames } },
+      });
+    };
+
+    const createExportTransaction = (data: {
+      accountId: string;
+      type: 'INCOME' | 'EXPENSE';
+      amount: string;
+      transactionDate: string;
+      description: string;
+      incomeCategoryId?: string;
+      expenseCategoryId?: string;
+    }) => {
+      const rateDate = new Date(`${data.transactionDate}T00:00:00.000Z`);
+
+      return prisma.transaction.create({
+        data: {
+          accountId: data.accountId,
+          type: data.type,
+          amount: data.amount,
+          currency: 'MYR',
+          description: data.description,
+          transactionDate: rateDate,
+          incomeCategoryId: data.incomeCategoryId,
+          expenseCategoryId: data.expenseCategoryId,
+          ...seedFxFields(data.amount, rateDate),
+        },
+      });
+    };
+
+    const exportRequest = (token: string, query: Record<string, string>) =>
+      request(app.getHttpServer())
+        .get('/api/v1/transactions/export')
+        .query(query)
+        .set('Authorization', `Bearer ${token}`);
+
+    const exportWindowQuery = (
+      format: string,
+      extra: Record<string, string> = {},
+    ) => ({
+      format,
+      from: exportWindowFrom,
+      to: exportWindowTo,
+      ...extra,
+    });
+
+    const fetchCsv = async (
+      token: string,
+      extra: Record<string, string> = {},
+    ): Promise<string> => {
+      const response = await exportRequest(
+        token,
+        exportWindowQuery('csv', extra),
+      )
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      return (response.body as Buffer).toString('utf8');
+    };
+
+    beforeAll(async () => {
+      await cleanupExportData();
+
+      const incomeCategory = await prisma.incomeCategory.findFirst({
+        where: { userId: null },
+      });
+      const expenseCategory = await prisma.expenseCategory.findFirst({
+        where: { userId: null },
+      });
+
+      if (!incomeCategory || !expenseCategory) {
+        throw new Error(
+          'System categories not found. Run npm run db:seed:test',
+        );
+      }
+
+      exportSystemIncomeCategoryId = incomeCategory.id;
+      exportSystemExpenseCategoryId = expenseCategory.id;
+
+      const exportAccount = await prisma.account.create({
+        data: {
+          userId: superAdminId,
+          name: exportAccountName,
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
+        },
+      });
+      const secondUserAccount = await prisma.account.create({
+        data: {
+          userId: secondUserId,
+          name: secondUserAccountName,
+          type: 'BANK_ACCOUNT',
+          currency: 'MYR',
+          openingBalance: '0.0000',
+        },
+      });
+
+      exportAccountId = exportAccount.id;
+      secondUserExportAccountId = secondUserAccount.id;
+
+      await createExportTransaction({
+        accountId: exportAccountId,
+        type: 'INCOME',
+        amount: '1000.0000',
+        transactionDate: '2032-05-05',
+        description: 'Export income',
+        incomeCategoryId: exportSystemIncomeCategoryId,
+      });
+      await createExportTransaction({
+        accountId: exportAccountId,
+        type: 'EXPENSE',
+        amount: '200.0000',
+        transactionDate: '2032-05-10',
+        description: 'Export categorized expense',
+        expenseCategoryId: exportSystemExpenseCategoryId,
+      });
+      await createExportTransaction({
+        accountId: secondUserExportAccountId,
+        type: 'EXPENSE',
+        amount: '999.0000',
+        transactionDate: '2032-05-10',
+        description: 'Export second user expense',
+      });
+
+      // A user with no roles, so the request reaches the permission guard.
+      const noPermissionUser = await prisma.user.create({
+        data: {
+          email: `transactions-export-${Date.now()}-no-permission@example.com`,
+          passwordHash: 'e2e-test-password-hash',
+          firstName: 'Transactions',
+          lastName: 'NoPermission',
+          status: UserStatus.ACTIVE,
+          emailVerifiedAt: new Date(),
+        },
+      });
+
+      noPermissionUserId = noPermissionUser.id;
+      noPermissionUserToken = await createAccessToken(app, {
+        userId: noPermissionUser.id,
+        email: noPermissionUser.email,
+      });
+    });
+
+    afterAll(async () => {
+      await cleanupExportData();
+      await prisma.user.delete({ where: { id: noPermissionUserId } });
+    });
+
+    it('should export the authenticated user transactions as a CSV attachment', async () => {
+      const response = await exportRequest(
+        accessToken,
+        exportWindowQuery('csv'),
+      )
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      expect(response.headers['content-type']).toBe('text/csv; charset=utf-8');
+      expect(response.headers['content-disposition']).toMatch(
+        /^attachment; filename="navro-transactions-\d{4}-\d{2}-\d{2}\.csv"$/,
+      );
+      expect(response.headers['cache-control']).toBe('no-store');
+
+      const csv = (response.body as Buffer).toString('utf8');
+
+      expect(csv).toContain(
+        'Date,Type,Account,Category,Description,Amount,Currency,Base Amount,Base Currency,Exchange Rate,Rate Date',
+      );
+      expect(csv).toContain('Export income');
+      expect(csv).toContain('Export categorized expense');
+      expect(csv).toContain(exportAccountName);
+    });
+
+    it('should export the authenticated user transactions as a PDF attachment', async () => {
+      const response = await exportRequest(
+        accessToken,
+        exportWindowQuery('pdf'),
+      )
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      expect(response.headers['content-type']).toBe('application/pdf');
+      expect(response.headers['content-disposition']).toMatch(
+        /^attachment; filename="navro-transactions-\d{4}-\d{2}-\d{2}\.pdf"$/,
+      );
+
+      const pdf = response.body as Buffer;
+
+      expect(pdf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+    });
+
+    it('should not include transactions belonging to other users', async () => {
+      const ownCsv = await fetchCsv(accessToken);
+      const otherUserCsv = await fetchCsv(secondAccessToken);
+
+      expect(ownCsv).not.toContain('Export second user expense');
+      expect(otherUserCsv).toContain('Export second user expense');
+      expect(otherUserCsv).not.toContain('Export income');
+    });
+
+    it('should apply the from and to date window', async () => {
+      const csv = await fetchCsv(accessToken, { from: '2032-05-08' });
+
+      expect(csv).not.toContain('Export income');
+      expect(csv).toContain('Export categorized expense');
+    });
+
+    it('should filter by transaction type', async () => {
+      const csv = await fetchCsv(accessToken, { type: 'INCOME' });
+
+      expect(csv).toContain('Export income');
+      expect(csv).not.toContain('Export categorized expense');
+    });
+
+    it('should filter by expense category', async () => {
+      const csv = await fetchCsv(accessToken, {
+        expenseCategoryId: exportSystemExpenseCategoryId,
+      });
+
+      expect(csv).toContain('Export categorized expense');
+      expect(csv).not.toContain('Export income');
+    });
+
+    it('should filter by account', async () => {
+      const csv = await fetchCsv(accessToken, { accountId: exportAccountId });
+
+      expect(csv).toContain('Export income');
+      expect(csv).not.toContain('Export second user expense');
+    });
+
+    it('should return 404 when filtering by an account the user does not own', async () => {
+      const response = await exportRequest(
+        accessToken,
+        exportWindowQuery('csv', { accountId: secondUserExportAccountId }),
+      ).expect(404);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject export without a format', async () => {
+      const response = await exportRequest(accessToken, {
+        from: exportWindowFrom,
+        to: exportWindowTo,
+      }).expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject an unsupported export format', async () => {
+      const response = await exportRequest(
+        accessToken,
+        exportWindowQuery('xlsx'),
+      ).expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject pagination parameters on export', async () => {
+      const response = await exportRequest(
+        accessToken,
+        exportWindowQuery('csv', { page: '1' }),
+      ).expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject a date range where from is after to', async () => {
+      const response = await exportRequest(
+        accessToken,
+        exportWindowQuery('csv', { from: '2032-06-01', to: '2032-05-01' }),
+      ).expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject export without authentication', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/transactions/export')
+        .query(exportWindowQuery('csv'))
+        .expect(401);
+    });
+
+    it('should reject export without transactions:read permission', async () => {
+      const response = await exportRequest(
+        noPermissionUserToken,
+        exportWindowQuery('csv'),
+      ).expect(403);
 
       expect(response.body.success).toBe(false);
     });

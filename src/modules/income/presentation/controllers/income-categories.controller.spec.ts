@@ -1,6 +1,7 @@
 import { request as expressRequest } from 'express';
 
 import { IncomeCategory } from '../../domain/entities/income-category.entity';
+import { ExportFormat } from '../../../../common/export/export-table';
 import { AuthenticatedRequest } from '../../../auth/infrastructure/interfaces/authenticated-request.interface';
 
 import { IncomeCategoriesController } from './income-categories.controller';
@@ -30,6 +31,7 @@ describe('IncomeCategoriesController', () => {
   const incomeCategoriesService = {
     create: jest.fn(),
     findAll: jest.fn(),
+    findAllForExport: jest.fn(),
     findById: jest.fn(),
     update: jest.fn(),
     archive: jest.fn(),
@@ -100,6 +102,39 @@ describe('IncomeCategoriesController', () => {
         hasNextPage: false,
         hasPreviousPage: true,
       });
+    });
+  });
+
+  describe('exportIncomeCategories', () => {
+    it('should export the income categories available to the user as a CSV attachment', async () => {
+      incomeCategoriesService.findAllForExport.mockResolvedValue([category]);
+
+      const file = await controller.exportIncomeCategories(
+        createAuthenticatedRequest(),
+        { format: ExportFormat.CSV },
+      );
+      const headers = file.getHeaders();
+
+      expect(incomeCategoriesService.findAllForExport).toHaveBeenCalledWith(
+        'user-1',
+      );
+      expect(headers.type).toBe('text/csv; charset=utf-8');
+      expect(headers.disposition).toMatch(
+        /^attachment; filename="navro-income-categories-\d{4}-\d{2}-\d{2}\.csv"$/,
+      );
+    });
+
+    it('should export the income categories as a PDF attachment when no categories exist', async () => {
+      incomeCategoriesService.findAllForExport.mockResolvedValue([]);
+
+      const file = await controller.exportIncomeCategories(
+        createAuthenticatedRequest(),
+        { format: ExportFormat.PDF },
+      );
+      const headers = file.getHeaders();
+
+      expect(headers.type).toBe('application/pdf');
+      expect(headers.disposition).toMatch(/\.pdf"$/);
     });
   });
 

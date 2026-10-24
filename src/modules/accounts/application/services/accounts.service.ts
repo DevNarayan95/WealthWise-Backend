@@ -16,6 +16,11 @@ import { InvalidAccountException } from '../../presentation/exceptions/invalid-a
 import { AccountNotFoundException } from '../../presentation/exceptions/account-not-found.exception';
 import { AccountAlreadyArchivedApplicationException } from '../../presentation/exceptions/account-already-archived.exception';
 
+import {
+  assertWithinExportLimit,
+  getExportRowLimit,
+} from '../../../../common/export/export-limit';
+
 import { CreateAccountInput } from '../inputs/create-account.input';
 import { PaginatedAccountsOutput } from '../outputs/paginated-accounts.output';
 import { AccountBalanceOutput } from '../outputs/account-balance.output';
@@ -75,6 +80,20 @@ export class AccountsService {
       limit,
       total: result.total,
     };
+  }
+
+  async findAllForExport(userId: string): Promise<Account[]> {
+    const maxRows = getExportRowLimit();
+
+    const result = await this.accountRepository.findAllByUserId({
+      userId,
+      skip: 0,
+      take: maxRows + 1,
+    });
+
+    assertWithinExportLimit(result.accounts.length, maxRows);
+
+    return result.accounts;
   }
 
   private validateAccountName(name: string): void {

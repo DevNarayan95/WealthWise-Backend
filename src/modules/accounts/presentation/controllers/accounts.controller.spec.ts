@@ -1,7 +1,9 @@
 import {
+  Account,
   AccountStatus,
   AccountType,
 } from '../../domain/entities/account.entity';
+import { ExportFormat } from '../../../../common/export/export-table';
 import { AccountsController } from './accounts.controller';
 import { AuthenticatedRequest } from 'src/modules/auth/infrastructure/interfaces/authenticated-request.interface';
 import { request as expressRequest } from 'express';
@@ -19,6 +21,7 @@ describe('AccountsController', () => {
   const accountsService = {
     create: jest.fn(),
     findAll: jest.fn(),
+    findAllForExport: jest.fn(),
     findById: jest.fn(),
     archive: jest.fn(),
     getBalance: jest.fn(),
@@ -164,6 +167,49 @@ describe('AccountsController', () => {
 
       expect(result.data.id).toBe('account-id');
       expect(result.data.name).toBe('Cash Wallet');
+    });
+  });
+
+  describe('exportAccounts', () => {
+    it('should export the authenticated user accounts as a CSV attachment', async () => {
+      const account = Account.create({
+        id: 'account-id',
+        userId: 'user-id',
+        name: 'Maybank Savings',
+        type: AccountType.BANK_ACCOUNT,
+        currency: 'MYR',
+        openingBalance: '1250.5000',
+        status: AccountStatus.ACTIVE,
+        createdAt: new Date('2026-08-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-08-01T00:00:00.000Z'),
+      });
+
+      accountsService.findAllForExport.mockResolvedValue([account]);
+
+      const file = await controller.exportAccounts(
+        createAuthenticatedRequest(),
+        { format: ExportFormat.CSV },
+      );
+      const headers = file.getHeaders();
+
+      expect(accountsService.findAllForExport).toHaveBeenCalledWith('user-id');
+      expect(headers.type).toBe('text/csv; charset=utf-8');
+      expect(headers.disposition).toMatch(
+        /^attachment; filename="navro-accounts-\d{4}-\d{2}-\d{2}\.csv"$/,
+      );
+    });
+
+    it('should export the authenticated user accounts as a PDF attachment', async () => {
+      accountsService.findAllForExport.mockResolvedValue([]);
+
+      const file = await controller.exportAccounts(
+        createAuthenticatedRequest(),
+        { format: ExportFormat.PDF },
+      );
+      const headers = file.getHeaders();
+
+      expect(headers.type).toBe('application/pdf');
+      expect(headers.disposition).toMatch(/\.pdf"$/);
     });
   });
 

@@ -85,6 +85,24 @@
     "defaultPageSize": 20,
     "maxPageSize": 100
   },
+  "export": {
+    "maxRows": 5000,
+    "fileNamePrefix": "navro",
+    "csv": {
+      "delimiter": ",",
+      "includeUtf8Bom": true,
+      "neutralizeFormulas": true
+    },
+    "pdf": {
+      "pageSize": "A4",
+      "orientation": "portrait",
+      "marginPt": 36,
+      "fontSize": 9,
+      "titleFontSize": 16,
+      "fontPath": "",
+      "showPageNumbers": true
+    }
+  },
   "income": {
     "categoryNameMaxLength": 100
   },

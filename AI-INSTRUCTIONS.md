@@ -130,7 +130,7 @@ Filter by type and category                        ✅
 Month-wise and year-wise history                   ✅ (via from and to, inclusive)
 ```
 
-`accountId` is optional. Without it, the list covers every account the caller owns. A supplied `accountId` must belong to the caller, or the request returns 404. Dates are inclusive. `from` must not be after `to`, or the request returns 400 `INVALID_TRANSACTION`. Dedicated monthly and yearly report exports are built in Reporting (R11).
+`accountId` is optional. Without it, the list covers every account the caller owns. A supplied `accountId` must belong to the caller, or the request returns 404. Dates are inclusive. `from` must not be after `to`, or the request returns 400 `INVALID_TRANSACTION`. Monthly and yearly report aggregates are not built yet; they belong to Reporting (R11).
 
 ### R6. Budgets
 
@@ -215,7 +215,7 @@ Historical report (custom date range)              ❌
 Totals: income, expense, net savings, category     ❌
 ```
 
-Reports use `transactionDate`, not `createdAt`. Export: CSV and PDF, printable, generated on request (approved).
+Reports use `transactionDate`, not `createdAt`. Export: CSV and PDF, printable, generated on request (approved). List export is built for accounts, transactions, income categories, and expense categories (see Data Exports). The monthly, yearly, and historical report aggregates above are not built yet.
 
 ### R12. Forecasting and Planning
 
@@ -273,7 +273,7 @@ Each decision must be answered before the related module is implemented. The AI 
 3. **FD and RD.** Approved: account types hold the balance. All maturity details are stored (BR-DEP-01 to BR-DEP-06).
 4. **Dashboard configuration (conflict).** Sections 1, 26, and 29 say configuration comes from files and secrets come only from environment variables. The requirement asks the Super Admin to manage mail and data configuration from the dashboard. **Deferred:** configuration stays in files for now. The Phase 2 admin-panel design decides whether non-secret settings move to the database. Secrets stay environment-only in all cases. Changing sections 1 and 26 needs your approval at that time.
 5. **Goal progress.** Approved: current amount = balances of the accounts plus current values of the investments the user explicitly attaches to the goal. Nothing is linked automatically (BR-GOAL-02, BR-GOAL-03).
-6. **Report export.** Approved: CSV and PDF, printable, generated on request.
+6. **Report export.** Approved: CSV and PDF, printable, generated on request. Applies to every list, not only transactions. Implemented for accounts, transactions, income categories, and expense categories.
 7. **Savings as a module.** Approved: savings is a separate module. The user attaches accounts to it and sees its transactions and progress. The `SAVINGS` account type (R2) is still available for individual accounts. Rules: BR-SAV-01 to BR-SAV-05.
 8. **Expense category defaults.** Approved: the 15 default expense categories in BRD section 6.3, as with income. Users can add their own.
 9. **Time zone for financial dates.** Approved: each user has a time zone. Financial dates use the user's local date (BRD decision 11, NFR-DATA-03).
@@ -3025,7 +3025,9 @@ Financial Domain
 │
 ├── Expenses                           ✅ COMPLETE
 │
-├── Transaction History Filters        ⏳
+├── Transaction History Filters        ✅ COMPLETE
+│
+├── Data Exports (CSV / PDF)           ✅ COMPLETE
 │
 ├── Auth Session (Logout)              ✅ COMPLETE
 │
@@ -3123,9 +3125,9 @@ Income                             ✅ COMPLETE
 
 Expenses                           ✅ COMPLETE
 
-Transaction History Filters        ⏳
+Transaction History Filters        ✅ COMPLETE
 
-Auth Session (Logout)              ✅ COMPLETE
+Data Exports (CSV / PDF)           ✅ COMPLETE
 
 Transfers                          ⏳
 
@@ -3299,7 +3301,7 @@ Expenses mirror Income (section 39 onward) and reuse its patterns. The decisions
 
 **Status**
 
-Design recorded. Implementation starts after the inferred items above are confirmed.
+Implemented. Expense categories (system and custom) and the transaction link are complete. Expense category export is complete (see the Data Exports rules below).
 
 **Current position:**
 
@@ -3316,7 +3318,51 @@ Income Module
       ↓
       ✅ COMPLETE
 
-Expenses — Domain Design
+Expenses Module
       ↓
-      ✅ DESIGN RECORDED (implementation next)
+      ✅ COMPLETE
+
+Data Exports (CSV / PDF)
+      ↓
+      ✅ COMPLETE
 ```
+
+# 58. Data Export Rules
+
+Every list endpoint can be exported as CSV or PDF. This covers accounts, transactions, income categories, and expense categories. Future list modules must follow the same pattern.
+
+**Routes**
+
+- `GET /api/v1/<resource>/export?format=csv|pdf`. Declare it before any `GET /:id` route, or Nest matches `export` as an id.
+- Permission: the same `read` permission as the list route (for example `income:read`, `expense:read`, `accounts:read`, `transactions:read`).
+- Filters on the list also apply to the export (for example the transaction date range).
+- Response: `text/csv` or `application/pdf`, with `Content-Disposition: attachment; filename="<fileNamePrefix>-<resource>-<UTC date>.<ext>"`.
+
+**Behavior**
+
+- Rows are fetched with `maxRows + 1`. If more rows exist than `export.maxRows`, the request returns `EXPORT_LIMIT_EXCEEDED` (422, `NV422`). Exports are never truncated silently.
+- Archived categories are excluded, matching the list endpoint.
+- Exports are generated on request and never stored.
+- CSV cells starting with `=`, `+`, `-`, or `@` are neutralized when `export.csv.neutralizeFormulas` is `true`.
+
+**Structure**
+
+- Shared code lives in `src/common/export/`: `export-table`, `csv-writer`, `pdf-writer`, `export-renderer`, `export-file-name`, `export-limit`, and `dto/export-query.dto`. Do not duplicate it per module.
+- Each module adds a mapper in `presentation/mappers/<name>-export.mapper.ts` that turns records into an `ExportTable`. The mapper owns the column headers.
+- The service exposes `findAllForExport(userId, ...)`, which applies the limit check. The controller calls `renderExport` and returns a `StreamableFile`.
+- Headers are static constants in each mapper. Changing a column is a breaking change for users who import the file.
+
+**Configuration**
+
+- All export settings live in the `export` section of `config/default.json` (see [CONFIGURATION.md](./docs/CONFIGURATION.md#export)). Do not hard-code page size, font, delimiter, or limits in code.
+
+**Known limits (recorded decisions)**
+
+- Account exports do not include a live balance.
+- PDFs use Helvetica, which cannot render non-Latin text. Set `export.pdf.fontPath` to a Unicode `.ttf` to change this.
+- PDFs are portrait. Wide tables may wrap.
+
+**Testing**
+
+- Each mapper, service method, and controller route has a unit spec. Each module has an e2e block that checks CSV and PDF content, the file name, permission, and the 422 behavior where practical.
+- The 422 path has unit coverage only. An e2e test would need a config override.

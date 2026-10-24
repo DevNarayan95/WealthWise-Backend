@@ -10,8 +10,10 @@ import {
 
 import {
   CreateTransactionRepositoryInput,
+  FindTransactionsForExportRepositoryInput,
   FindTransactionsRepositoryInput,
   FindTransactionsRepositoryOutput,
+  TransactionExportRecord,
   TransactionRepository,
 } from '../../domain/repositories/transaction.repository';
 
@@ -116,7 +118,38 @@ export class PrismaTransactionRepository extends TransactionRepository {
     };
   }
 
-  private buildListWhere(input: FindTransactionsRepositoryInput) {
+  async findAllForExportByUser(
+    input: FindTransactionsForExportRepositoryInput,
+  ): Promise<TransactionExportRecord[]> {
+    const rows = await this.prisma.transaction.findMany({
+      where: this.buildListWhere(input),
+      take: input.take,
+      orderBy: [
+        {
+          transactionDate: 'desc',
+        },
+        {
+          createdAt: 'desc',
+        },
+      ],
+      include: {
+        account: { select: { name: true } },
+        incomeCategory: { select: { name: true } },
+        expenseCategory: { select: { name: true } },
+      },
+    });
+
+    return rows.map((row) => ({
+      transaction: this.toDomain(row),
+      accountName: row.account.name,
+      categoryName:
+        row.incomeCategory?.name ?? row.expenseCategory?.name ?? null,
+    }));
+  }
+
+  private buildListWhere(
+    input: Omit<FindTransactionsRepositoryInput, 'offset' | 'limit'>,
+  ) {
     const where: {
       accountId?: string;
       account: { userId: string };

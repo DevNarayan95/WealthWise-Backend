@@ -1,6 +1,7 @@
 import { request as expressRequest } from 'express';
 
 import { ExpenseCategory } from '../../domain/entities/expense-category.entity';
+import { ExportFormat } from '../../../../common/export/export-table';
 import { AuthenticatedRequest } from '../../../auth/infrastructure/interfaces/authenticated-request.interface';
 
 import { ExpenseCategoriesController } from './expense-categories.controller';
@@ -30,6 +31,7 @@ describe('ExpenseCategoriesController', () => {
   const expenseCategoriesService = {
     create: jest.fn(),
     findAll: jest.fn(),
+    findAllForExport: jest.fn(),
     findById: jest.fn(),
     update: jest.fn(),
     archive: jest.fn(),
@@ -100,6 +102,39 @@ describe('ExpenseCategoriesController', () => {
         hasNextPage: false,
         hasPreviousPage: true,
       });
+    });
+  });
+
+  describe('exportExpenseCategories', () => {
+    it('should export the expense categories available to the user as a CSV attachment', async () => {
+      expenseCategoriesService.findAllForExport.mockResolvedValue([category]);
+
+      const file = await controller.exportExpenseCategories(
+        createAuthenticatedRequest(),
+        { format: ExportFormat.CSV },
+      );
+      const headers = file.getHeaders();
+
+      expect(expenseCategoriesService.findAllForExport).toHaveBeenCalledWith(
+        'user-1',
+      );
+      expect(headers.type).toBe('text/csv; charset=utf-8');
+      expect(headers.disposition).toMatch(
+        /^attachment; filename="navro-expense-categories-\d{4}-\d{2}-\d{2}\.csv"$/,
+      );
+    });
+
+    it('should export the expense categories as a PDF attachment when no categories exist', async () => {
+      expenseCategoriesService.findAllForExport.mockResolvedValue([]);
+
+      const file = await controller.exportExpenseCategories(
+        createAuthenticatedRequest(),
+        { format: ExportFormat.PDF },
+      );
+      const headers = file.getHeaders();
+
+      expect(headers.type).toBe('application/pdf');
+      expect(headers.disposition).toMatch(/\.pdf"$/);
     });
   });
 

@@ -125,6 +125,14 @@ The transaction list (`GET /api/v1/transactions`) also returns `INVALID_TRANSACT
 
 Linking an INCOME transaction to an expense category returns `INVALID_TRANSACTION` (400).
 
+### Exports
+
+Every list endpoint has an `/export` route that returns CSV or PDF (see [CONFIGURATION.md](./CONFIGURATION.md#export)).
+
+| `error.code`            | HTTP status | `statusCode` (default) | When it is returned                                                                                                                                              |
+| ----------------------- | ----------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EXPORT_LIMIT_EXCEEDED` | 422         | `NV422`                | The list has more rows than `export.maxRows`. Narrow the filters (for example, a shorter date range) and export again. The export is not truncated silently. |
+
 ### Exchange rates
 
 | `error.code`               | HTTP status | `statusCode` (default) | When it is returned                                                                                                                                                                 |

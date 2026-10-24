@@ -106,6 +106,16 @@ Use `accounts` as the reference. Its files are under [src/modules/accounts/](../
 5. Return `successResponse(data)` for success.
 6. Add unit tests for the service and controller, and an e2e test for the HTTP behavior (status, body, and error code).
 
+## 5a. Add a CSV and PDF export to a list
+
+Every list endpoint must have an export. The shared code is in [src/common/export/](../src/common/export/). The rules are in [AI-INSTRUCTIONS.md](../AI-INSTRUCTIONS.md) section 58.
+
+1. **Mapper.** Add `presentation/mappers/<name>-export.mapper.ts`. It turns records into an `ExportTable` with static column headers. Add a spec for it. Write the spec first.
+2. **Service.** Add `findAllForExport(userId, ...)`. Fetch `export.maxRows + 1` rows and call `assertWithinExportLimit`. Exclude archived rows if the list does.
+3. **Controller.** Add `@Get('export')` before any `@Get(':id')` route. Use the list's read permission. Query with `ExportQueryDto` and return a `StreamableFile` from `renderExport`.
+4. **Tests.** Add unit specs for the service and controller. Add an e2e block that checks the CSV header and row, the PDF header bytes (`%PDF`), the `Content-Disposition` file name, and the permission check.
+5. **Docs.** If you add a new export setting, add it to `config/default.json`, the joi schema, and [CONFIGURATION.md](./CONFIGURATION.md#export).
+
 ## 6. Add an error code
 
 Every API error must have a code that is documented and returns a correct HTTP status.

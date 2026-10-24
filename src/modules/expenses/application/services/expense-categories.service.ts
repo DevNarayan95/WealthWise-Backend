@@ -14,6 +14,10 @@ import { InvalidExpenseCategoryException } from '../../presentation/exceptions/i
 import { SystemExpenseCategoryReadOnlyException } from '../../presentation/exceptions/system-expense-category-read-only.exception';
 
 import {
+  assertWithinExportLimit,
+  getExportRowLimit,
+} from '../../../../common/export/export-limit';
+import {
   CreateExpenseCategoryInput,
   UpdateExpenseCategoryInput,
 } from '../inputs/expense-category.input';
@@ -60,6 +64,20 @@ export class ExpenseCategoriesService {
       limit,
       total: result.total,
     };
+  }
+
+  async findAllForExport(userId: string): Promise<ExpenseCategory[]> {
+    const maxRows = getExportRowLimit();
+
+    const result = await this.expenseCategoryRepository.findAllAvailableToUser({
+      userId,
+      skip: 0,
+      take: maxRows + 1,
+    });
+
+    assertWithinExportLimit(result.categories.length, maxRows);
+
+    return result.categories;
   }
 
   async findById(categoryId: string, userId: string): Promise<ExpenseCategory> {

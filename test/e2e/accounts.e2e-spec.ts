@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { createAccessToken } from './support/access-token';
+import { binaryParser } from './support/binary-parser';
 import request from './support/api-request';
 
 import { AppModule } from '../../src/app.module';
@@ -741,6 +742,105 @@ describe('Accounts (E2E)', () => {
       expect(response.body.meta.limit).toBe(20);
       expect(response.body.meta.total).toBe(1);
       expect(response.body.meta.totalPages).toBe(1);
+    });
+  });
+
+  describe('GET /api/v1/accounts/export', () => {
+    const exportRequest = (token: string, format?: string) => {
+      const url = format
+        ? `/api/v1/accounts/export?format=${format}`
+        : '/api/v1/accounts/export';
+
+      return request(app.getHttpServer())
+        .get(url)
+        .set('Authorization', `Bearer ${token}`);
+    };
+
+    it('should export the authenticated user accounts as a CSV attachment', async () => {
+      await createAccount(authorizedUserToken, {
+        name: `${testPrefix}-csv-account`,
+      }).expect(201);
+
+      const response = await exportRequest(authorizedUserToken, 'csv')
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      expect(response.headers['content-type']).toBe('text/csv; charset=utf-8');
+      expect(response.headers['content-disposition']).toMatch(
+        /^attachment; filename="navro-accounts-\d{4}-\d{2}-\d{2}\.csv"$/,
+      );
+      expect(response.headers['cache-control']).toBe('no-store');
+
+      const csv = (response.body as Buffer).toString('utf8');
+
+      expect(csv).toContain(
+        'Name,Type,Currency,Opening Balance,Status,Created At,Updated At',
+      );
+      expect(csv).toContain(`${testPrefix}-csv-account`);
+    });
+
+    it('should export the authenticated user accounts as a PDF attachment', async () => {
+      await createAccount(authorizedUserToken, {
+        name: `${testPrefix}-pdf-account`,
+      }).expect(201);
+
+      const response = await exportRequest(authorizedUserToken, 'pdf')
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      expect(response.headers['content-type']).toBe('application/pdf');
+      expect(response.headers['content-disposition']).toMatch(
+        /^attachment; filename="navro-accounts-\d{4}-\d{2}-\d{2}\.pdf"$/,
+      );
+
+      const pdf = response.body as Buffer;
+
+      expect(pdf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+    });
+
+    it('should not include accounts belonging to other users', async () => {
+      await createAccount(secondAuthorizedUserToken, {
+        name: `${testPrefix}-other-user-account`,
+      }).expect(201);
+
+      const response = await exportRequest(authorizedUserToken, 'csv')
+        .buffer(true)
+        .parse(binaryParser)
+        .expect(200);
+
+      const csv = (response.body as Buffer).toString('utf8');
+
+      expect(csv).not.toContain(`${testPrefix}-other-user-account`);
+    });
+
+    it('should reject export without a format', async () => {
+      const response = await exportRequest(authorizedUserToken).expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject an unsupported export format', async () => {
+      const response = await exportRequest(authorizedUserToken, 'xlsx').expect(
+        400,
+      );
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject export without authentication', async () => {
+      await request(app.getHttpServer())
+        .get('/api/v1/accounts/export?format=csv')
+        .expect(401);
+    });
+
+    it('should reject export without accounts:read permission', async () => {
+      const response = await exportRequest(unauthorizedUserToken, 'csv').expect(
+        403,
+      );
+
+      expect(response.body.success).toBe(false);
     });
   });
 
