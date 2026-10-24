@@ -1,6 +1,8 @@
 export enum TransactionType {
   INCOME = 'INCOME',
   EXPENSE = 'EXPENSE',
+  TRANSFER_IN = 'TRANSFER_IN',
+  TRANSFER_OUT = 'TRANSFER_OUT',
 }
 
 export type TransactionRateSource =
@@ -22,6 +24,9 @@ export interface TransactionProps {
   exchangeRate: string;
   rateDate: string;
   rateSource: TransactionRateSource;
+  transferGroupId?: string | null;
+  transferExchangeRate?: string | null;
+  transferRateSource?: TransactionRateSource | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -91,6 +96,18 @@ export class Transaction {
 
   get rateSource(): TransactionRateSource {
     return this.props.rateSource;
+  }
+
+  get transferGroupId(): string | null {
+    return this.props.transferGroupId ?? null;
+  }
+
+  get transferExchangeRate(): string | null {
+    return this.props.transferExchangeRate ?? null;
+  }
+
+  get transferRateSource(): TransactionRateSource | null {
+    return this.props.transferRateSource ?? null;
   }
 
   get createdAt(): Date {

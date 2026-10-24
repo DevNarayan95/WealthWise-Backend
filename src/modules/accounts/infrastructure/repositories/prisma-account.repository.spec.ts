@@ -507,6 +507,34 @@ describe('PrismaAccountRepository', () => {
       });
     });
 
+    it('should add transfers received and subtract transfers sent', async () => {
+      prisma.account.findFirst.mockResolvedValue({
+        id: 'account-id',
+        currency: 'MYR',
+        openingBalance: new Prisma.Decimal('1000.0000'),
+      });
+
+      prisma.transaction.groupBy.mockResolvedValue([
+        { type: 'INCOME', _sum: { amount: new Prisma.Decimal('200.0000') } },
+        { type: 'EXPENSE', _sum: { amount: new Prisma.Decimal('50.0000') } },
+        {
+          type: 'TRANSFER_IN',
+          _sum: { amount: new Prisma.Decimal('300.0000') },
+        },
+        {
+          type: 'TRANSFER_OUT',
+          _sum: { amount: new Prisma.Decimal('125.0000') },
+        },
+      ]);
+
+      const result = await repository.getBalanceForUser({
+        accountId: 'account-id',
+        userId: 'user-id',
+      });
+
+      expect(result?.balance).toBe('1325.0000');
+    });
+
     it('should return opening balance when the account has no transactions', async () => {
       prisma.account.findFirst.mockResolvedValue({
         id: 'account-id',

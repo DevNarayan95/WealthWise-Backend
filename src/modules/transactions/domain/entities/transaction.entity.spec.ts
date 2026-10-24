@@ -98,4 +98,28 @@ describe('Transaction', () => {
     expect(transaction.type).toBe(TransactionType.EXPENSE);
     expect(transaction.amount).toBe('5000.000');
   });
+
+  it('should expose transfer leg fields through getters', () => {
+    const transaction = Transaction.create({
+      ...props,
+      id: 'transfer-out-1',
+      type: TransactionType.TRANSFER_OUT,
+      transferGroupId: 'group-1',
+      transferExchangeRate: '0.24000000',
+      transferRateSource: 'PROVIDER',
+    });
+
+    expect(transaction.type).toBe(TransactionType.TRANSFER_OUT);
+    expect(transaction.transferGroupId).toBe('group-1');
+    expect(transaction.transferExchangeRate).toBe('0.24000000');
+    expect(transaction.transferRateSource).toBe('PROVIDER');
+  });
+
+  it('should default transfer leg fields to null for income and expense transactions', () => {
+    const transaction = Transaction.create(props);
+
+    expect(transaction.transferGroupId).toBeNull();
+    expect(transaction.transferExchangeRate).toBeNull();
+    expect(transaction.transferRateSource).toBeNull();
+  });
 });

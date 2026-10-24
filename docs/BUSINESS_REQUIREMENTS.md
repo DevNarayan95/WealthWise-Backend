@@ -442,6 +442,8 @@ These rules apply to every Phase 1 API. They are summarized here for business re
 | 19  | Transaction currency        | A transaction uses its account's currency. Conversion is used only for base-currency reporting, net worth, and the dashboard.                                                                                    | Approved |
 | 20  | System category rows        | Default categories are shared rows (`user_id` NULL) with a partial unique index on the normalized name. Users can archive system categories for themselves through a per-user archive table. | Approved |
 | 21  | Transaction date            | `transactionDate` and `rateDate` are calendar dates (`YYYY-MM-DD`), not timestamps. This is a breaking API change, made in development before release. Base amounts store 4 decimal places. | Approved |
+| 22  | Cross-currency transfers    | A transfer between accounts in different currencies is converted by the system using the stored exchange rate for the transfer date (same fallback chain as decision 17). Each leg is recorded in its own account's currency, and the rate is stored. | Approved |
+| 23  | Transfer reversal           | Reversing either leg reverses the whole transfer. Both legs are reversed together in one database transaction. Each leg keeps its own reversal record. | Approved |
 
 ---
 

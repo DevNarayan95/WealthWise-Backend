@@ -51,6 +51,7 @@ describe('JwtStrategy', () => {
       rotateRefreshToken: jest.fn(),
       revokeSession: jest.fn(),
       revokeAllSessionsForUser: jest.fn(),
+      deleteExpiredSessions: jest.fn(),
     };
 
     const configService = {

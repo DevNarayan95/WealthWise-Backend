@@ -11,6 +11,15 @@ export const isTransactionType = (value: string): value is TransactionType => {
   return Object.values(TransactionType).includes(value as TransactionType);
 };
 
+const TRANSFER_TRANSACTION_TYPES: ReadonlySet<TransactionType> = new Set([
+  TransactionType.TRANSFER_IN,
+  TransactionType.TRANSFER_OUT,
+]);
+
+export const isTransferTransactionType = (type: TransactionType): boolean => {
+  return TRANSFER_TRANSACTION_TYPES.has(type);
+};
+
 export const isValidTransactionCurrency = (currency: string): boolean => {
   return /^[A-Z]{3}$/.test(currency);
 };

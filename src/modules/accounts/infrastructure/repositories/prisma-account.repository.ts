@@ -210,6 +210,8 @@ export class PrismaAccountRepository implements AccountRepository {
   ): Prisma.Decimal {
     let income = new Prisma.Decimal(0);
     let expense = new Prisma.Decimal(0);
+    let transfersIn = new Prisma.Decimal(0);
+    let transfersOut = new Prisma.Decimal(0);
 
     for (const total of totals) {
       const amount = total.amount ?? new Prisma.Decimal(0);
@@ -221,9 +223,21 @@ export class PrismaAccountRepository implements AccountRepository {
       if (total.type === 'EXPENSE') {
         expense = expense.plus(amount);
       }
+
+      if (total.type === 'TRANSFER_IN') {
+        transfersIn = transfersIn.plus(amount);
+      }
+
+      if (total.type === 'TRANSFER_OUT') {
+        transfersOut = transfersOut.plus(amount);
+      }
     }
 
-    return openingBalance.plus(income).minus(expense);
+    return openingBalance
+      .plus(income)
+      .minus(expense)
+      .plus(transfersIn)
+      .minus(transfersOut);
   }
 
   private toDomain(account: {

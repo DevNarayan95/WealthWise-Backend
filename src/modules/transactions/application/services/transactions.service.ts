@@ -12,6 +12,7 @@ import {
 
 import {
   isTransactionType,
+  isTransferTransactionType,
   isValidTransactionAmount,
   isValidTransactionCurrency,
   isValidTransactionDate,
@@ -35,6 +36,7 @@ import {
 } from '../../../../common/export/export-limit';
 
 import { InvalidTransactionException } from '../../presentation/exceptions/invalid-transaction.exception';
+import { TransactionCannotBeReversedException } from '../../presentation/exceptions/transaction-cannot-be-reversed.exception';
 import { TransactionNotFoundException } from '../../presentation/exceptions/transaction-not-found.exception';
 import { ListTransactionsInput } from '../inputs/list-transactions.input';
 import { ReverseTransactionInput } from '../inputs/reverse-transaction.input';
@@ -58,6 +60,12 @@ export class TransactionsService {
 
     if (!isTransactionType(input.type)) {
       throw new InvalidTransactionException('Invalid transaction type');
+    }
+
+    if (isTransferTransactionType(input.type)) {
+      throw new InvalidTransactionException(
+        'Transfer transactions must be created through the transfers endpoint',
+      );
     }
 
     if (!isValidTransactionAmount(amount)) {
@@ -174,6 +182,12 @@ export class TransactionsService {
 
     if (!transaction) {
       throw new TransactionNotFoundException('Transaction not found');
+    }
+
+    if (isTransferTransactionType(transaction.type)) {
+      throw new TransactionCannotBeReversedException(
+        'Transfer legs must be reversed as a pair through the transfers endpoint',
+      );
     }
 
     if (transaction.reversalOfTransactionId !== null) {

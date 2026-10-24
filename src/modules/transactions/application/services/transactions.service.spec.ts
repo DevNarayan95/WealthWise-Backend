@@ -14,6 +14,7 @@ import {
 } from '../../domain/entities/transaction.entity';
 
 import { InvalidTransactionException } from '../../presentation/exceptions/invalid-transaction.exception';
+import { TransactionCannotBeReversedException } from '../../presentation/exceptions/transaction-cannot-be-reversed.exception';
 
 import { TransactionsService } from './transactions.service';
 import { TransactionNotFoundException } from '../../presentation/exceptions/transaction-not-found.exception';
@@ -757,6 +758,60 @@ describe('TransactionsService', () => {
           reversalOfTransactionId: 'transaction-1',
         }),
       );
+    });
+  });
+
+  describe('Transfer legs', () => {
+    it.each([TransactionType.TRANSFER_IN, TransactionType.TRANSFER_OUT])(
+      'should reject creating a %s leg through the generic transaction endpoint',
+      async (type) => {
+        await expect(
+          service.create({ ...createTransactionInput, type }),
+        ).rejects.toThrow(
+          new InvalidTransactionException(
+            'Transfer transactions must be created through the transfers endpoint',
+          ),
+        );
+
+        expect(transactionsRepository.create).not.toHaveBeenCalled();
+      },
+    );
+
+    it('should reject reversing a transfer leg with TRANSACTION_CANNOT_BE_REVERSED', async () => {
+      transactionsRepository.findByIdForUser.mockResolvedValue(
+        Transaction.create({
+          id: 'transaction-1',
+          accountId: 'account-1',
+          type: TransactionType.TRANSFER_OUT,
+          amount: '100.0000',
+          currency: 'MYR',
+          description: 'Transfer',
+          transactionDate,
+          reversalOfTransactionId: null,
+          incomeCategoryId: null,
+          expenseCategoryId: null,
+          ...baseConversion,
+          transferGroupId: 'group-1',
+          transferExchangeRate: '0.24000000',
+          transferRateSource: 'PROVIDER',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      );
+
+      await expect(
+        service.reverse({
+          userId: 'user-1',
+          transactionId: 'transaction-1',
+          transactionDate,
+          description: null,
+        }),
+      ).rejects.toThrow(TransactionCannotBeReversedException);
+
+      expect(
+        transactionsRepository.findReversalForTransaction,
+      ).not.toHaveBeenCalled();
+      expect(transactionsRepository.create).not.toHaveBeenCalled();
     });
   });
 

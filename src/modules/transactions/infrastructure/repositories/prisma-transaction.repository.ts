@@ -48,6 +48,9 @@ export class PrismaTransactionRepository extends TransactionRepository {
         exchangeRate: input.exchangeRate,
         rateDate: toDateColumnValue(input.rateDate),
         rateSource: input.rateSource,
+        transferGroupId: input.transferGroupId,
+        transferExchangeRate: input.transferExchangeRate,
+        transferRateSource: input.transferRateSource,
       },
     });
 
@@ -212,6 +215,9 @@ export class PrismaTransactionRepository extends TransactionRepository {
     exchangeRate: { toFixed(decimalPlaces: number): string };
     rateDate: Date;
     rateSource: string;
+    transferGroupId: string | null;
+    transferExchangeRate: { toFixed(decimalPlaces: number): string } | null;
+    transferRateSource: string | null;
     createdAt: Date;
     updatedAt: Date;
   }): Transaction {
@@ -231,6 +237,12 @@ export class PrismaTransactionRepository extends TransactionRepository {
       exchangeRate: transaction.exchangeRate.toFixed(8),
       rateDate: toIsoDateString(transaction.rateDate),
       rateSource: this.toDomainRateSource(transaction.rateSource),
+      transferGroupId: transaction.transferGroupId ?? null,
+      transferExchangeRate:
+        transaction.transferExchangeRate?.toFixed(8) ?? null,
+      transferRateSource: transaction.transferRateSource
+        ? this.toDomainRateSource(transaction.transferRateSource)
+        : null,
       createdAt: transaction.createdAt,
       updatedAt: transaction.updatedAt,
     });
@@ -256,6 +268,12 @@ export class PrismaTransactionRepository extends TransactionRepository {
 
       case 'EXPENSE':
         return TransactionType.EXPENSE;
+
+      case 'TRANSFER_IN':
+        return TransactionType.TRANSFER_IN;
+
+      case 'TRANSFER_OUT':
+        return TransactionType.TRANSFER_OUT;
 
       default:
         throw new Error(`Unsupported transaction type: ${type}`);

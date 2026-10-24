@@ -284,6 +284,8 @@ Each decision must be answered before the related module is implemented. The AI 
 14. **Exchange-rate fallback.** Approved: provider rate for the date, then the most recent stored rate on or before the date, then the most recent stored rate of any date (last given rate), then a manual rate in config. Transactions are never rejected (NFR-DATA-07).
 15. **Loan EMI category and transaction currency.** Approved: Loan EMI is a system category, and a transaction uses its account's currency (decisions 18 and 19 in BRD section 11).
 16. **Expired session cleanup.** Approved: expired auth sessions are deleted on a configurable schedule (`auth.sessionCleanup`, default every 60 minutes, enabled). Only sessions past `expiresAt` are deleted.
+17. **Cross-currency transfers.** Approved: the system converts the transfer amount with the stored exchange rate for the transfer date, using the same fallback chain as decision 14. Each leg is recorded in its own account's currency (BRD decision 22).
+18. **Transfer reversal.** Approved: reversing either leg reverses the whole transfer, both legs together in one database transaction (BRD decision 23).
 
 ---
 
@@ -2989,21 +2991,21 @@ The Account Balance milestone should proceed in this order:
 ```text
 Account Balance
 
-├── 1. Domain/business rules                ⏳
-├── 2. Existing repository review           ⏳
-├── 3. Repository balance abstraction       ⏳
-├── 4. Prisma aggregate implementation      ⏳
-├── 5. Application service                  ⏳
-├── 6. Response DTO                         ⏳
-├── 7. Controller endpoint                  ⏳
-├── 8. Unit tests                           ⏳
-├── 9. Integration tests                    ⏳
-├── 10. E2E tests                           ⏳
-├── 11. Ownership tests                     ⏳
-├── 12. Decimal/reversal tests              ⏳
-├── 13. Archived-account tests              ⏳
-├── 14. Full validation                     ⏳
-└── 15. Focused Git checkpoint              ⏳
+├── 1. Domain/business rules                ✅
+├── 2. Existing repository review           ✅
+├── 3. Repository balance abstraction       ✅
+├── 4. Prisma aggregate implementation      ✅
+├── 5. Application service                  ✅
+├── 6. Response DTO                         ✅
+├── 7. Controller endpoint                  ✅
+├── 8. Unit tests                           ✅
+├── 9. Integration tests                    ✅
+├── 10. E2E tests                           ✅
+├── 11. Ownership tests                     ✅
+├── 12. Decimal/reversal tests              ✅
+├── 13. Archived-account tests              ✅
+├── 14. Full validation                     ✅
+└── 15. Focused Git checkpoint              ✅
 ```
 
 Do not implement balance logic before confirming the existing Accounts repository/service structure.
@@ -3157,7 +3159,7 @@ Super Admin and System             ⏳
 
 CURRENT MILESTONE
 
-└── Income                         ✅ COMPLETE
+└── Transfers                      ⏳ IN PROGRESS
 
 CURRENT PHASE
 
@@ -3165,7 +3167,7 @@ CURRENT PHASE
 
 CURRENT TOPIC
 
-└── Expenses — Domain Design  ⏳ NEXT
+└── Transfers chunk 2 (service and API) — red specs first  ⏳ NEXT
 ```
 
 ---
@@ -3269,9 +3271,25 @@ When continuing NAVRO development:
 
 ---
 
-# 57. Next Topic
+# 57. Next Topic and Design Record
 
-## Expenses — Domain Design
+## Transfers — Domain Design (in progress)
+
+A transfer moves money between two of the user's own accounts. It is stored as two linked transaction rows, one per account, and the two rows are never edited (BR-TXN-02, BR-TXN-08).
+
+**Approved decisions** (BRD decisions 22 and 23, Open Decisions 17 and 18)
+
+- The source leg has type `TRANSFER_OUT`. The destination leg has type `TRANSFER_IN`. Both share a `transfer_group_id` (UUID).
+- Each leg is recorded in its own account's currency. The client sends `amount` in the source account's currency, so no currency field is needed. Source and destination must differ.
+- Cross-currency: the destination amount is `amount × rate`, where the rate comes from `ExchangeRateService.getRate` for the transfer date (same fallback chain as decision 17). The rate, rounded to 8 decimal places, and its `rate_source` are stored on both legs.
+- Each leg also gets its normal base-currency conversion (`base_amount`, `exchange_rate`, `rate_date`, `rate_source`). Income and expense reports filter by `INCOME` and `EXPENSE` only, so transfers never count as income or spending.
+- Balance: `TRANSFER_IN` adds to the account balance and `TRANSFER_OUT` subtracts from it (BR-BAL-01).
+- Reversal: reversing either leg reverses the whole pair in one database transaction. Each leg gets its own reversal row. Reversal types map `TRANSFER_OUT` ↔ `TRANSFER_IN`. The two reversal rows share a new `transfer_group_id`, because the unique index on `(transfer_group_id, type)` forbids reusing the original group. The CHECK constraint requires a group ID on every transfer-type row, so the reversal pair always has one.
+- Chunk 1 (model, migration `20261105090000_add_transfers`, balance, and the create and reverse guards) is complete and green. Chunk 2 covers `TransfersService`, `POST /transfers`, pair reversal, and e2e tests.
+- The generic `POST /transactions` rejects `TRANSFER_IN` and `TRANSFER_OUT`. Transfers are created only through `POST /transfers`.
+- Database CHECK: `transfer_group_id` is set only on transfer types, and it is NULL on income and expense rows.
+
+## Expenses — Domain Design (complete)
 
 Expenses mirror Income (section 39 onward) and reuse its patterns. The decisions below were answered for this design. Implementation follows this design.
 

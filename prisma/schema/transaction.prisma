@@ -1,6 +1,8 @@
 enum TransactionType {
   INCOME
   EXPENSE
+  TRANSFER_IN
+  TRANSFER_OUT
 }
 
 // How the exchange rate was obtained. Stored per transaction so reports can flag approximate values.
@@ -27,6 +29,9 @@ model Transaction {
   exchangeRate            Decimal         @map("exchange_rate") @db.Decimal(19, 8)
   rateDate                DateTime        @map("rate_date") @db.Date
   rateSource              RateSource      @map("rate_source")
+  transferGroupId         String?         @map("transfer_group_id") @db.Uuid
+  transferExchangeRate    Decimal?        @map("transfer_exchange_rate") @db.Decimal(19, 8)
+  transferRateSource      RateSource?     @map("transfer_rate_source")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -38,6 +43,7 @@ model Transaction {
   expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id], onDelete: Restrict)
 
   @@unique([reversalOfTransactionId])
+  @@unique([transferGroupId, type])
   @@index([accountId])
   @@index([accountId, transactionDate])
   @@map("nv_transactions")

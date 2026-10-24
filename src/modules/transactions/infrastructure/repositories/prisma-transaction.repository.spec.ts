@@ -32,6 +32,11 @@ describe('PrismaTransactionRepository', () => {
       reversalOfTransactionId: string | null;
       incomeCategoryId: string | null;
       expenseCategoryId: string | null;
+      transferGroupId: string | null;
+      transferExchangeRate: {
+        toFixed: (decimalPlaces: number) => string;
+      } | null;
+      transferRateSource: string | null;
       createdAt: Date;
       updatedAt: Date;
     }> = {},
@@ -78,6 +83,9 @@ describe('PrismaTransactionRepository', () => {
       exchangeRate: string;
       rateDate: string;
       rateSource: TransactionRateSource;
+      transferGroupId: string | null;
+      transferExchangeRate: string | null;
+      transferRateSource: TransactionRateSource | null;
     }> = {},
   ) => ({
     accountId: 'account-1',
@@ -180,6 +188,74 @@ describe('PrismaTransactionRepository', () => {
       expect(result.currency).toBe('MYR');
       expect(result.description).toBe('Reversal of salary');
       expect(result.reversalOfTransactionId).toBe('transaction-1');
+    });
+  });
+
+  describe('transfer legs', () => {
+    it('should persist the transfer group and cross-currency rate for a transfer leg', async () => {
+      prisma.transaction.create.mockResolvedValue(
+        createPrismaTransaction({
+          type: 'TRANSFER_OUT',
+          transferGroupId: 'group-1',
+          transferExchangeRate: { toFixed: () => '0.24000000' },
+          transferRateSource: 'PROVIDER',
+        }),
+      );
+
+      const input = createTransactionInput({
+        type: TransactionType.TRANSFER_OUT,
+        transferGroupId: 'group-1',
+        transferExchangeRate: '0.24000000',
+        transferRateSource: 'PROVIDER',
+      });
+
+      const result = await repository.create(input);
+
+      expect(prisma.transaction.create).toHaveBeenCalledWith({
+        data: toExpectedPrismaData(input),
+      });
+      expect(result.type).toBe(TransactionType.TRANSFER_OUT);
+      expect(result.transferGroupId).toBe('group-1');
+      expect(result.transferExchangeRate).toBe('0.24000000');
+      expect(result.transferRateSource).toBe('PROVIDER');
+    });
+
+    it('should map a TRANSFER_IN row to the transfer domain type', async () => {
+      prisma.transaction.findFirst.mockResolvedValue(
+        createPrismaTransaction({
+          type: 'TRANSFER_IN',
+          transferGroupId: 'group-1',
+          transferExchangeRate: { toFixed: () => '0.24000000' },
+          transferRateSource: 'PROVIDER',
+        }),
+      );
+
+      const result = await repository.findByIdForUser(
+        'transaction-1',
+        'user-1',
+      );
+
+      expect(result?.type).toBe(TransactionType.TRANSFER_IN);
+      expect(result?.transferGroupId).toBe('group-1');
+    });
+
+    it('should map income and expense rows with null transfer fields', async () => {
+      prisma.transaction.findFirst.mockResolvedValue(
+        createPrismaTransaction({
+          transferGroupId: null,
+          transferExchangeRate: null,
+          transferRateSource: null,
+        }),
+      );
+
+      const result = await repository.findByIdForUser(
+        'transaction-1',
+        'user-1',
+      );
+
+      expect(result?.transferGroupId).toBeNull();
+      expect(result?.transferExchangeRate).toBeNull();
+      expect(result?.transferRateSource).toBeNull();
     });
   });
 

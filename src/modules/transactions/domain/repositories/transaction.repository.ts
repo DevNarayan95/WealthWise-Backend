@@ -19,6 +19,9 @@ export interface CreateTransactionRepositoryInput {
   exchangeRate: string;
   rateDate: string;
   rateSource: TransactionRateSource;
+  transferGroupId?: string | null;
+  transferExchangeRate?: string | null;
+  transferRateSource?: TransactionRateSource | null;
 }
 
 export interface FindTransactionsRepositoryInput {
